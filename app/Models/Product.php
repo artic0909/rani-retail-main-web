@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-     protected $fillable = [
+    protected $fillable = [
         'sub_category_id',
         'product_name',
         'purchase_details',
@@ -30,13 +30,23 @@ class Product extends Model
         return $this->belongsTo(SubCategoryDescriptiveFields::class, 'sub_category_descriptive_field_id');
     }
 
+    // public function mainCategory()
+    // {
+    //     return $this->belongsTo(MainCategory::class);
+    // }
+
+    // public function subCategory()
+    // {
+    //     return $this->belongsTo(SubCategory::class);
+    // }
+
     public function mainCategory()
     {
-        return $this->belongsTo(MainCategory::class);
+        return $this->belongsTo(MainCategory::class, 'main_category_id'); // Check your actual column name
     }
 
     public function subCategory()
     {
-        return $this->belongsTo(SubCategory::class);
+        return $this->belongsTo(SubCategory::class, 'sub_category_id');
     }
 }

@@ -15,6 +15,8 @@ use App\Models\Manager;
 use App\Models\Product;
 use App\Models\SubCategory;
 use App\Models\SubCategoryDescriptiveFields;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\FilteredProductsExport;
 
 class ManagerController extends Controller
 {
@@ -110,6 +112,40 @@ class ManagerController extends Controller
         $mainCategory->save();
         return redirect()->route('stock-add-main-category')->with('success', 'Main Category added successfully');
     }
+
+    // Show All Main Category View ---------------------------->
+    public function showAllMainCategory()
+    {
+
+        $mainCategories = MainCategory::all();
+
+        return view('stocker.stock-all-main-category', compact('mainCategories'));
+    }
+
+    public function editMainCategory(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:main_categories,id',
+            'main_category_name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
+        ]);
+
+        $category = MainCategory::findOrFail($request->id);
+        $category->main_category_name = $request->main_category_name;
+        $category->slug = $request->slug;
+        $category->save();
+
+        return redirect()->back()->with('success', 'Main Category updated successfully.');
+    }
+
+    public function deleteMainCategory($id)
+    {
+        $category = MainCategory::findOrFail($id);
+        $category->delete();
+
+        return redirect()->back()->with('success', 'Main Category deleted successfully.');
+    }
+
 
 
     // Store Sub Category Function---------------------------->
@@ -207,10 +243,9 @@ class ManagerController extends Controller
     // Store Products Function---------------------------->
     public function storeProduct(Request $request, $subcategorySlug)
     {
-        // Get subcategory with fields
         $subCategory = SubCategory::with('descriptiveFields')->where('slug', $subcategorySlug)->firstOrFail();
 
-        // Validate static fields
+
         $request->validate([
             'product_name'     => 'required|string|max:255',
             'purchase_details' => 'nullable|string',
@@ -220,15 +255,13 @@ class ManagerController extends Controller
             'transport_cost'   => 'nullable|numeric',
         ]);
 
-        // Prepare dynamic fields (based on the subcategory's descriptive fields)
+        $dynamicInputs = $request->input('dynamic_fields', []);
         $dynamicFieldValues = [];
 
         foreach ($subCategory->descriptiveFields as $field) {
-            $fieldInput = $request->input('dynamic_' . $field->id); // dynamic_1, dynamic_2, etc.
-            $dynamicFieldValues[$field->field_name] = $fieldInput;
+            $dynamicFieldValues[$field->field_name] = $dynamicInputs[$field->field_name] ?? null;
         }
 
-        // Store product
         Product::create([
             'sub_category_id'  => $subCategory->id,
             'product_name'     => $request->input('product_name'),
@@ -237,9 +270,85 @@ class ManagerController extends Controller
             'unit_type'        => $request->input('unit_type'),
             'purchase_rate'    => $request->input('purchase_rate'),
             'transport_cost'   => $request->input('transport_cost'),
-            'field_values'     => $dynamicFieldValues, // casted as JSON
+            'field_values'     => $dynamicFieldValues,
         ]);
 
         return redirect()->back()->with('success', 'Product added successfully.');
+    }
+
+    // Show Category Wise Products Function---------------------------->
+    public function showCategoryWiseProducts()
+    {
+        $mainCategories = MainCategory::all();
+
+        return view('stocker.stock-all-products', compact('mainCategories'));
+    }
+
+    public function getSubcategories($mainCategoryId)
+    {
+        $subcategories = SubCategory::where('main_category_id', $mainCategoryId)->get();
+        return response()->json($subcategories);
+    }
+
+
+    public function getProducts(Request $request)
+    {
+        $products = Product::where('sub_category_id', $request->sub_category_id)->get();
+        return response()->json($products);
+    }
+
+    public function editProductView($id)
+    {
+        $product = Product::findOrFail($id);
+
+        $fields = SubCategoryDescriptiveFields::where('sub_category_id', $product->sub_category_id)->get();
+
+        $fieldValues = is_string($product->field_values)
+            ? json_decode($product->field_values, true)
+            : ($product->field_values ?? []);
+
+        return view('stocker.stock-edit-product', compact('product', 'fields', 'fieldValues'));
+    }
+
+    public function editProduct(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'product_name'      => 'required|string|max:255',
+            'purchase_details'  => 'nullable|string',
+            'purchase_unit'     => 'nullable|string|max:255',
+            'purchase_rate'     => 'nullable|numeric',
+            'transport_cost'    => 'nullable|numeric',
+        ]);
+
+        $product = Product::findOrFail($id);
+
+        $product->product_name     = $validated['product_name'];
+        $product->purchase_details = $validated['purchase_details'];
+        $product->purchase_unit    = $validated['purchase_unit'];
+        $product->purchase_rate    = $validated['purchase_rate'];
+        $product->transport_cost   = $validated['transport_cost'];
+
+        $dynamicFieldValues = $request->input('dynamic_fields', []);
+
+        // ✅ Save as array (will auto-convert to JSON)
+        $product->field_values = $dynamicFieldValues;
+
+        $product->save();
+
+        return redirect()->back()->with('success', 'Product updated successfully.');
+    }
+
+    public function deleteProduct($id)
+    {
+        Product::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Product deleted successfully.');
+    }
+
+    public function allProductsList()
+    {
+
+        $products = Product::with(['subCategory.mainCategory'])->get();
+
+        return view('stocker.stock-list-all-products', compact('products'));
     }
 }

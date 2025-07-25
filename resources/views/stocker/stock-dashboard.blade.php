@@ -86,14 +86,14 @@
         <li class="mt-0.5 w-full">
           <a
             class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-            href="/stock/stock-add-products">
+            href="/stock/stock-list-all-products">
             <div
               class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
               <i
                 class="relative top-0 text-sm leading-normal text-orange-500 ni ni-archive-2"></i>
             </div>
             <span
-              class="ml-1 duration-300 opacity-100 pointer-events-none ease">Add Products</span>
+              class="ml-1 duration-300 opacity-100 pointer-events-none ease">All Products</span>
           </a>
         </li>
 
@@ -107,7 +107,7 @@
                 class="relative top-0 text-sm leading-normal text-emerald-500 ni ni-box-2"></i>
             </div>
             <span
-              class="ml-1 duration-300 opacity-100 pointer-events-none ease">All Products</span>
+              class="ml-1 duration-300 opacity-100 pointer-events-none ease">Filter Products</span>
           </a>
         </li>
 
@@ -128,7 +128,7 @@
         <li class="mt-0.5 w-full">
           <a
             class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-              href="/stock/stock-sales-report">
+            href="/stock/stock-sales-report">
             <div
               class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
               <i
@@ -400,22 +400,76 @@
 
       <!-- cards row 2 -->
       <div class="flex flex-wrap mt-6 -mx-3">
+
         <div class="w-full max-w-full px-3 mt-0 lg:w-7/12 lg:flex-none">
           <div
             class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
             <div
               class="border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
-              <h6 class="capitalize dark:text-white">Sales overview</h6>
+              <h6 class="capitalize dark:text-white">Category Lists</h6>
               <p
                 class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
-                <i class="fa fa-arrow-up text-emerald-500"></i>
-                <span class="font-semibold">4% more</span> in 2021
               </p>
             </div>
             <div class="flex-auto p-4">
-              <div>
-                <canvas id="chart-line" height="300"></canvas>
+              <!-- card1 -->
+              <div
+                class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-3/4">
+                <a href="/stock/stock-all-main-category"
+                  class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                  <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                      <div class="flex-none w-2/3 max-w-full px-3">
+                        <div>
+                          <p
+                            class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                            Main Category
+                          </p>
+                          <h5 class="mb-2 font-bold dark:text-white">Total - 33</h5>
+
+                        </div>
+                      </div>
+                      <div class="px-3 text-right basis-1/3">
+                        <div
+                          class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
+                          <i
+                            class="ni leading-none ni ni-calendar-grid-58 text-lg relative top-3.5 text-white"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
               </div>
+              <br>
+              <!-- card2 -->
+              <div
+                class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-3/4">
+                <a href="/stock/stock-all-sub-category"
+                  class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                  <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                      <div class="flex-none w-2/3 max-w-full px-3">
+                        <div>
+                          <p
+                            class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                            Sub Categories
+                          </p>
+                          <h5 class="mb-2 font-bold dark:text-white">Total - 55</h5>
+                          
+                        </div>
+                      </div>
+                      <div class="px-3 text-right basis-1/3">
+                        <div
+                          class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-red-600 to-orange-600">
+                          <i
+                            class="ni leading-none ni ni-calendar-grid-58 text-lg relative top-3.5 text-white"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+
             </div>
           </div>
         </div>

@@ -10,7 +10,7 @@
         sizes="76x76"
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>{{$subCategory->sub_category_name}} | {{$mainCategory->main_category_name}} | Add Products</title>
+    <title>All Main Categories | Rani Retail</title>
     <!--     Fonts and icons     -->
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
@@ -188,11 +188,14 @@
                         <li
                             class="text-sm pl-2 capitalize leading-normal text-white before:float-left before:pr-2 before:text-white before:content-['/']"
                             aria-current="page">
-                            {{$subCategory->sub_category_name}}
+                            All
                         </li>
                     </ol>
-                    <h6 class="mb-0 font-bold text-white capitalize">{{$mainCategory->main_category_name}}</h6>
+                    <h6 class="mb-0 font-bold text-white capitalize">
+                        All Main Categories
+                    </h6>
                 </nav>
+
                 <div
                     class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
                     <div class="flex items-center md:ml-auto md:pr-4">
@@ -210,6 +213,10 @@
                     </div>
                     <ul
                         class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
+                        <!-- online builder btn  -->
+                        <!-- <li class="flex items-center">
+                <a class="inline-block px-8 py-2 mb-0 mr-4 text-xs font-bold text-center text-blue-500 uppercase align-middle transition-all ease-in bg-transparent border border-blue-500 border-solid rounded-lg shadow-none cursor-pointer leading-pro hover:-translate-y-px active:shadow-xs hover:border-blue-500 active:bg-blue-500 active:hover:text-blue-500 hover:text-blue-500 tracking-tight-rem hover:bg-transparent hover:opacity-75 hover:shadow-none active:text-white active:hover:bg-transparent" target="_blank" href="https://www.creative-tim.com/builder/soft-ui?ref=navbar-dashboard&amp;_ga=2.76518741.1192788655.1647724933-1242940210.1644448053">Online Builder</a>
+              </li> -->
                         <li class="flex items-center">
                             <a
                                 href=""
@@ -255,191 +262,235 @@
                                 aria-expanded="false">
                                 <i class="cursor-pointer fa fa-bell"></i>
                             </a>
+
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <!-- Products Add -->
         <div class="w-full p-6 mx-auto">
             <div class="flex flex-wrap -mx-3">
 
-                <!-- Products adds fields -->
-                <div
-                    id="addProducts"
-                    class="w-full max-w-full px-3 mt-6 shrink-0 md:w-12/12 md:flex-0 md:mt-0">
-                    <div
-                        class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-                        <div class="p-4 pb-0 rounded-t-4">
-                            <h6 class="mb-0 dark:text-white">Add Products</h6>
-                        </div>
-                        <div class="flex-auto p-4">
-                            <form action="{{ route('stock.products-store', $subCategory->slug) }}" method="POST" enctype="multipart/form-data" class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-                                @csrf
-                                <div class="flex-auto p-6">
-                                    <div class="flex flex-wrap -mx-3">
+                <!-- Show Added Main Categories -->
+                <div class="w-full max-w-full px-3 shrink-0 md:w-7/12 md:flex-0 mt-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-full max-w-full px-3">
+                            <div
+                                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                                <div
+                                    class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+                                    <h6 class="dark:text-white">Main Categories</h6>
+                                </div>
+                                <div class="flex-auto px-0 pt-0 pb-2">
+                                    <div class="p-0 overflow-x-auto">
+                                        <table class="w-full text-center text-sm border border-gray-200 mb-5">
+                                            <thead class="bg-gray-100 text-xs font-semibold">
+                                                <tr>
+                                                    <th class="border px-4 py-2">ID</th>
+                                                    <th class="border px-4 py-2">Main Category</th>
+                                                    <th class="border px-4 py-2">Slug</th>
+                                                    <th class="border px-4 py-2">Created At</th>
+                                                    <th class="border px-4 py-2">Updated At</th>
+                                                    <th class="border px-4 py-2">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($mainCategories as $category)
+                                                <tr class="border-b">
+                                                    <td class="px-4 py-2">{{ $category->id }}</td>
+                                                    <td class="px-4 py-2">{{ $category->main_category_name }}</td>
+                                                    <td class="px-4 py-2">{{ $category->slug }}</td>
+                                                    <td class="px-4 py-2">{{ $category->created_at }}</td>
+                                                    <td class="px-4 py-2">{{ $category->updated_at }}</td>
+                                                    <td class="px-4 py-2">
+                                                        <button
+                                                            style="color: green;"
+                                                            class="font-semibold edit-btn"
+                                                            data-id="{{ $category->id }}"
+                                                            data-name="{{ $category->main_category_name }}"
+                                                            data-slug="{{ $category->slug }}">
+                                                            Edit
+                                                        </button> &nbsp; &nbsp;
 
-                                        <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
-                                            <div class="mb-4">
-                                                <label
-                                                    for="product_name"
-                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Product Name</label>
-                                                <input
-                                                    type="text"
-                                                    name="product_name"
-                                                    id="product_name"
-                                                    placeholder="Enter Product Name"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
-                                            </div>
-                                        </div>
-
-                                        <!-- Dynamic Fields Added Here -->
-                                        @foreach($fields as $field)
-                                        <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
-                                            <div class="mb-4">
-                                                <label
-                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                                    {{ ucfirst(str_replace('_', ' ', $field->field_name)) }}
-                                                </label>
-
-                                                @if($field->field_type == 'text')
-                                                <input
-                                                    type="text"
-                                                    name="dynamic_fields[{{ $field->field_name }}]"
-                                                    id="dynamic_fields[{{ $field->field_name }}]"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
-
-                                                @elseif($field->field_type == 'number')
-                                                <input
-                                                    type="number"
-                                                    name="dynamic_fields[{{ $field->field_name }}]"
-                                                    id="dynamic_fields[{{ $field->field_name }}]"
-                                                    step="any"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
-
-                                                @elseif($field->field_type == 'date')
-                                                <input
-                                                    type="date"
-                                                    name="dynamic_fields[{{ $field->field_name }}]"
-                                                    id="dynamic_fields[{{ $field->field_name }}]"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
-
-                                                @elseif($field->field_type == 'textarea')
-                                                <textarea
-                                                    name="dynamic_fields[{{ $field->field_name }}]"
-                                                    id="dynamic_fields[{{ $field->field_name }}]"
-                                                    rows="3"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"></textarea>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        @endforeach
+                                                        <button
+                                                            style="color: red;"
+                                                            class=" font-semibold delete-btn"
+                                                            data-id="{{ $category->id }}"
+                                                            data-name="{{ $category->main_category_name }}"
+                                                            data-slug="{{ $category->slug }}">
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
 
 
 
-                                    </div>
-                                    <hr
-                                        class="h-px mx-0 my-4 bg-transparent border-0 opacity-25 bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent" />
-
-                                    <p
-                                        class="leading-normal uppercase dark:text-white dark:opacity-60 text-sm">
-                                        Import/Purchase Information
-                                    </p>
-                                    <div class="flex flex-wrap -mx-3">
-                                        <div
-                                            class="w-full max-w-full px-3 shrink-0 md:w-full md:flex-0">
-                                            <div class="mb-4">
-                                                <label
-                                                    for="purchase_details"
-                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Purchase Details</label>
-
-
-                                                <textarea rows="3" name="purchase_details" id="purchase_details" class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"></textarea>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="w-full max-w-full px-3 shrink-0 md:w-4/12 md:flex-0">
-                                            <div class="mb-4">
-                                                <label
-                                                    for="purchase_unit"
-                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Purchase Unit</label>
-                                                <input
-                                                    type="text"
-                                                    name="purchase_unit"
-                                                    id="purchase_unit"
-                                                    placeholder="Enter Purchase Unit"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            class="w-full max-w-full px-3 shrink-0 md:w-4/12 md:flex-0">
-                                            <div class="mb-4">
-                                                <label
-                                                    for="purchase_unit"
-                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Unit Type</label>
-
-                                                <select name="unit_type" id="unit_type" class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                                    <option value="">Select Unit Type</option>
-                                                    <option value="kg">kg</option>
-                                                    <option value="litre">litre</option>
-                                                    <option value="piece">piece</option>
-                                                    <option value="ton">ton</option>
-                                                    <option value="pallet">pallet</option>
-                                                    <option value="carton">carton</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            class="w-full max-w-full px-3 shrink-0 md:w-4/12 md:flex-0">
-                                            <div class="mb-4">
-                                                <label
-                                                    for="purchase_rate"
-                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Purchase Rate</label>
-                                                <input
-                                                    type="number"
-                                                    name="purchase_rate"
-                                                    id="purchase_rate"
-                                                    placeholder="0.00"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="w-full max-w-full px-3 shrink-0 md:w-4/12 md:flex-0">
-                                            <div class="mb-4">
-                                                <label
-                                                    for="transport_cost"
-                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Transport Cost</label>
-                                                <input
-                                                    type="number"
-                                                    name="transport_cost"
-                                                    id="transport_cost"
-                                                    placeholder="0.00"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div style="display: flex; justify-content: center">
-                                        <button
-                                            type="submit"
-                                            class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
-                                            style="font-size: 14px">
-                                            ADD PRODUCT
-                                        </button>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+
+
+
+
+                <div class="w-full max-w-full px-3 shrink-0 md:w-5/12 md:flex-0 mt-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-full max-w-full px-3">
+                            <div
+                                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                                <div
+                                    class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+                                    <h6 class="dark:text-white">Edit Main Category</h6>
+                                </div>
+                                <div class="flex-auto px-0 pt-0 pb-2">
+                                    <div class="p-0 overflow-x-auto">
+
+
+                                        <!-- Edit Panel -->
+                                        <div id="editPanel" class="mt-8 hidden bg-white shadow-lg rounded-lg p-6 border border-gray-300 max-w-md">
+                                            <h3 class="text-lg font-bold mb-4 text-gray-800">Edit Main Category</h3>
+                                            <form method="POST" action="{{ route('main-category.update') }}">
+                                                @csrf
+                                                <input type="hidden" name="id" id="editId">
+
+                                                <div class="mb-4">
+                                                    <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Main Category Name</label>
+                                                    <input
+                                                        type="text"
+                                                        name="main_category_name"
+                                                        id="editName"
+                                                        class="w-full border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required>
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <label for="editSlug" class="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                                                    <input
+                                                        type="text"
+                                                        name="slug"
+                                                        id="editSlug"
+                                                        class="w-full border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required>
+                                                </div>
+
+                                                <div class="flex justify-center">
+                                                    <button type="submit"
+                                                        class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85" style="font-size: 14px">UPDATE</button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
             </div>
         </div>
     </div>
 
 
+    <!-- delete form -->
+    <form id="delete-form" method="POST" style="display: none;">
+        @csrf
+    </form>
+
+
+    <!-- In your Blade file -->
+    <script>
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const panel = document.getElementById('editPanel');
+                panel.classList.remove('hidden');
+
+                document.getElementById('editId').value = this.dataset.id;
+                document.getElementById('editName').value = this.dataset.name;
+                document.getElementById('editSlug').value = this.dataset.slug;
+
+                // Scroll to panel
+                panel.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+        function editField(button) {
+            const name = button.getAttribute('data-name');
+            const id = button.getAttribute('data-id');
+
+            // Show the edit section if hidden
+            document.getElementById('editSection').classList.remove('hidden');
+
+            // Fill inputs
+            document.getElementById('editFieldName').value = name;
+
+            // Add hidden input for field ID
+            let existingIdInput = document.getElementById('editFieldId');
+            if (!existingIdInput) {
+                existingIdInput = document.createElement('input');
+                existingIdInput.type = 'hidden';
+                existingIdInput.name = 'id';
+                existingIdInput.id = 'editFieldId';
+                document.getElementById('subcategory-wrapper').appendChild(existingIdInput);
+            }
+            existingIdInput.value = id;
+        }
+    </script>
+
+    <script>
+        $('.editButton').on('click', function() {
+            const id = $(this).data('id');
+            $.ajax({
+                url: '',
+                type: 'PUT',
+                data: {
+                    id: id,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const field = response.data;
+
+                        // Fill form fields
+                        $('#editFieldId').val(field.id);
+                        $('#editFieldName').val(field.field_name);
+
+                        $('#editFieldForm').removeClass('d-none');
+                    }
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+
+                if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                    const form = document.getElementById('delete-form');
+                    form.action = `/stock/main-category/delete/${id}`;
+                    form.submit();
+                }
+            });
+        });
+    </script>
 
 
 </body>

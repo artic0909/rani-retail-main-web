@@ -10,7 +10,8 @@
         sizes="76x76"
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>{{$mainCategory->main_category_name}} | Rani Retail</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Filter Search Products</title>
     <!--     Fonts and icons     -->
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
@@ -20,13 +21,13 @@
         src="https://kit.fontawesome.com/42d5adcbca.js"
         crossorigin="anonymous"></script>
     <!-- Nucleo Icons -->
-    <link href="{{ asset('../assets/css/nucleo-icons.css') }}" rel="stylesheet" />
-    <link href="{{ asset('../assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- Popper -->
-    <script src="{{ asset('https://unpkg.com/@popperjs/core@2') }}"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
     <!-- Main Styling -->
     <link
-        href="{{ asset('../assets/css/argon-dashboard-tailwind.css?v=1.0.1') }}"
+        href="../assets/css/argon-dashboard-tailwind.css?v=1.0.1"
         rel="stylesheet" />
 </head>
 
@@ -77,7 +78,7 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class="bg-blue-500/13 dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                        class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
                         href="/stock/stock-add-main-category">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
@@ -91,7 +92,7 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                        class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
                         href="/stock/stock-list-all-products">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
@@ -105,7 +106,7 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                        class="bg-blue-500/13 bg-blue-500/13dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
                         href="/stock/stock-all-products">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center fill-current stroke-0 text-center xl:p-2.5">
@@ -183,7 +184,7 @@
                     <ol
                         class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
                         <li class="text-sm leading-normal">
-                            <a class="text-white font-bold" href="/stock/stock-add-main-category">Back</a>
+                            <a class="text-white font-bold" href="#">Back</a>
                         </li>
                         <li
                             class="text-sm pl-2 capitalize leading-normal text-white before:float-left before:pr-2 before:text-white before:content-['/']"
@@ -191,11 +192,8 @@
                             Add
                         </li>
                     </ol>
-                    <h6 class="mb-0 font-bold text-white capitalize">
-                        Product Categories
-                    </h6>
+                    <h6 class="mb-0 font-bold text-white capitalize">Show Products</h6>
                 </nav>
-
                 <div
                     class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
                     <div class="flex items-center md:ml-auto md:pr-4">
@@ -264,112 +262,109 @@
             </div>
         </nav>
 
-        <!-- Sub Ctaegory Fields Add -->
+        <!-- Products Show -->
         <div class="w-full p-6 mx-auto">
             <div class="flex flex-wrap -mx-3">
-                <div class="w-full max-w-full px-3 shrink-0 md:w-8/12 md:flex-0">
+                <div class="w-full max-w-full px-3 shrink-0 md:flex-0">
                     <div
                         class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                         <div
                             class="border-black/12.5 rounded-t-2xl border-b-0 border-solid p-6 pb-0">
                             <div class="flex items-center">
-                                <p class="mb-0 dark:text-white/80">All Sub Categories</p>
+                                <p class="mb-0 dark:text-white/80">
+                                    Select Product Categories To Show Products
+                                </p>
                             </div>
                         </div>
                         <div class="flex-auto p-6">
-                            <p
-                                class="leading-normal uppercase dark:text-white dark:opacity-60 text-xl font-bold">
-                                Main Category:
-                                <span class="text-emerald-500">{{$mainCategory->main_category_name}}</span>
-                            </p>
+                            <div class="flex flex-wrap -mx-3">
+                                <div
+                                    class="w-full max-w-full px-3 shrink-0 md:w-full md:flex-0">
+                                    <div class="mb-4">
+                                        <label
+                                            for="username"
+                                            class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Choose Main Category *</label>
 
-                            <p
-                                class="leading-normal uppercase dark:text-white dark:opacity-60 text-sm font-bold">
-                                Sub Categories:
-                            </p>
+                                        <select
+                                            name=""
+                                            id="main-category"
+                                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                            <option value="" selected>Select Main Category</option>
+                                            @foreach ($mainCategories as $mainCategory)
+                                            <option value="{{$mainCategory->id}}">{{$mainCategory->main_category_name}}</option>
+                                            @endforeach
 
-                            <div class="flex-auto p-4">
-                                <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                                        </select>
+                                    </div>
 
-                                    @foreach($mainCategory->subCategories as $subCategory)
-                                    <li
-                                        class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                                        <div class="flex items-center">
-                                            <div
-                                                class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-blue-700 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                                                <i
-                                                    class="text-white ni ni-shop relative top-0.75 text-xxs"></i>
-                                            </div>
-                                            <div class="flex flex-col">
-                                                <h6
-                                                    class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                                                    {{$subCategory->sub_category_name}}
-                                                </h6>
-                                            </div>
+                                    <div class="mb-4">
+                                        <label
+                                            for=""
+                                            class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Choose Sub Category *</label>
+
+                                        <select
+                                            name=""
+                                            id="sub-category"
+                                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                            <option value="" selected>Select Sub Category</option>
+                                        </select>
+
+                                        <div
+                                            style="
+                          display: flex;
+                          justify-content: center;
+                          margin-top: 20px;
+                        ">
+                                            <button
+                                                id="show-products-btn"
+                                                type="submit"
+                                                class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
+                                                style="font-size: 14px">
+                                                SHOW
+                                            </button>
                                         </div>
-
-                                        <div class="flex">
-                                            <a
-                                                href="{{ route('show.subcategory-fields', $subCategory->slug) }}"
-                                                class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white">
-                                                <i
-                                                    class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
-                                                    aria-hidden="true"></i>
-                                            </a>
-                                        </div>
-                                    </li>
-                                    @endforeach
-                                </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Show All Main Categories -->
-                <div
-                    class="w-full max-w-full px-3 mt-6 shrink-0 md:w-4/12 md:flex-0 md:mt-0">
-                    <div
-                        class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-                        <div class="p-4 pb-0 rounded-t-4">
-                            <h6 class="mb-0 dark:text-white">Product Categories- {{ count($mainCategories) }}</h6>
-                        </div>
-                        <div class="flex-auto p-4">
-                            <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                <!-- All Products Show -->
+                <div class="w-full max-w-full px-3 shrink-0 md:flex-0 mt-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-full max-w-full px-3">
+                            <div
+                                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                                <div
+                                    class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
+                                    <h6 class="dark:text-white">Stock - 33</h6>
+                                    <a href="" class="text-sm text-cyan-500 underline">Export</a>
+                                </div>
+                                <div class="flex-auto px-0 pt-0 pb-2">
+                                    <div class="p-0 overflow-x-auto">
+                                        <table
+                                            class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
+                                            <thead class="align-bottom">
 
-                                @foreach($mainCategories as $mainCategory)
-                                <li
-                                    class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                                            <i
-                                                class="text-white ni ni-box-2 relative top-0.75 text-xxs"></i>
-                                        </div>
-                                        <div class="flex flex-col">
-                                            <h6
-                                                class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                                                {{$mainCategory->main_category_name}}
-                                            </h6>
-                                            <span class="text-xs leading-tight dark:text-white/80">
-                                                <span
-                                                    class="font-semibold text-red-600 dark:text-white">{{ count($mainCategory->subCategories) }}</span>
-                                                Sub Category</span>
-                                        </div>
+                                                <tr style="text-align:center; border-bottom: 1px solid #ccc;">
+                                                    <th>Product Name</th>
+                                                    <th>Decriptive Fields</th>
+                                                    <th>Purchase Details</th>
+                                                    <th>Unit</th>
+                                                    <th>Purchase Rate</th>
+                                                    <th>Transport Cost</th>
+                                                    <th colspan="2">Actions</th>
+                                                </tr>
+
+                                            </thead>
+                                            <tbody id="products-table-body">
+
+                                            </tbody>
+                                        </table>
                                     </div>
-
-                                    <div class="flex">
-                                        <a
-                                            href="{{ route('show.subcategory', $mainCategory->slug) }}"
-                                            class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white">
-                                            <i
-                                                class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
-                                                aria-hidden="true"></i>
-                                        </a>
-                                    </div>
-                                </li>
-                                @endforeach
-
-                            </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -377,37 +372,119 @@
         </div>
     </div>
 
+
+
+
+
     <script>
-        function addSubCategoryField() {
-            const wrapper = document.getElementById("subcategory-wrapper");
-            const div = document.createElement("div");
-            div.className = "flex items-center mb-2";
+        document.addEventListener("DOMContentLoaded", () => {
+            const mainCategorySelect = document.querySelector("#main-category");
+            const subCategorySelect = document.querySelector("#sub-category");
+            const showButton = document.querySelector("#show-products-btn");
 
-            div.innerHTML = `
-      <input
-        type="text"
-        name="subcategory[]"
-        class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-red-500 focus:outline-none"
-      />
-      <button
-        type="button"
-        onclick="removeField(this)"
-        class="ml-2 px-3 py-2 font-bold text-white text-xs bg-red-600 rounded-lg shadow-md hover:bg-red-700"
-      >
-        ❌
-      </button>
-    `;
-            wrapper.appendChild(div);
-        }
+            // Load subcategories when main category changes
+            mainCategorySelect.addEventListener("change", function() {
+                const mainCategoryId = this.value;
 
-        function removeField(button) {
-            button.parentElement.remove();
+                fetch(`/stock/get-subcategories/${mainCategoryId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
+                        data.forEach(sub => {
+                            subCategorySelect.innerHTML += `<option value="${sub.id}">${sub.sub_category_name}</option>`;
+                        });
+                    });
+            });
+
+            // Load products when "SHOW" button is clicked
+            showButton.addEventListener("click", function() {
+                const subCategoryId = subCategorySelect.value;
+
+                fetch('/stock/get-products', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            sub_category_id: subCategoryId
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        const tableBody = document.querySelector("#products-table-body");
+                        tableBody.innerHTML = "";
+
+                        data.forEach(product => {
+                            let fieldsHtml = '';
+
+                            if (product.field_values && typeof product.field_values === 'object') {
+                                for (const [key, value] of Object.entries(product.field_values)) {
+                                    let displayValue;
+                                    if (Array.isArray(value)) {
+                                        displayValue = value.join(', ');
+                                    } else if (typeof value === 'object') {
+                                        displayValue = JSON.stringify(value);
+                                    } else {
+                                        displayValue = value ?? 'N/A';
+                                    }
+
+                                    fieldsHtml += `<div><strong>${key}:</strong> ${displayValue}</div>`;
+                                }
+                            } else {
+                                fieldsHtml = 'N/A';
+                            }
+
+                            tableBody.innerHTML += `
+                        <tr style="text-align:center; border-bottom: 1px solid #ccc;">
+                            <td>${product.product_name}</td>
+                            <td>${fieldsHtml}</td>
+                            <td>${product.purchase_details ?? 'N/A'}</td>
+                            <td>${product.purchase_unit ?? 'N/A'}</td>
+                            <td>${product.purchase_rate ?? 'N/A'}</td>
+                            <td>${product.transport_cost ?? 'N/A'}</td>
+                            <td><a href="/stock/products/${product.id}/edit" class="text-green-600">Edit</a></td>
+                            <td><a href="#" onclick="deleteProduct(${product.id})" class="text-red-600">Delete</a></td>
+                        </tr>`;
+                        });
+                    });
+            });
+        });
+    </script>
+
+    <script>
+        function deleteProduct(id) {
+            if (!confirm("Are you sure you want to delete this product?")) return;
+
+            fetch(`/stock/delete-product/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    }
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error("Error deleting product:", error);
+                    alert("Something went wrong.");
+                });
         }
     </script>
+
+
+
 </body>
 <!-- plugin for scrollbar  -->
-<script src="{{ asset('../assets/js/plugins/perfect-scrollbar.min.js') }}" async></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js" async></script>
 <!-- main script file  -->
-<script src="{{ asset('../assets/js/argon-dashboard-tailwind.js?v=1.0.1') }}" async></script>
+<script src="../assets/js/argon-dashboard-tailwind.js?v=1.0.1" async></script>
 
 </html>

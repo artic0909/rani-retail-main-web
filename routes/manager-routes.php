@@ -26,11 +26,28 @@ Route::middleware('auth:managers')->group(function () {
     Route::put('/stock/subcategory-fields/edit/{id}', [ManagerController::class, 'editDescriptiveFields'])->name('subcategory.fields.edit');
     Route::delete('/stock/subcategory-fields/delete/{id}', [ManagerController::class, 'deleteDescriptiveFields'])->name('subcategory.fields.delete');
 
+    Route::get('/stock/stock-all-main-category', [ManagerController::class, 'showAllMainCategory'])->name('show.all-main-category');
+    Route::post('/stock/stock-all-main-category', [ManagerController::class, 'editMainCategory'])->name('main-category.update');
+    Route::post('/stock/main-category/delete/{id}', [ManagerController::class, 'deleteMainCategory'])->name('main-category.delete');
+
+
+
     // Products
     Route::get('/stock/products-create/{subcategorySlug}', [ManagerController::class, 'addProductsView'])->name('stock.products-add.view');
     Route::post('/stock/add-products/{subcategorySlug}', [ManagerController::class, 'storeProduct'])->name('stock.products-store');
 
+    // Products Show
+    Route::get('/stock/stock-all-products/', [ManagerController::class, 'showCategoryWiseProducts'])->name('stock.all-products');
 
 
+    Route::get('/stock/get-subcategories/{mainCategoryId}', [ManagerController::class, 'getSubcategories']);
+    Route::post('/stock/get-products', [ManagerController::class, 'getProducts'])->name('get.products');
+    Route::delete('/stock/delete-product/{id}', [ManagerController::class, 'deleteProduct'])->name('delete.product');
+
+    Route::get('/stock/products/{id}/edit', [ManagerController::class, 'editProductView'])->name('products.edit.view');
+    Route::put('/stock/products/{id}/edit', [ManagerController::class, 'editProduct'])->name('products.edit.update');
+
+    // Product all list show
+    Route::get('/stock/stock-list-all-products', [ManagerController::class, 'allProductsList'])->name('stock.list-all-products');
 
 });

@@ -10,7 +10,7 @@
         sizes="76x76"
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>{{$subCategory->sub_category_name}} | {{$mainCategory->main_category_name}} | Add Products</title>
+    <title> Edit Product</title>
     <!--     Fonts and icons     -->
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
@@ -77,7 +77,7 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class="bg-blue-500/13 dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                        class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
                         href="/stock/stock-add-main-category">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
@@ -188,10 +188,10 @@
                         <li
                             class="text-sm pl-2 capitalize leading-normal text-white before:float-left before:pr-2 before:text-white before:content-['/']"
                             aria-current="page">
-                            {{$subCategory->sub_category_name}}
+                            swdesd
                         </li>
                     </ol>
-                    <h6 class="mb-0 font-bold text-white capitalize">{{$mainCategory->main_category_name}}</h6>
+                    <h6 class="mb-0 font-bold text-white capitalize">dsds</h6>
                 </nav>
                 <div
                     class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
@@ -261,22 +261,23 @@
             </div>
         </nav>
 
-        <!-- Products Add -->
+        <!-- Products Edit -->
         <div class="w-full p-6 mx-auto">
             <div class="flex flex-wrap -mx-3">
 
-                <!-- Products adds fields -->
+                <!-- Products Edit Fields -->
                 <div
-                    id="addProducts"
+                    id="editProducts"
                     class="w-full max-w-full px-3 mt-6 shrink-0 md:w-12/12 md:flex-0 md:mt-0">
                     <div
                         class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                         <div class="p-4 pb-0 rounded-t-4">
-                            <h6 class="mb-0 dark:text-white">Add Products</h6>
+                            <h6 class="mb-0 dark:text-white">Edit Product</h6>
                         </div>
                         <div class="flex-auto p-4">
-                            <form action="{{ route('stock.products-store', $subCategory->slug) }}" method="POST" enctype="multipart/form-data" class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                            <form action="{{ route('products.edit.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                                 @csrf
+                                @method('PUT')
                                 <div class="flex-auto p-6">
                                     <div class="flex flex-wrap -mx-3">
 
@@ -289,52 +290,61 @@
                                                     type="text"
                                                     name="product_name"
                                                     id="product_name"
-                                                    placeholder="Enter Product Name"
+                                                    value="{{ $product->product_name }}"
                                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                                             </div>
                                         </div>
 
-                                        <!-- Dynamic Fields Added Here -->
+                                        <!-- Dynamic Fields Added Here For Edit -->
+
                                         @foreach($fields as $field)
+                                        @php
+                                        $fieldName = $field->field_name;
+                                        $value = old("dynamic_fields.$fieldName", $fieldValues[$fieldName] ?? '');
+                                        @endphp
+
                                         <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
                                             <div class="mb-4">
-                                                <label
-                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                                <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
                                                     {{ ucfirst(str_replace('_', ' ', $field->field_name)) }}
                                                 </label>
 
                                                 @if($field->field_type == 'text')
                                                 <input
                                                     type="text"
-                                                    name="dynamic_fields[{{ $field->field_name }}]"
-                                                    id="dynamic_fields[{{ $field->field_name }}]"
+                                                    name="dynamic_fields[{{ $fieldName }}]"
+                                                    id="dynamic_fields_{{ $fieldName }}"
+                                                    value="{{ $value }}"
                                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
 
                                                 @elseif($field->field_type == 'number')
                                                 <input
                                                     type="number"
-                                                    name="dynamic_fields[{{ $field->field_name }}]"
-                                                    id="dynamic_fields[{{ $field->field_name }}]"
+                                                    name="dynamic_fields[{{ $fieldName }}]"
+                                                    id="dynamic_fields_{{ $fieldName }}"
+                                                    value="{{ $value }}"
                                                     step="any"
                                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
 
                                                 @elseif($field->field_type == 'date')
                                                 <input
                                                     type="date"
-                                                    name="dynamic_fields[{{ $field->field_name }}]"
-                                                    id="dynamic_fields[{{ $field->field_name }}]"
+                                                    name="dynamic_fields[{{ $fieldName }}]"
+                                                    id="dynamic_fields_{{ $fieldName }}"
+                                                    value="{{ $value }}"
                                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
 
                                                 @elseif($field->field_type == 'textarea')
                                                 <textarea
-                                                    name="dynamic_fields[{{ $field->field_name }}]"
-                                                    id="dynamic_fields[{{ $field->field_name }}]"
+                                                    name="dynamic_fields[{{ $fieldName }}]"
+                                                    id="dynamic_fields_{{ $fieldName }}"
                                                     rows="3"
-                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"></textarea>
+                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">{{ $value }}</textarea>
                                                 @endif
                                             </div>
                                         </div>
                                         @endforeach
+
 
 
 
@@ -355,7 +365,7 @@
                                                     class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Purchase Details</label>
 
 
-                                                <textarea rows="3" name="purchase_details" id="purchase_details" class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"></textarea>
+                                                <textarea rows="3" name="purchase_details" id="purchase_details" class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">{{ $product->purchase_details }}</textarea>
                                             </div>
                                         </div>
                                         <div
@@ -368,7 +378,7 @@
                                                     type="text"
                                                     name="purchase_unit"
                                                     id="purchase_unit"
-                                                    placeholder="Enter Purchase Unit"
+                                                    value="{{ $product->purchase_unit }}"
                                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                                             </div>
                                         </div>
@@ -381,6 +391,7 @@
                                                     class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Unit Type</label>
 
                                                 <select name="unit_type" id="unit_type" class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                                    <option value="{{ $product->unit_type }}">{{ $product->unit_type }}</option>
                                                     <option value="">Select Unit Type</option>
                                                     <option value="kg">kg</option>
                                                     <option value="litre">litre</option>
@@ -402,7 +413,7 @@
                                                     type="number"
                                                     name="purchase_rate"
                                                     id="purchase_rate"
-                                                    placeholder="0.00"
+                                                    value="{{$product->purchase_rate }}"
                                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                                             </div>
                                         </div>
@@ -416,7 +427,7 @@
                                                     type="number"
                                                     name="transport_cost"
                                                     id="transport_cost"
-                                                    placeholder="0.00"
+                                                    value="{{ $product->transport_cost }}"
                                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                                             </div>
                                         </div>
@@ -427,7 +438,7 @@
                                             type="submit"
                                             class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
                                             style="font-size: 14px">
-                                            ADD PRODUCT
+                                            UPDATE PRODUCT
                                         </button>
                                     </div>
                                 </div>
@@ -435,10 +446,21 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
 
 
