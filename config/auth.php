@@ -41,10 +41,10 @@ return [
             'provider' => 'users',
         ], //this is for superadmin operation
 
-        // 'salers' => [
-        //     'driver' => 'session',
-        //     'provider' => 'salers',
-        // ],
+        'salers' => [
+            'driver' => 'session',
+            'provider' => 'salers',
+        ],
 
         'managers' => [
             'driver' => 'session',
@@ -73,12 +73,12 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
-        ], //this is for superadmin operation
+        ],
 
-        // 'salers' => [
-        //     'driver' => 'eloquent',
-        //     'model' => App\Models\Saler::class,
-        // ],
+        'salers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Saler::class,
+        ],
 
         'managers' => [
             'driver' => 'eloquent',
@@ -108,6 +108,13 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'salers' => [
+            'provider' => 'salers',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

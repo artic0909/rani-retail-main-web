@@ -51,4 +51,4 @@ Route::middleware(['auth'])->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/manager-routes.php';
-require __DIR__.'/salers-routes.php';
+require __DIR__.'/saler-routes.php';
