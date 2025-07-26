@@ -16,6 +16,15 @@ Route::middleware('auth:managers')->group(function () {
     Route::get('/stock/stock-dashboard', [ManagerController::class, 'stockDashboardView'])->name('stock-dashboard');
     Route::post('/stock-manager-logout', [ManagerController::class, 'stockManagerLogout'])->name('stock-manager.logout');
 
+    // Profile
+    Route::get('/stock/stock-profile', [ManagerController::class, 'profileView'])->name('stock-manager-profile');
+    Route::post('/stock/update-profile', [ManagerController::class, 'updateProfile'])->name('manager.updateProfile');
+    Route::post('/stock/update-password', [ManagerController::class, 'updateProfilePassword'])->name('manager.updatePassword');
+
+
+
+
+
     // Main Category
     Route::get('/stock/stock-add-main-category', [ManagerController::class, 'addMainCategoryView'])->name('stock-add-main-category');
     Route::post('/stock/stock-add-main-category', [ManagerController::class, 'storeMainCategory'])->name('store.main-category');
@@ -26,9 +35,15 @@ Route::middleware('auth:managers')->group(function () {
     Route::put('/stock/subcategory-fields/edit/{id}', [ManagerController::class, 'editDescriptiveFields'])->name('subcategory.fields.edit');
     Route::delete('/stock/subcategory-fields/delete/{id}', [ManagerController::class, 'deleteDescriptiveFields'])->name('subcategory.fields.delete');
 
+    // Only For Main Category
     Route::get('/stock/stock-all-main-category', [ManagerController::class, 'showAllMainCategory'])->name('show.all-main-category');
     Route::post('/stock/stock-all-main-category', [ManagerController::class, 'editMainCategory'])->name('main-category.update');
     Route::post('/stock/main-category/delete/{id}', [ManagerController::class, 'deleteMainCategory'])->name('main-category.delete');
+
+    // Only For Sub Category
+    Route::get('/stock/stock-all-sub-category', [ManagerController::class, 'showAllSubCategory'])->name('show.all-sub-category');
+    Route::post('/stock/stock-all-sub-category', [ManagerController::class, 'editSubCategory'])->name('sub-category.update');
+    Route::post('/stock/sub-category/delete/{id}', [ManagerController::class, 'deleteSubCategory'])->name('sub-category.delete');
 
 
 
@@ -50,4 +65,10 @@ Route::middleware('auth:managers')->group(function () {
     // Product all list show
     Route::get('/stock/stock-list-all-products', [ManagerController::class, 'allProductsList'])->name('stock.list-all-products');
 
+    // Stock Report
+    Route::get('/stock/stock-stock-report', [ManagerController::class, 'stockReportView'])->name('stock-report');
+
+
+    // Sales Report
+    Route::get('/stock/stock-sales-report', [ManagerController::class, 'salesReportView'])->name('stock-sales-report');
 });

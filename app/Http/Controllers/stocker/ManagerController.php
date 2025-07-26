@@ -39,11 +39,15 @@ class ManagerController extends Controller
         return view('waiting-page');
     }
 
+    // Stock Dashboard View---------------------------->
     public function stockDashboardView()
     {
-        return view('stocker.stock-dashboard');
-    }
+        $mainCategories = MainCategory::with('subCategories.products')
+            ->inRandomOrder()
+            ->paginate(6);
 
+        return view('stocker.stock-dashboard', compact('mainCategories'));
+    }
 
     // Stock Manager Register Function---------------------------->
     public function stockManagerRegister(Request $request)
@@ -51,12 +55,14 @@ class ManagerController extends Controller
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users,email',
+            'mobile'   => 'required',
             'password' => 'required|string|min:6',
         ]);
 
         User::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
+            'mobile'    => $validated['mobile'],
             'password' => bcrypt($validated['password']),
             'type'     => 'stock-manager',
         ]);
@@ -91,6 +97,50 @@ class ManagerController extends Controller
         Session::flush();
         return redirect()->route('stock-manager-login');
     }
+
+    // Stock Manager Profile View---------------------------->
+    public function profileView()
+    {
+        $user = Auth::guard('managers')->user();
+        return view('stocker.stock-manager-profile', compact('user'));
+    }
+
+    // Stock Manager Profile Edit---------------------------->
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'mobile' => 'nullable|string|max:20',
+        ]);
+
+        $user = Auth::guard('managers')->user();
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile = $request->mobile;
+        $user->save();
+
+        return back()->with('success', 'Profile updated successfully.');
+    }
+
+    // Stock Manager Profile Password Update---------------------------->
+    public function updateProfilePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = Auth::guard('managers')->user();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->back()->with('success', 'Password updated successfully!');
+    }
+
+
+
+
 
     // Main Category View---------------------------->
     public function addMainCategoryView()
@@ -127,12 +177,11 @@ class ManagerController extends Controller
         $request->validate([
             'id' => 'required|exists:main_categories,id',
             'main_category_name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
         ]);
 
         $category = MainCategory::findOrFail($request->id);
         $category->main_category_name = $request->main_category_name;
-        $category->slug = $request->slug;
+        $category->slug = Str::slug($request->main_category_name);
         $category->save();
 
         return redirect()->back()->with('success', 'Main Category updated successfully.');
@@ -175,6 +224,37 @@ class ManagerController extends Controller
         $mainCategories = MainCategory::all();
         return view('stocker.stock-show-sub-category-fields', compact('mainCategory', 'mainCategories'));
     }
+
+    // Show All Sub Category View ---------------------------->
+    public function showAllSubCategory()
+    {
+        $subCategories = SubCategory::with('mainCategory')->get();
+        return view('stocker.stock-all-sub-category', compact('subCategories'));
+    }
+
+    public function editSubCategory(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:sub_categories,id',
+            'sub_category_name' => 'required|string|max:255',
+        ]);
+
+        $subCategory = SubCategory::findOrFail($request->id);
+        $subCategory->sub_category_name = $request->sub_category_name;
+        $subCategory->slug = Str::slug($request->sub_category_name);
+        $subCategory->save();
+
+        return redirect()->back()->with('success', 'Sub Category updated successfully.');
+    }
+
+    public function deleteSubCategory($id)
+    {
+        $subCategory = SubCategory::findOrFail($id);
+        $subCategory->delete();
+
+        return redirect()->back()->with('success', 'Sub Category deleted successfully.');
+    }
+
 
     // Add Sub Category Data Fields View---------------------------->
     public function addSubCategoryFieldsView($slug)
@@ -350,5 +430,18 @@ class ManagerController extends Controller
         $products = Product::with(['subCategory.mainCategory'])->get();
 
         return view('stocker.stock-list-all-products', compact('products'));
+    }
+
+    // Stock Report View---------------------------->
+    public function stockReportView()
+    {
+        $mainCategories = MainCategory::with(['subCategories.products'])->orderBy('main_category_name')->get();
+        return view('stocker.stock-stock-report', compact('mainCategories'));
+    }
+
+    // Sales Report View---------------------------->
+    public function salesReportView()
+    {
+        return view('stocker.stock-sales-report');
     }
 }

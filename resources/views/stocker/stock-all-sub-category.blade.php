@@ -10,7 +10,7 @@
         sizes="76x76"
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>All Main Categories | Rani Retail</title>
+    <title>All Sub Categories | Rani Retail</title>
     <!--     Fonts and icons     -->
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
@@ -192,7 +192,7 @@
                         </li>
                     </ol>
                     <h6 class="mb-0 font-bold text-white capitalize">
-                        All Main Categories
+                        All Sub Categories
                     </h6>
                 </nav>
 
@@ -280,7 +280,7 @@
                                 class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                                    <h6 class="dark:text-white">Main Categories</h6>
+                                    <h6 class="dark:text-white">Sub Categories</h6>
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
@@ -289,36 +289,34 @@
                                                 <tr>
                                                     <th class="border px-4 py-2">SL</th>
                                                     <th class="border px-4 py-2">Main Category</th>
+                                                    <th class="border px-4 py-2">Sub Category</th>
                                                     <th class="border px-4 py-2">Slug</th>
-                                                    <th class="border px-4 py-2">Created At</th>
-                                                    <th class="border px-4 py-2">Updated At</th>
                                                     <th class="border px-4 py-2">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($mainCategories as $category)
+                                                @foreach ($subCategories as $index => $sub)
                                                 <tr class="border-b">
-                                                    <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                                                    <td class="px-4 py-2">{{ $category->main_category_name }}</td>
-                                                    <td class="px-4 py-2">{{ $category->slug }}</td>
-                                                    <td class="px-4 py-2">{{ $category->created_at }}</td>
-                                                    <td class="px-4 py-2">{{ $category->updated_at }}</td>
+                                                    <td class="px-4 py-2">{{ $index + 1 }}</td>
+                                                    <td class="px-4 py-2">{{ $sub->mainCategory->main_category_name }}</td>
+                                                    <td class="px-4 py-2">{{ $sub->sub_category_name }}</td>
+                                                    <td class="px-4 py-2">{{ $sub->slug }}</td>
                                                     <td class="px-4 py-2">
                                                         <button
                                                             style="color: green;"
                                                             class="font-semibold edit-btn"
-                                                            data-id="{{ $category->id }}"
-                                                            data-name="{{ $category->main_category_name }}"
-                                                            data-slug="{{ $category->slug }}">
+                                                            data-id="{{ $sub->id }}"
+                                                            data-name="{{ $sub->sub_category_name }}"
+                                                            data-slug="{{ $sub->slug }}">
                                                             Edit
                                                         </button> &nbsp; &nbsp;
 
                                                         <button
                                                             style="color: red;"
                                                             class=" font-semibold delete-btn"
-                                                            data-id="{{ $category->id }}"
-                                                            data-name="{{ $category->main_category_name }}"
-                                                            data-slug="{{ $category->slug }}">
+                                                            data-id="{{ $sub->id }}"
+                                                            data-name="{{ $sub->sub_category_name }}"
+                                                            data-slug="{{ $sub->slug }}">
                                                             Delete
                                                         </button>
                                                     </td>
@@ -347,7 +345,7 @@
                                 class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                                    <h6 class="dark:text-white">Edit Main Category</h6>
+                                    <h6 class="dark:text-white">Edit Sub Category</h6>
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
@@ -355,16 +353,16 @@
 
                                         <!-- Edit Panel -->
                                         <div id="editPanel" class="mt-8 hidden bg-white shadow-lg rounded-lg p-6 border border-gray-300 max-w-md">
-                                            <h3 class="text-lg font-bold mb-4 text-gray-800">Edit Main Category</h3>
-                                            <form method="POST" action="{{ route('main-category.update') }}">
+                                            <h3 class="text-lg font-bold mb-4 text-gray-800">Edit Sub Category</h3>
+                                            <form method="POST" action="{{ route('sub-category.update') }}">
                                                 @csrf
                                                 <input type="hidden" name="id" id="editId">
 
                                                 <div class="mb-4">
-                                                    <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Main Category Name</label>
+                                                    <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Sub Category Name</label>
                                                     <input
                                                         type="text"
-                                                        name="main_category_name"
+                                                        name="sub_category_name"
                                                         id="editName"
                                                         class="w-full border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         required>
@@ -476,7 +474,7 @@
 
                 if (confirm(`Are you sure you want to delete "${name}"?`)) {
                     const form = document.getElementById('delete-form');
-                    form.action = `/stock/main-category/delete/${id}`;
+                    form.action = `/stock/sub-category/delete/${id}`;
                     form.submit();
                 }
             });

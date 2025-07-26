@@ -10,7 +10,7 @@
         sizes="76x76"
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>All Main Categories | Rani Retail</title>
+    <title>Sales Report</title>
     <!--     Fonts and icons     -->
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
@@ -20,13 +20,13 @@
         src="https://kit.fontawesome.com/42d5adcbca.js"
         crossorigin="anonymous"></script>
     <!-- Nucleo Icons -->
-    <link href="{{ asset('../assets/css/nucleo-icons.css') }}" rel="stylesheet" />
-    <link href="{{ asset('../assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- Popper -->
-    <script src="{{ asset('https://unpkg.com/@popperjs/core@2') }}"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
     <!-- Main Styling -->
     <link
-        href="{{ asset('../assets/css/argon-dashboard-tailwind.css?v=1.0.1') }}"
+        href="../assets/css/argon-dashboard-tailwind.css?v=1.0.1"
         rel="stylesheet" />
 </head>
 
@@ -77,7 +77,7 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                        class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
                         href="/stock/stock-add-main-category">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
@@ -133,7 +133,7 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                        class="bg-blue-500/13 dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
                         href="/stock/stock-sales-report">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
@@ -183,19 +183,16 @@
                     <ol
                         class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
                         <li class="text-sm leading-normal">
-                            <a class="text-white font-bold" href="#">Back</a>
+                            <a class="text-white font-bold" href="">Back</a>
                         </li>
                         <li
                             class="text-sm pl-2 capitalize leading-normal text-white before:float-left before:pr-2 before:text-white before:content-['/']"
                             aria-current="page">
-                            All
+                            Stock
                         </li>
                     </ol>
-                    <h6 class="mb-0 font-bold text-white capitalize">
-                        All Main Categories
-                    </h6>
+                    <h6 class="mb-0 font-bold text-white capitalize">Sales Report</h6>
                 </nav>
-
                 <div
                     class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
                     <div class="flex items-center md:ml-auto md:pr-4">
@@ -208,15 +205,11 @@
                             <input
                                 type="text"
                                 class="pl-9 text-sm focus:shadow-primary-outline ease w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 dark:bg-slate-850 dark:text-white bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:transition-shadow"
-                                placeholder="Search here..." />
+                                placeholder="Type here..." />
                         </div>
                     </div>
                     <ul
                         class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
-                        <!-- online builder btn  -->
-                        <!-- <li class="flex items-center">
-                <a class="inline-block px-8 py-2 mb-0 mr-4 text-xs font-bold text-center text-blue-500 uppercase align-middle transition-all ease-in bg-transparent border border-blue-500 border-solid rounded-lg shadow-none cursor-pointer leading-pro hover:-translate-y-px active:shadow-xs hover:border-blue-500 active:bg-blue-500 active:hover:text-blue-500 hover:text-blue-500 tracking-tight-rem hover:bg-transparent hover:opacity-75 hover:shadow-none active:text-white active:hover:bg-transparent" target="_blank" href="https://www.creative-tim.com/builder/soft-ui?ref=navbar-dashboard&amp;_ga=2.76518741.1192788655.1647724933-1242940210.1644448053">Online Builder</a>
-              </li> -->
                         <li class="flex items-center">
                             <a
                                 href=""
@@ -262,248 +255,167 @@
                                 aria-expanded="false">
                                 <i class="cursor-pointer fa fa-bell"></i>
                             </a>
-
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
 
+        <!-- Products Show -->
         <div class="w-full p-6 mx-auto">
             <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 shrink-0 md:flex-0">
+                    <div
+                        class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                        <div
+                            class="border-black/12.5 rounded-t-2xl border-b-0 border-solid p-6 pb-0">
+                            <div class="flex items-center">
+                                <p class="mb-0 dark:text-white/80">
+                                    Generate Sales Report Date Wise
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex-auto p-6">
+                            <div class="flex flex-wrap -mx-3">
+                                <div
+                                    class="w-full max-w-full px-3 shrink-0 md:w-full md:flex-0">
+                                    <div class="mb-4">
+                                        <label
+                                            for="username"
+                                            class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">From*</label>
+                                        <input
+                                            type="date"
+                                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                                    </div>
 
-                <!-- Show Added Main Categories -->
-                <div class="w-full max-w-full px-3 shrink-0 md:w-7/12 md:flex-0 mt-4">
+                                    <div class="mb-4">
+                                        <label
+                                            for="username"
+                                            class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">To*</label>
+                                        <input
+                                            type="date"
+                                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Products Show -->
+                <div class="w-full max-w-full px-3 shrink-0 md:flex-0 mt-4">
                     <div class="flex flex-wrap -mx-3">
                         <div class="flex-none w-full max-w-full px-3">
                             <div
                                 class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                                 <div
-                                    class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                                    <h6 class="dark:text-white">Main Categories</h6>
+                                    class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
+                                    <h6 class="dark:text-white">
+                                        Sales Report : 12/02/2025 to 13/02/2025
+                                    </h6>
+                                    <a href="" class="text-sm text-cyan-500 underline">Export Report</a>
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
-                                        <table class="w-full text-center text-sm border border-gray-200 mb-5">
-                                            <thead class="bg-gray-100 text-xs font-semibold">
+                                        <table
+                                            class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
+                                            <thead class="align-bottom">
                                                 <tr>
-                                                    <th class="border px-4 py-2">SL</th>
-                                                    <th class="border px-4 py-2">Main Category</th>
-                                                    <th class="border px-4 py-2">Slug</th>
-                                                    <th class="border px-4 py-2">Created At</th>
-                                                    <th class="border px-4 py-2">Updated At</th>
-                                                    <th class="border px-4 py-2">Actions</th>
+                                                    <th
+                                                        class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                                        Product Name
+                                                    </th>
+                                                    <th
+                                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                                        Product Details
+                                                    </th>
+                                                    <th
+                                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                                        Seles Unit
+                                                    </th>
+
+                                                    <th
+                                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                                        Sales Price
+                                                    </th>
+
+                                                    <th
+                                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                                        Profit
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($mainCategories as $category)
-                                                <tr class="border-b">
-                                                    <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                                                    <td class="px-4 py-2">{{ $category->main_category_name }}</td>
-                                                    <td class="px-4 py-2">{{ $category->slug }}</td>
-                                                    <td class="px-4 py-2">{{ $category->created_at }}</td>
-                                                    <td class="px-4 py-2">{{ $category->updated_at }}</td>
-                                                    <td class="px-4 py-2">
-                                                        <button
-                                                            style="color: green;"
-                                                            class="font-semibold edit-btn"
-                                                            data-id="{{ $category->id }}"
-                                                            data-name="{{ $category->main_category_name }}"
-                                                            data-slug="{{ $category->slug }}">
-                                                            Edit
-                                                        </button> &nbsp; &nbsp;
+                                                <tr style="text-align: center">
+                                                    <td
+                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                        <div class="flex px-2 py-1">
+                                                            <div>
+                                                                <img
+                                                                    src="../assets/img/team-4.jpg"
+                                                                    class="inline-flex items-center justify-center mr-4 text-sm text-white transition-all duration-200 ease-in-out h-9 w-9 rounded-xl"
+                                                                    alt="user3" />
+                                                            </div>
+                                                            <div class="flex flex-col justify-center">
+                                                                <h6
+                                                                    class="mb-0 text-sm leading-normal dark:text-white">
+                                                                    sample
+                                                                </h6>
+                                                            </div>
+                                                        </div>
+                                                    </td>
 
-                                                        <button
-                                                            style="color: red;"
-                                                            class=" font-semibold delete-btn"
-                                                            data-id="{{ $category->id }}"
-                                                            data-name="{{ $category->main_category_name }}"
-                                                            data-slug="{{ $category->slug }}">
-                                                            Delete
-                                                        </button>
+                                                    <td
+                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                        <div class="flex px-2 py-1">
+                                                            <div class="flex flex-col justify-center">
+                                                                <h6
+                                                                    class="mb-0 text-sm leading-normal dark:text-white">
+                                                                    sample
+                                                                </h6>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    <td
+                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                        <p
+                                                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">
+                                                            sample
+                                                        </p>
+                                                    </td>
+
+                                                    <td
+                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                        <p
+                                                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">
+                                                            sample
+                                                        </p>
+                                                    </td>
+
+                                                    <td
+                                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                        <span
+                                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">sample</span>
                                                     </td>
                                                 </tr>
-                                                @endforeach
                                             </tbody>
                                         </table>
-
-
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-                <div class="w-full max-w-full px-3 shrink-0 md:w-5/12 md:flex-0 mt-4">
-                    <div class="flex flex-wrap -mx-3">
-                        <div class="flex-none w-full max-w-full px-3">
-                            <div
-                                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-                                <div
-                                    class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                                    <h6 class="dark:text-white">Edit Main Category</h6>
-                                </div>
-                                <div class="flex-auto px-0 pt-0 pb-2">
-                                    <div class="p-0 overflow-x-auto">
-
-
-                                        <!-- Edit Panel -->
-                                        <div id="editPanel" class="mt-8 hidden bg-white shadow-lg rounded-lg p-6 border border-gray-300 max-w-md">
-                                            <h3 class="text-lg font-bold mb-4 text-gray-800">Edit Main Category</h3>
-                                            <form method="POST" action="{{ route('main-category.update') }}">
-                                                @csrf
-                                                <input type="hidden" name="id" id="editId">
-
-                                                <div class="mb-4">
-                                                    <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Main Category Name</label>
-                                                    <input
-                                                        type="text"
-                                                        name="main_category_name"
-                                                        id="editName"
-                                                        class="w-full border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        required>
-                                                </div>
-
-
-                                                <div class="flex justify-center">
-                                                    <button type="submit"
-                                                        class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85" style="font-size: 14px">UPDATE</button>
-                                                </div>
-                                            </form>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
             </div>
         </div>
     </div>
 
 
-    <!-- delete form -->
-    <form id="delete-form" method="POST" style="display: none;">
-        @csrf
-    </form>
-
-
-    <!-- In your Blade file -->
-    <script>
-        document.querySelectorAll('.edit-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const panel = document.getElementById('editPanel');
-                panel.classList.remove('hidden');
-
-                document.getElementById('editId').value = this.dataset.id;
-                document.getElementById('editName').value = this.dataset.name;
-                document.getElementById('editSlug').value = this.dataset.slug;
-
-                // Scroll to panel
-                panel.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-    </script>
-
-
-    <script>
-        function editField(button) {
-            const name = button.getAttribute('data-name');
-            const id = button.getAttribute('data-id');
-
-            // Show the edit section if hidden
-            document.getElementById('editSection').classList.remove('hidden');
-
-            // Fill inputs
-            document.getElementById('editFieldName').value = name;
-
-            // Add hidden input for field ID
-            let existingIdInput = document.getElementById('editFieldId');
-            if (!existingIdInput) {
-                existingIdInput = document.createElement('input');
-                existingIdInput.type = 'hidden';
-                existingIdInput.name = 'id';
-                existingIdInput.id = 'editFieldId';
-                document.getElementById('subcategory-wrapper').appendChild(existingIdInput);
-            }
-            existingIdInput.value = id;
-        }
-    </script>
-
-    <script>
-        $('.editButton').on('click', function() {
-            const id = $(this).data('id');
-            $.ajax({
-                url: '',
-                type: 'PUT',
-                data: {
-                    id: id,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        const field = response.data;
-
-                        // Fill form fields
-                        $('#editFieldId').val(field.id);
-                        $('#editFieldName').val(field.field_name);
-
-                        $('#editFieldForm').removeClass('d-none');
-                    }
-                }
-            });
-        });
-    </script>
-
-
-    <script>
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-
-                if (confirm(`Are you sure you want to delete "${name}"?`)) {
-                    const form = document.getElementById('delete-form');
-                    form.action = `/stock/main-category/delete/${id}`;
-                    form.submit();
-                }
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.querySelector('input[placeholder="Search here..."]');
-            const rows = document.querySelectorAll('table tbody tr');
-
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                rows.forEach(row => {
-                    const text = row.innerText.toLowerCase();
-                    row.style.display = text.includes(searchTerm) ? '' : 'none';
-                });
-            });
-        });
-    </script>
-
-
 </body>
 <!-- plugin for scrollbar  -->
-<script src="{{ asset('../assets/js/plugins/perfect-scrollbar.min.js') }}" async></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js" async></script>
 <!-- main script file  -->
-<script src="{{ asset('../assets/js/argon-dashboard-tailwind.js?v=1.0.1') }}" async></script>
+<script src="../assets/js/argon-dashboard-tailwind.js?v=1.0.1" async></script>
 
 </html>

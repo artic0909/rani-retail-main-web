@@ -455,7 +455,7 @@
                             Sub Categories
                           </p>
                           <h5 class="mb-2 font-bold dark:text-white">Total - 55</h5>
-                          
+
                         </div>
                       </div>
                       <div class="px-3 text-right basis-1/3">
@@ -800,6 +800,8 @@
             </div>
             <div class="flex-auto p-4">
               <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+
+                @foreach ($mainCategories as $mainCategory)
                 <li
                   class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
                   <div class="flex items-center">
@@ -811,134 +813,24 @@
                     <div class="flex flex-col">
                       <h6
                         class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                        Grocery
+                        {{ $mainCategory->main_category_name }}
                       </h6>
-                      <span class="text-xs leading-tight dark:text-white/80">250 in stock,
-                        <span class="font-semibold">346+ sold</span></span>
+                      <span class="text-xs leading-tight dark:text-white/80">
+                        <span class="font-semibold">{{ count($mainCategory->subCategories) }} Sub Categories</span></span>
                     </div>
                   </div>
 
                   <div class="flex">
-                    <button
+                    <a href="{{ route('show.subcategory', $mainCategory->slug) }}"
                       class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white">
                       <i
                         class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
                         aria-hidden="true"></i>
-                    </button>
+                    </a>
                   </div>
                 </li>
+                @endforeach
 
-                <li
-                  class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                  <div class="flex items-center">
-                    <div
-                      class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                      <i
-                        class="text-white ni ni-box-2 relative top-0.75 text-xxs"></i>
-                    </div>
-                    <div class="flex flex-col">
-                      <h6
-                        class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                        Electronics
-                      </h6>
-                      <span class="text-xs leading-tight dark:text-white/80">250 in stock,
-                        <span class="font-semibold">346+ sold</span></span>
-                    </div>
-                  </div>
-
-                  <div class="flex">
-                    <button
-                      class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white">
-                      <i
-                        class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
-                        aria-hidden="true"></i>
-                    </button>
-                  </div>
-                </li>
-
-                <li
-                  class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                  <div class="flex items-center">
-                    <div
-                      class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                      <i
-                        class="text-white ni ni-box-2 relative top-0.75 text-xxs"></i>
-                    </div>
-                    <div class="flex flex-col">
-                      <h6
-                        class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                        Shoes
-                      </h6>
-                      <span class="text-xs leading-tight dark:text-white/80">250 in stock,
-                        <span class="font-semibold">346+ sold</span></span>
-                    </div>
-                  </div>
-
-                  <div class="flex">
-                    <button
-                      class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white">
-                      <i
-                        class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
-                        aria-hidden="true"></i>
-                    </button>
-                  </div>
-                </li>
-
-                <li
-                  class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                  <div class="flex items-center">
-                    <div
-                      class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                      <i
-                        class="text-white ni ni-box-2 relative top-0.75 text-xxs"></i>
-                    </div>
-                    <div class="flex flex-col">
-                      <h6
-                        class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                        Daily
-                      </h6>
-                      <span class="text-xs leading-tight dark:text-white/80">250 in stock,
-                        <span class="font-semibold">346+ sold</span></span>
-                    </div>
-                  </div>
-
-                  <div class="flex">
-                    <button
-                      class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white">
-                      <i
-                        class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
-                        aria-hidden="true"></i>
-                    </button>
-                  </div>
-                </li>
-
-                <li
-                  class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                  <div class="flex items-center">
-                    <div
-                      class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                      <i
-                        class="text-white ni ni-box-2 relative top-0.75 text-xxs"></i>
-                    </div>
-                    <div class="flex flex-col">
-                      <h6
-                        class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                        xyz
-                      </h6>
-                      <span class="text-xs leading-tight dark:text-white/80">250 in stock,
-                        <span class="font-semibold">346+ sold</span></span>
-                    </div>
-                  </div>
-
-                  <div class="flex">
-                    <button
-                      class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white">
-                      <i
-                        class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
-                        aria-hidden="true"></i>
-                    </button>
-                  </div>
-                </li>
               </ul>
             </div>
           </div>
