@@ -34,6 +34,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::get('/admin-saler', [AdminController::class, 'salerView'])->name('admin.admin-saler');
+    Route::get('/admin-saler/{id}', [AdminController::class, 'addToSaler'])->name('store.admin-saler');
+
+    Route::get('/remove-saler/{id}', [AdminController::class, 'removeFromSaler'])->name('remove.admin-saler');
+    Route::get('/delete-user-saler/{id}', [AdminController::class, 'deleteSaler'])->name('delete.admin-user.saler');
 });
 
 
@@ -49,6 +53,6 @@ Route::middleware(['auth'])->group(function () {
 // ================Super Admin Routes==========================================================================================================================
 // ============================================================================================================================================================
 
-require __DIR__.'/auth.php';
-require __DIR__.'/manager-routes.php';
-require __DIR__.'/saler-routes.php';
+require __DIR__ . '/auth.php';
+require __DIR__ . '/manager-routes.php';
+require __DIR__ . '/saler-routes.php';

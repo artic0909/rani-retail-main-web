@@ -14,5 +14,15 @@ Route::post('/saler-login', [SalerController::class, 'salerLogin'])->name('verif
 
 
 Route::middleware('auth:salers')->group(function () {
+    Route::get('/saler/saler-dashboard', [SalerController::class, 'salerDashboardView'])->name('saler-dashboard');
+    Route::post('/saler/saler-logout', [SalerController::class, 'salerLogout'])->name('saler.logout');
+
+    // All Products
+    Route::get('/saler/saler-all-products', [SalerController::class, 'allProductsView'])->name('saler-all-products');
+    Route::post('/saler/saler-all-products', [SalerController::class, 'addToCart'])->name('saler-add-to-cart');
+
+    // Cart
+    Route::get('/saler/saler-cart-items', [SalerController::class, 'cartView'])->name('saler-cart');
+    Route::post('/saler/saler-cart-items', [SalerController::class, 'addToBill'])->name('addToBill');
 
 });

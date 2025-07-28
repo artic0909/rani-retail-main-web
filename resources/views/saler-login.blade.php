@@ -49,7 +49,7 @@
                 class="py-1.75 text-sm mr-4 ml-4 whitespace-nowrap font-bold text-slate-700 lg:ml-0"
                 href="/"
               >
-                Rani Retail - Stock
+                Rani Retail - Sales
               </a>
               <button
                 navbar-trigger
@@ -97,7 +97,7 @@
                   <li>
                     <a
                       class="block px-4 py-2 mr-2 font-normal transition-all ease-in-out lg-max:opacity-0 duration-250 text-sm text-slate-700 lg:px-2"
-                      href="/stock-manager-register"
+                      href="/saler-register"
                     >
                       <i class="mr-1 fas fa-user-circle opacity-60"></i>
                       Sign Up
@@ -107,7 +107,7 @@
                   <li>
                     <a
                       class="block px-4 py-2 mr-2 font-normal transition-all ease-in-out lg-max:opacity-0 duration-250 text-sm text-slate-700 lg:px-2"
-                      href="/stock-manager-login"
+                      href="/saler-login"
                     >
                       <i class="mr-1 fas fa-key opacity-60"></i>
                       Sign In
@@ -135,7 +135,7 @@
                 >
                   <div class="p-6 pb-0 mb-0">
                     <h4 class="font-bold" style="font-size: 2rem">
-                      Hello, Stock Manager!
+                      Hello, Dear!
                     </h4>
                     <p class="mb-0" style="text-align: justify">
                       Log in to manage product entries, monitor inventory, and
@@ -143,7 +143,7 @@
                     </p>
                   </div>
                   <div class="flex-auto p-6">
-                    <form role="form" action="{{ route('verify.stock-manager-login') }}" method="POST">
+                    <form role="form" action="{{ route('verify.saler-login') }}" method="POST">
                       @csrf
 
                       <div class="mb-4">
@@ -194,7 +194,7 @@
                     <p class="mx-auto mb-6 leading-normal text-sm">
                       Don't have an account?
                       <a
-                        href="/stock-manager-register"
+                        href="/saler-register"
                         class="font-semibold text-transparent bg-clip-text bg-gradient-to-tl from-blue-500 to-violet-500"
                         >Sign up</a
                       >
@@ -208,8 +208,9 @@
                 <div
                   class="relative flex flex-col justify-center h-full bg-cover px-24 m-4 overflow-hidden rounded-xl"
                   style="
-                    background: url(../assets/img/stock.png);
+                    background: url(../assets/img/saller-reg.png);
                     background-position: center;
+                    background-size: cover;
                   "
                 >
                   <span

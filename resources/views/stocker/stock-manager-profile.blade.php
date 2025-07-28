@@ -283,7 +283,7 @@
                     </div>
                     <div class="flex-none w-auto max-w-full px-3 my-auto">
                         <div class="h-full">
-                            <h5 class="mb-1 dark:text-white">Stock Manager Name</h5>
+                            <h5 class="mb-1 dark:text-white">{{ Auth::user()->name }}</h5>
                             <p
                                 class="mb-0 font-semibold leading-normal dark:text-white dark:opacity-60 text-sm">
                                 Stock Manager
