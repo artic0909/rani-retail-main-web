@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Solded;
 use App\Models\User;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -138,17 +138,91 @@ class SalerController extends Controller
 
     public function addToBill(Request $request)
     {
+        $request->validate([
+            'bill_data' => 'required|array',
+            'bill_data.*.product_id' => 'required|integer',
+            'bill_data.*.product_name' => 'required|string',
+            'bill_data.*.other_details' => 'nullable|string',
+            'bill_data.*.purchase_rate' => 'required|numeric',
+            'bill_data.*.quantity' => 'required|numeric',
+            'bill_data.*.profit_percentage' => 'required|numeric',
+            'bill_data.*.selling_price' => 'required|numeric',
+            'total_amount' => 'required|numeric',
+        ]);
 
-        $cart = $request->input('cart');
-
-        if (!$cart || !is_array($cart)) {
-            return redirect()->back()->with('error', 'No items to save.');
-        }
+        $totalAmount = collect($request->bill_data)->sum('total_amount');
 
         $bill = new Bill();
-        $bill->bill_data = json_encode($cart);
+        $bill->bill_data = json_encode($request->bill_data);
+        $bill->total_amount = $totalAmount;
         $bill->save();
 
-        return redirect()->back()->with('success', 'Bill saved successfully.');
+
+        return redirect()->back()->with('success', 'Bill created successfully!');
+    }
+
+
+    public function generateBill(Request $request)
+    {
+        $request->validate([
+            'customer_name' => 'required|string',
+            'email' => 'nullable|email',
+            'mobile_number' => 'nullable|string|max:15',
+            'bill_id' => 'required|integer|exists:bills,id',
+        ]);
+
+        $bill = Bill::findOrFail($request->bill_id);
+
+        // Decode bill_data
+        $billItems = json_decode($bill->bill_data, true); // true = associative array
+
+        foreach ($billItems as $item) {
+            if (isset($item['id'], $item['quantity'])) {
+                $product = Product::find($item['id']);
+
+                if ($product) {
+                    $newQty = max(0, $product->purchase_unit - (int) $item['quantity']);
+                    $product->purchase_unit = $newQty;
+                    $product->save();
+                }
+            }
+        }
+
+
+        // Move to sold table
+        Solded::create([
+            'bill_data' => $bill->bill_data,
+            'total_amount' => $bill->total_amount,
+            'customer_name' => $request->customer_name,
+            'email' => $request->email,
+            'mobile_number' => $request->mobile_number,
+        ]);
+
+        // Delete the original bill
+        $bill->delete();
+
+        return redirect()->back()->with('success', 'Bill generated, stock updated, and moved to Solded successfully.');
+    }
+
+    public function emptyCart()
+    {
+        try {
+            Cart::truncate();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteCartProduct($id)
+    {
+        try {
+            $cartItem = Cart::findOrFail($id);
+            $cartItem->delete();
+
+            return redirect()->back()->with('success', 'Deleted Successfully.');
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error deleting cart item.', 'error' => $e->getMessage()]);
+        }
     }
 }

@@ -28,6 +28,19 @@
     <link
         href="../assets/css/argon-dashboard-tailwind.css?v=1.0.1"
         rel="stylesheet" />
+    <style>
+        .floating-btn-delete {
+            position: fixed;
+            bottom: 100px;
+            right: 10px;
+            z-index: 9999;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body
@@ -257,137 +270,56 @@
                     <form method="POST" action="{{ route('addToBill') }}"
                         class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                         @csrf
-                        <div
-                            class="p-6 px-4 pb-0 mb-0 border-b-0 rounded-t-2xl flex justify-between">
-                            <h6 class="mb-0 dark:text-white">Selected Items Billing Amount: ₹ <span id="totalAmount"></span> </h6>
-                            <button
-                                type="submit"
-                                class="px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
-                                style="font-size: 0.8rem">
+                        <div class="p-6 px-4 pb-0 mb-0 border-b-0 rounded-t-2xl flex justify-between">
+                            <h6 class="mb-0 dark:text-white">Selected Items Billing Amount: ₹ <span id="totalAmount"></span></h6>
+                            <button type="submit"
+                                class="px-8 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md text-xs hover:shadow-xs hover:-translate-y-px active:opacity-85">
                                 Save for Bill
                             </button>
                         </div>
 
                         <div class="flex-auto p-4 pt-6">
                             <ul class="flex flex-col pl-0 mb-0 rounded-lg">
-                                <!-- Cart Items -->
                                 @foreach($cartProducts as $cartProduct)
-                                <li
-                                    class="relative flex p-6 mb-2 border-0 rounded-t-inherit rounded-xl bg-gray-50 dark:bg-slate-850">
+                                @php
+                                $fields = is_string($cartProduct->product->field_values) ? json_decode($cartProduct->product->field_values, true) : $cartProduct->product->field_values;
+                                $otherDetails = collect($fields)->map(function($value, $key) { return "$key: $value"; })->implode(', ');
+                                @endphp
+                                <li class="relative flex p-6 mb-2 border-0 rounded-xl bg-gray-50 dark:bg-slate-850 justify-between">
                                     <div class="flex flex-col">
-                                        <input type="hidden" name="cart[{{ $cartProduct->id }}][id]" value="{{ $cartProduct->id }}" />
-                                        <h6 class="mb-4 text-sm leading-normal dark:text-white">
-                                            {{ $cartProduct->product->product_name }}
-                                        </h6>
+                                        <h6 class="mb-2 text-sm dark:text-white">{{ $cartProduct->product->product_name }}</h6>
+                                        <span class="text-sm dark:text-white/80">Other Details: {{ $otherDetails ?: 'N/A' }}</span>
 
-                                        <span
-                                            class="mb-2 text-sm leading-tight dark:text-white/80">HSN Code:
-                                            <span
-                                                class="font-bold text-slate-700 dark:text-white sm:ml-2">dfd</span></span>
+                                        <input type="hidden" name="cart[{{ $cartProduct->id }}][id]" value="{{ $cartProduct->product->id }}">
+                                        <input type="hidden" name="cart[{{ $cartProduct->id }}][name]" value="{{ $cartProduct->product->product_name }}">
+                                        <input type="hidden" name="cart[{{ $cartProduct->id }}][purchase_rate]" value="{{ $cartProduct->purchase_rate }}">
+                                        <input type="hidden" name="cart[{{ $cartProduct->id }}][other_details]" value="{{ $otherDetails }}">
+                                        <input type="hidden" id="total-amount-{{ $cartProduct->id }}" name="cart[{{ $cartProduct->id }}][total_amount]" value="">
+                                    </div>
 
-
-                                        <div class="mb-4">
-                                            <div class="form flex">
-                                                <div class="form-group">
-                                                    <p
-                                                        class="text-sm leading-tight dark:text-white/80 mt-1 flex">Rate: ₹
-                                                    </p>
-
-                                                    <input id="rate-{{ $cartProduct->id }}"
-                                                        class="mb-2 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" type="number" readonly value="{{ $cartProduct->purchase_rate }}">
-                                                </div>
-                                                &nbsp;
-                                                &nbsp;
-                                                <div class="form-group">
-                                                    <p
-                                                        class="text-sm leading-tight dark:text-white/80 mt-1 text-red-600 flex">Selling price: ₹
-                                                    </p>
-
-                                                    <input name="cart[{{ $cartProduct->id }}][selling_price]"
-                                                        id="selling-price-{{ $cartProduct->id }}"
-                                                        class="selling-price-output mb-2 focus:shadow-primary-outline text-red-600 dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" type="number" readonly value="{{ $cartProduct->selling_price }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <input
-                                                    type="number"
-                                                    class="quantity-input mb-2 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                                    data-rate="{{ $cartProduct->purchase_rate }}"
-                                                    data-target="{{ $cartProduct->id }}"
-                                                    name="cart[{{ $cartProduct->id }}][quantity]"
-                                                    placeholder="Enter Quantity" />
-                                                <input
-                                                    type="number"
-                                                    data-target="{{ $cartProduct->id }}"
-                                                    class="percentage-input mb-2 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                                    name="cart[{{ $cartProduct->id }}][profit_percentage]"
-                                                    placeholder="Enter percentage" />
+                                    <div class="flex-col">
+                                        <div class="flex mb-2">
+                                            <div class="mr-2">
+                                                <label class="text-sm dark:text-white">Rate: ₹</label>
+                                                <input type="number" readonly id="rate-{{ $cartProduct->id }}" value="{{ $cartProduct->purchase_rate }}"
+                                                    class="quantity-input w-full px-3 py-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm" data-rate="{{ $cartProduct->purchase_rate }}" data-target="{{ $cartProduct->id }}">
                                             </div>
 
-
-                                            @php
-                                            $fields = is_string($cartProduct->product->field_values)
-                                            ? json_decode($cartProduct->product->field_values, true)
-                                            : $cartProduct->product->field_values;
-
-                                            $otherDetails = '';
-                                            if (!empty($fields) && is_array($fields)) {
-                                            foreach ($fields as $label => $value) {
-                                            $otherDetails .= "$label: $value, ";
-                                            }
-                                            $otherDetails = rtrim($otherDetails, ', '); // remove trailing comma
-                                            }
-                                            @endphp
-
-                                            <input type="hidden" name="cart[{{ $cartProduct->id }}][other_details]" value="{{ $otherDetails }}">
-                                            <input type="hidden" name="cart[{{ $cartProduct->id }}][name]" value="{{ $cartProduct->product->product_name }}">
-                                            <input type="hidden" name="cart[{{ $cartProduct->id }}][purchase_rate]" value="{{ $cartProduct->purchase_rate }}">
-                                            <input type="hidden" name="cart[{{ $cartProduct->id }}][purchase_rate]" value="{{ $cartProduct->purchase_rate }}">
-                                            <input type="hidden" id="total-amount-{{ $cartProduct->id }}" name="cart[{{ $cartProduct->id }}][total_amount]" value="">
-
+                                            <div>
+                                                <label class="text-sm text-red-600 dark:text-white">Selling price: ₹</label>
+                                                <input type="number" readonly name="cart[{{ $cartProduct->id }}][selling_price]"
+                                                    id="selling-price-{{ $cartProduct->id }}" value="{{ $cartProduct->selling_price }}"
+                                                    class="selling-price-output w-full px-3 py-2 border text-red-600 rounded-lg dark:bg-slate-850 dark:text-white text-sm">
+                                            </div>
                                         </div>
 
+                                        <input type="number" placeholder="Enter Quantity" name="cart[{{ $cartProduct->id }}][quantity]"
+                                            class="quantity-input w-full px-3 py-2 mb-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm"
+                                            data-rate="{{ $cartProduct->purchase_rate }}" data-target="{{ $cartProduct->id }}">
 
-                                        @php
-                                        $fields = is_string($cartProduct->product->field_values)
-                                        ? json_decode($cartProduct->product->field_values, true)
-                                        : $cartProduct->product->field_values;
-                                        @endphp
-
-                                        @if(!empty($fields) && is_array($fields))
-                                        <span class="font-semi-bold text-slate-700 dark:text-white sm:ml-2">
-                                            @foreach($fields as $label => $value)
-                                            {{ $label }}: {{ $value }}@if(!$loop->last), @endif
-                                            @endforeach
-                                        </span>
-                                        @else
-                                        <span class="font-semi-bold text-slate-700 dark:text-white sm:ml-2">N/A</span>
-                                        @endif
-
-
-                                    </div>
-                                    <!-- buttons -->
-                                    <div class="ml-auto text-right flex items-center gap-2">
-
-
-                                        <!-- Remove Button -->
-                                        <a
-                                            class="relative z-10 inline-block px-4 py-2.5 mb-0 font-bold text-center text-transparent align-middle transition-all border-0 rounded-lg shadow-none cursor-pointer leading-normal text-sm ease-in bg-150 bg-gradient-to-tl from-red-600 to-orange-600 hover:-translate-y-px active:opacity-85 bg-x-25 bg-clip-text"
-                                            href="javascript:;">
-                                            <i
-                                                class="mr-2 far fa-trash-alt bg-150 bg-gradient-to-tl from-red-600 to-orange-600 bg-x-25 bg-clip-text"></i>
-                                            Remove
-                                        </a>
-
-                                        <!-- Edit Button -->
-                                        <a
-                                            class="inline-block dark:text-white px-4 py-2.5 mb-0 font-bold text-center align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-normal text-sm ease-in bg-150 hover:-translate-y-px active:opacity-85 bg-x-25 text-slate-700"
-                                            href="javascript:;">
-                                            <i
-                                                class="mr-2 fas fa-pencil-alt text-slate-700"
-                                                aria-hidden="true"></i>
-                                            Edit
-                                        </a>
+                                        <input type="number" placeholder="Enter percentage" name="cart[{{ $cartProduct->id }}][profit_percentage]"
+                                            class="percentage-input w-full px-3 py-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm"
+                                            data-target="{{ $cartProduct->id }}">
                                     </div>
                                 </li>
                                 @endforeach
@@ -395,13 +327,20 @@
                         </div>
                     </form>
 
+
                 </div>
+
 
                 <!-- Show Billings -->
                 <div
                     class="w-full max-w-full px-3 mt-6 shrink-0 md:w-4/12 md:flex-0 md:mt-0">
-                    <div
-                        class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                    <form action="{{ route('generate.bill') }}" method="POST" class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+
+                        @csrf
+                        @if($lastBill)
+                        <input type="hidden" name="bill_id" value="{{ $lastBill->id }}">
+                        @endif
+
                         <div class="p-4 pb-0 rounded-t-4">
                             <h6 class="mb-0 dark:text-white">Bill Details</h6>
                         </div>
@@ -449,12 +388,20 @@
                                                 class="text-white relative top-0.75 text-sm font-bold">&#8377;</span>
                                         </div>
                                         <div class="flex flex-col">
+
+
                                             <h6
                                                 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
                                                 Total billing amount:
+                                                @if($lastBill)
+                                                <span
+                                                    class="font-semibold text-red-600 dark:text-white">₹ {{ $lastBill->total_amount }}</span>
+                                                @else
                                                 <span
                                                     class="font-semibold text-red-600 dark:text-white">₹ 0</span>
+                                                @endif
                                             </h6>
+
                                         </div>
                                     </div>
                                 </li>
@@ -471,11 +418,11 @@
                                         class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
                                         <div class="mb-4">
                                             <label
-                                                for="username"
+                                                for="customer_name"
                                                 class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Customer's Name</label>
                                             <input
                                                 type="text"
-                                                name="username"
+                                                name="customer_name"
                                                 placeholder="Enter Name"
                                                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                                         </div>
@@ -497,11 +444,11 @@
                                         class="w-full max-w-full px-3 shrink-0 md:w-12/12 md:flex-0">
                                         <div class="mb-4">
                                             <label
-                                                for="first name"
+                                                for="mobile_number"
                                                 class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Mobile Number</label>
                                             <input
                                                 type="text"
-                                                name="first name"
+                                                name="mobile_number"
                                                 placeholder="Enter Mobile Number"
                                                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                                         </div>
@@ -511,109 +458,187 @@
 
                             <button
                                 class="px-8 w-full py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
-                                style="font-size: 1rem">
+                                style="font-size: 1rem" type="submit">
                                 Generate Bill
                             </button>
                         </div>
+                    </form>
+
+
+
+                    <!-- Floating Dropdown Menu Button -->
+                    <div class="floating-btn-delete fixed bottom-6 right-6 z-50">
+                        <div class="relative inline-block text-left">
+                            <button
+                                style="font-size: 0.8rem; background-color: red;"
+                                onclick="toggleDropdown()"
+                                class="px-4 py-2 text-white text-sm font-semibold bg-red-500 rounded-md shadow hover:bg-red-700 focus:outline-none">
+                                Delete Actions
+                            </button>
+
+                            <!-- DROPDOWN -->
+                            <div id="cartDropdown"
+                                class="hidden origin-bottom-right absolute right-0 bottom-full mb-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+
+                                <div class="py-1 text-sm text-gray-700" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                                    @if($cartProducts && count($cartProducts) > 0)
+                                    <button
+                                        style="font-size: 0.8rem; background-color: gray; color: white;"
+                                        class="px-4 py-2 text-white text-sm font-semibold bg-red-500 rounded-md shadow hover:bg-red-700 focus:outline-none"
+                                        id="emptyCart"
+                                        type="button"
+                                        onclick="emptyCart()">
+                                        Empty Cart
+                                    </button>
+                                    @endif
+                                </div>
+
+                                <div style="height: 45px; overflow-y: auto;">
+                                    @if($cartProducts && count($cartProducts) > 0)
+                                    @foreach($cartProducts as $item)
+                                    <form action="{{ route('cart.delete', $item->id) }}" method="POST" style="font-size: 0.8rem; background-color: gray; color: white; border-bottom: 1px solid white; margin-top: 5px;"
+                                        class="px-4 py-2 text-white text-sm font-semibold bg-red-500 rounded-md shadow hover:bg-red-700 focus:outline-none"
+                                        role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="submit">
+                                            {{ \Illuminate\Support\Str::limit($item->product->product_name, 10) }}
+                                        </button>
+                                    </form>
+                                    @endforeach
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+
+
+
                 </div>
+
+
             </div>
         </div>
     </main>
 
-    <script>
-        function increaseQty(button) {
-            const input = button.parentElement.querySelector("input");
-            let value = parseInt(input.value, 10);
-            input.value = value + 1;
-        }
 
-        function decreaseQty(button) {
-            const input = button.parentElement.querySelector("input");
-            let value = parseInt(input.value, 10);
-            if (value > 1) input.value = value - 1;
+    <script>
+        function addToCart(productId, rate) {
+            const quantityInput = document.querySelector(`.quantity-input[data-id='${productId}']`);
+            const quantity = parseInt(quantityInput.value) || 0;
+
+            if (quantity > 0) {
+                cart[productId] = {
+                    id: productId,
+                    quantity: quantity,
+                    rate: rate,
+                    total: quantity * rate
+                };
+            }
         }
     </script>
-
 
     <script>
         const cartState = {};
 
         document.querySelectorAll('.quantity-input').forEach(input => {
-            input.addEventListener('input', function() {
-                const cartId = this.dataset.target;
-                const baseRate = parseFloat(this.dataset.rate);
-                const quantity = parseFloat(this.value) || 0;
-
-                const rateField = document.getElementById(`rate-${cartId}`);
-                const totalRate = (baseRate * quantity).toFixed(2);
-
-                if (!cartState[cartId]) cartState[cartId] = {};
-                cartState[cartId].quantity = quantity;
-                cartState[cartId].rate = baseRate;
-
-                updateSellingPrice(cartId);
+            input.addEventListener('input', () => {
+                const id = input.dataset.target;
+                const rate = parseFloat(input.dataset.rate);
+                const qty = parseFloat(input.value) || 0;
+                if (!cartState[id]) cartState[id] = {};
+                cartState[id].quantity = qty;
+                cartState[id].rate = rate;
+                updatePrice(id);
             });
         });
 
         document.querySelectorAll('.percentage-input').forEach(input => {
-            input.addEventListener('input', function() {
-                const cartId = this.dataset.target;
-                const profit = parseFloat(this.value) || 0;
-
-                if (!cartState[cartId]) cartState[cartId] = {};
-                cartState[cartId].profit = profit;
-
-                updateSellingPrice(cartId);
+            input.addEventListener('input', () => {
+                const id = input.dataset.target;
+                const profit = parseFloat(input.value) || 0;
+                if (!cartState[id]) cartState[id] = {};
+                cartState[id].profit = profit;
+                updatePrice(id);
             });
         });
 
-        function updateSellingPrice(cartId) {
-            const state = cartState[cartId];
-            if (!state || typeof state.quantity === 'undefined' || typeof state.rate === 'undefined') return;
+        function updatePrice(id) {
+            const state = cartState[id];
+            if (!state.quantity || !state.rate) return;
+            const cost = state.quantity * state.rate;
+            const profit = (cost * (state.profit || 0)) / 100;
+            const total = cost + profit;
 
-            const totalCost = state.quantity * state.rate;
-            const profitValue = (totalCost * (state.profit || 0)) / 100;
-            const finalPrice = totalCost + profitValue;
+            document.getElementById(`selling-price-${id}`).value = total.toFixed(2);
+            document.getElementById(`total-amount-${id}`).value = total.toFixed(2);
 
-            const sellingPriceInput = document.getElementById(`selling-price-${cartId}`);
-            const totalAmountInput = document.getElementById(`total-amount-${cartId}`);
-
-            if (sellingPriceInput) {
-                sellingPriceInput.value = finalPrice.toFixed(2); // Just total with profit
-            }
-
-            if (totalAmountInput) {
-                totalAmountInput.value = finalPrice.toFixed(2); // ✅ Already includes quantity
-            }
-
-            calculateGrandTotal();
+            calculateTotal();
         }
 
-
-
-        function calculateGrandTotal() {
-            let grandTotal = 0;
-
-            Object.keys(cartState).forEach(cartId => {
-                const state = cartState[cartId];
-                if (state.quantity && state.rate) {
-                    const totalCost = state.quantity * state.rate;
-                    const profitValue = (totalCost * (state.profit || 0)) / 100;
-                    const finalPrice = totalCost + profitValue;
-
-                    grandTotal += finalPrice;
-                }
+        function calculateTotal() {
+            let total = 0;
+            Object.values(cartState).forEach(item => {
+                const cost = item.quantity * item.rate;
+                const profit = (cost * (item.profit || 0)) / 100;
+                total += cost + profit;
             });
-
-            document.getElementById('totalAmount').textContent = grandTotal.toFixed(2);
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
         }
 
-
-        // Optional: calculate total once on page load
-        window.addEventListener('DOMContentLoaded', updateTotalAmount);
+        window.addEventListener('DOMContentLoaded', calculateTotal);
     </script>
 
+
+    <script>
+        function emptyCart() {
+            if (confirm("Are you sure you want to empty the cart?")) {
+                fetch("{{ route('admin.empty-cart') }}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Content-Type": "application/json"
+                        },
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Cart emptied successfully.");
+                            location.reload();
+                        } else {
+                            alert("Failed to empty cart.");
+                        }
+                    })
+                    .catch(err => {
+                        alert("Error: " + err);
+                    });
+            }
+        }
+    </script>
+
+
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById("cartDropdown");
+            dropdown.classList.toggle("hidden");
+        }
+
+        document.addEventListener("click", function(event) {
+            const dropdown = document.getElementById("cartDropdown");
+            const button = event.target.closest("button");
+
+            const isDropdownOpen = !dropdown.classList.contains("hidden");
+            const clickedInsideDropdown = dropdown.contains(event.target);
+            const clickedToggleButton = event.target.closest(".floating-btn-delete");
+
+            if (isDropdownOpen && !clickedInsideDropdown && !clickedToggleButton) {
+                dropdown.classList.add("hidden");
+            }
+        });
+    </script>
 
 
 
