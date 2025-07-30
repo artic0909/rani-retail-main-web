@@ -24,8 +24,12 @@ Route::middleware('auth:salers')->group(function () {
     // Cart
     Route::get('/saler/saler-cart-items', [SalerController::class, 'cartView'])->name('saler-cart');
     Route::post('/saler/saler-cart-items/checkouts/store', [SalerController::class, 'checkOut'])->name('checkouts.store');
+    Route::delete('/saler/saler-cart-items/checkout/delete', [SalerController::class, 'deleteCheckOutData'])->name('checkout.delete');
+    Route::delete('/saler/cart/delete-item/{product_id}', [SalerController::class, 'deleteCartItem'])->name('cart.delete.item');
 
 
 
 
+    // Generate Bill
+    Route::post('/saler/generate-bill', [SalerController::class, 'generateBill'])->name('generate-bill.store');
 });

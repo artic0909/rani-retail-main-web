@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\Checkout;
 use App\Models\Product;
 use App\Models\Solded;
+use App\Models\SoldItems;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -111,13 +112,54 @@ class SalerController extends Controller
             'product_ids' => $request->product_ids,
         ]);
 
-        return back()->with('success', 'Products added to cart successfully!');
+        return redirect()->route('saler-cart')->with('success', 'Products added to cart successfully!');
+    }
+
+    public function deleteCartItem($product_id)
+    {
+        $latestCart = Cart::latest()->first();
+
+        if (!$latestCart) {
+            return back()->with('error', 'No cart found.');
+        }
+
+        if ($product_id === 'all') {
+            $latestCart->delete();
+            return back()->with('success', 'All items removed from cart.');
+        }
+
+        $productIds = $latestCart->product_ids;
+
+        // Remove the specific product
+        $updatedIds = array_filter($productIds, fn($id) => $id != $product_id);
+
+        if (empty($updatedIds)) {
+            $latestCart->delete();
+        } else {
+            $latestCart->product_ids = array_values($updatedIds);
+            $latestCart->save();
+        }
+
+        return back()->with('success', 'Item removed from cart.');
     }
 
     public function cartView()
     {
         $cartItems = Cart::all();
-        return view('saler.saler-cart', compact('cartItems'));
+        $latestCheckout = Checkout::latest()->first();
+
+        $decodedProducts = collect();
+        $productModels = collect();
+
+        if ($latestCheckout && is_array($latestCheckout->products)) {
+            $decodedProducts = collect($latestCheckout->products);
+
+            // Fetch related product models
+            $productIds = $decodedProducts->pluck('product_id')->toArray();
+            $productModels = Product::whereIn('id', $productIds)->get()->keyBy('id');
+        }
+
+        return view('saler.saler-cart', compact('cartItems', 'latestCheckout', 'decodedProducts', 'productModels'));
     }
 
     public function checkOut(Request $request)
@@ -143,7 +185,7 @@ class SalerController extends Controller
             $product = Product::find($item['product_id']);
 
             if ($product) {
-                
+
                 $product->purchase_unit -= $item['customer_purchase_quantity'];
 
                 // Avoid negative stock
@@ -158,5 +200,59 @@ class SalerController extends Controller
         return back()->with('success', 'Checkouts successfully!');
     }
 
+    public function deleteCheckOutData()
+    {
+        // Get the latest Checkout entry
+        $latestCheckout = Checkout::latest()->first();
 
+        if (!$latestCheckout) {
+            return back()->with('error', 'No checkout data found to delete.');
+        }
+
+        // Decode the products JSON into array (if it's stored as JSON)
+        $products = is_array($latestCheckout->products)
+            ? $latestCheckout->products
+            : json_decode($latestCheckout->products, true);
+
+        // Restore stock
+        foreach ($products as $item) {
+            $product = Product::find($item['product_id']);
+
+            if ($product) {
+                $product->purchase_unit += $item['customer_purchase_quantity'];
+                $product->save();
+            }
+        }
+
+        // Delete the checkout record
+        $latestCheckout->delete();
+
+        return back()->with('success', 'Latest checkout deleted and stock restored.');
+    }
+
+    public function generateBill(Request $request)
+    {
+        $validated = $request->validate([
+            'products' => 'required|array',
+            'customer_overall_total_amount' => 'required|numeric',
+            'customer_name' => 'required|string',
+            'custome_email' => 'nullable|email',
+            'custome_mobile' => 'nullable|string',
+        ]);
+
+        SoldItems::create([
+            'products' => $validated['products'],
+            'customer_overall_total_amount' => $validated['customer_overall_total_amount'],
+            'customer_name' => $validated['customer_name'],
+            'custome_email' => $validated['custome_email'] ?? null,
+            'custome_mobile' => $validated['custome_mobile'] ?? null,
+        ]);
+
+        $latestCheckout = Checkout::latest()->first();
+        if ($latestCheckout) {
+            $latestCheckout->delete();
+        }
+
+        return redirect()->back()->with('success', 'Bill generated and saved.');
+    }
 }

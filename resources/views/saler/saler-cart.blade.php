@@ -273,13 +273,14 @@
                             <h6 class="mb-0 dark:text-white">Selected Items Billing Amount: ₹ <span id="totalAmount"></span></h6>
                             <button type="submit"
                                 class="px-8 py-2 font-bold text-white bg-blue-500 rounded-lg shadow-md text-xs hover:shadow-xs hover:-translate-y-px active:opacity-85">
-                                Save for Bill
+                                Checkout
                             </button>
                         </div>
 
                         <div class="flex-auto p-4 pt-6">
                             <ul class="flex flex-col pl-0 mb-0 rounded-lg">
 
+                                @if($cartItems->isNotEmpty())
                                 @foreach ($cartItems as $item)
                                 @foreach ($item->products as $product)
                                 <li class="relative flex p-6 mb-2 border-0 rounded-xl bg-gray-50 dark:bg-slate-850 justify-between">
@@ -320,7 +321,7 @@
                                                 <!-- it get the purchase_rate + transport_cost from products table = this field data  -->
                                                 <label class="text-sm dark:text-white">Rate: ₹</label>
                                                 <input type="number" readonly id="" value="{{ $rate }}"
-                                                    class="quantity-input w-full px-3 py-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm" data-rate="" data-target=""  name="products[{{ $productId }}][customer_product_rate]">
+                                                    class="quantity-input w-full px-3 py-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm" data-rate="" data-target="" name="products[{{ $productId }}][customer_product_rate]">
                                             </div>
                                             <!-- it show selling price of products table each product after input quantity & profit_percentage-->
                                             <div>
@@ -329,7 +330,7 @@
                                             </div>
                                         </div>
                                         <!-- it allow input quantity by default 1 -->
-                                        <input type="number" placeholder="Enter Quantity"  name="products[{{ $productId }}][customer_purchase_quantity]" class="quantity-input w-full px-3 py-2 mb-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm"
+                                        <input type="number" placeholder="Enter Quantity" name="products[{{ $productId }}][customer_purchase_quantity]" class="quantity-input w-full px-3 py-2 mb-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm"
                                             data-rate="{{ $rate }}" data-target="{{ $targetId }}">
                                         <!-- it allow input profit percentage -->
                                         <input type="number" placeholder="Enter percentage" name="products[{{ $productId }}][customer_profit_percentage]"
@@ -340,6 +341,14 @@
                                 @endforeach
                                 @endforeach
 
+                                @else
+                                <li class="relative flex p-6 mb-2 border-0 rounded-xl bg-gray-50 dark:bg-slate-850 justify-between">
+                                    <div class="flex flex-col">
+                                        <h6 class="m-0 p-0 text-sm dark:text-white">No items in cart.</h6>
+                                    </div>
+                                </li>
+                                @endif
+
                             </ul>
                         </div>
                     </form>
@@ -349,140 +358,201 @@
 
 
                 <!-- Show Billings -->
-                <div
-                    class="w-full max-w-full px-3 mt-6 shrink-0 md:w-4/12 md:flex-0 md:mt-0">
-                    <form action="" method="POST" class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                <div class="w-full max-w-full px-3 mt-6 shrink-0 md:w-4/12 md:flex-0 md:mt-0">
+
+                    <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
 
 
-                     
+                        <!-- Operations -->
+                        <div style="display: flex; justify-content: space-between;">
+                            <!-- Delete Checkout Data -->
+                            @php
+                            $hasCheckout = \App\Models\Checkout::latest()->exists();
+                            @endphp
 
+                            @if($hasCheckout)
+                            <form action="{{ route('checkout.delete') }}" method="POST" style="padding: 15px;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="px-8 py-2 font-bold text-white rounded-lg shadow-md text-xs hover:shadow-xs hover:-translate-y-px active:opacity-85 w-full" style="background-color: red;" type="submit">Delete Checkout Items</button>
+                            </form>
+                            @endif
 
-                        <div class="p-4 pb-0 rounded-t-4">
-                            <h6 class="mb-0 dark:text-white">Bill Details</h6>
-                        </div>
-                        <div class="flex-auto p-4">
-                            <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                            <!-- Delete Cart Items Dropdown -->
+                            @if($cartItems->isNotEmpty())
+                            <div style="padding: 15px;">
 
+                                <form id="deleteForm" method="POST">
+                                    @csrf
+                                    @method('DELETE')
 
-                                
-                                <li
-                                    class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                                    <div class="flex">
-                                        <div
-                                            class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                                            <i
-                                                class="text-white ni ni-box-2 relative top-0.75 text-xxs"></i>
-                                        </div>
-                                        <div class="flex flex-wrap ">
-                                            <h6
-                                                class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                                                Products: &nbsp;
-
-                                            </h6>
-                                            <span class="font-semibold text-red-600 dark:text-white text-sm"></span>,&nbsp;
-                                            <span class="font-semibold text-red-600 dark:text-white text-sm">Quantity: </span>,&nbsp;
-                                            <span class="font-semibold text-red-600 dark:text-white text-sm">Details: </span>
-                                        </div>
-                                    </div>
-
-                                </li>
-
-
-
-                                <li
-                                    class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                                            <span
-                                                class="text-white relative top-0.75 text-sm font-bold">&#8377;</span>
-                                        </div>
-                                        <div class="flex flex-col">
-
-
-                                            <h6
-                                                class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                                                <span
-                                                    class="font-semibold text-red-600 dark:text-white">₹ 0</span>
-
-                                            </h6>
-
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-
-                            <!-- Customer Details -->
-                            <div class="p-4 pb-0 rounded-t-4">
-                                <h6 class="mb-0 dark:text-white">Customer Details</h6>
+                                    <select id="productSelect" class="px-8 py-2 font-bold rounded-lg shadow-md text-xs w-full text-red-600">
+                                        <option selected>Select cart item to delete</option>
+                                        @foreach ($cartItems as $item)
+                                        <option value="{{ route('cart.delete.item', 'all') }}">
+                                            Delete All
+                                        </option>
+                                        @foreach ($item->products as $product)
+                                        <option value="{{ route('cart.delete.item', $product->id) }}">
+                                            {{ $product->product_name }}
+                                        </option>
+                                        @endforeach
+                                        @endforeach
+                                    </select>
+                                </form>
                             </div>
+                            @endif
+                        </div>
 
+
+
+                        <!-- Generate Bill -->
+                        <form action="{{ route('generate-bill.store') }}" method="POST">
+                            @csrf
+
+                            <div class="p-4 pb-0 rounded-t-4">
+                                <h6 class="mb-0 dark:text-white">Bill Details</h6>
+                            </div>
                             <div class="flex-auto p-4">
-                                <div class="flex flex-wrap -mx-3">
-                                    <div
-                                        class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
-                                        <div class="mb-4">
-                                            <label
-                                                for="customer_name"
-                                                class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Customer's Name</label>
-                                            <input
-                                                type="text"
-                                                name="customer_name"
-                                                placeholder="Enter Name"
-                                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                                <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+
+
+                                    @foreach($decodedProducts as $productData)
+                                    @php
+                                    $product = $productModels[$productData['product_id']] ?? null;
+                                    $fields = $product?->field_values ?? [];
+                                    @endphp
+                                    <li
+                                        class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
+                                        <div class="flex">
+                                            <div
+                                                class="inline-block w-8 h-8 mr-4 text-center">
+                                                <i
+                                                    class="text-black ni ni-box-2 relative top-0.75 text-m"></i>
+                                            </div>
+                                            <div class="flex flex-wrap ">
+                                                <!-- it contain name of products using product_id -->
+                                                <h6 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
+                                                    Product: &nbsp;
+                                                    <span class="font-semibold text-red-600 dark:text-white text-sm" style="text-transform: capitalize;">{{ $product?->product_name }}</span>,&nbsp;
+
+                                                    Quantity:
+                                                    <span class="font-semibold text-red-600 dark:text-white text-sm">{{ $productData['customer_purchase_quantity'] }}</span>,&nbsp;
+
+                                                    Amount:
+                                                    <span class="font-semibold text-red-600 dark:text-white text-sm">{{ $productData['customer_product_selling_price'] }}</span>,&nbsp;
+
+                                                    Details:
+                                                    <span class="font-semibold text-red-600 dark:text-white text-sm">
+                                                        @foreach($fields as $key => $value)
+                                                        {{ $key }}: {{ $value }},
+                                                        @endforeach
+                                                    </span>
+                                                </h6>
+
+
+
+                                                <!-- Hidden Inputs -->
+                                                <input type="hidden" name="products[{{ $productData['product_id'] }}][product_id]" value="{{ $productData['product_id'] }}">
+                                                <input type="hidden" name="products[{{ $productData['product_id'] }}][customer_product_rate]" value="{{ $productData['customer_product_rate'] }}">
+                                                <input type="hidden" name="products[{{ $productData['product_id'] }}][customer_purchase_quantity]" value="{{ $productData['customer_purchase_quantity'] }}">
+                                                <input type="hidden" name="products[{{ $productData['product_id'] }}][customer_profit_percentage]" value="{{ $productData['customer_profit_percentage'] }}">
+                                                <input type="hidden" name="products[{{ $productData['product_id'] }}][customer_product_selling_price]" value="{{ $productData['customer_product_selling_price'] }}">
+
+
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div
-                                        class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
-                                        <div class="mb-4">
-                                            <label
-                                                for="email"
-                                                class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Email ID</label>
-                                            <input
-                                                type="email"
-                                                name="email"
-                                                placeholder="Enter Email ID"
-                                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+
+                                    </li>
+                                    @endforeach
+
+
+                                    @if($latestCheckout && $latestCheckout->customer_overall_total_amount)
+                                    <input type="hidden" name="customer_overall_total_amount" value="{{ $latestCheckout?->customer_overall_total_amount ?? 0 }}">
+                                    <li
+                                        class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
+                                        <div class="flex items-center">
+                                            <div class="flex">
+                                                <i class="text-black ni ni-box-2 relative top-0.75 text-m"></i> &nbsp; &nbsp; &nbsp;
+                                                <h6
+                                                    class="text-sm leading-normal text-slate-700 dark:text-white">
+                                                    Grand Total:
+                                                    <!-- it shows customer_overall_total_amount -->
+                                                    <span class="font-semibold text-red-600 dark:text-white">₹ {{ number_format($latestCheckout->customer_overall_total_amount, 2) }}</span>
+                                                </h6>
+
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div
-                                        class="w-full max-w-full px-3 shrink-0 md:w-12/12 md:flex-0">
-                                        <div class="mb-4">
-                                            <label
-                                                for="mobile_number"
-                                                class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Mobile Number</label>
-                                            <input
-                                                type="text"
-                                                name="mobile_number"
-                                                placeholder="Enter Mobile Number"
-                                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                                    </li>
+                                    @endif
+                                </ul>
+
+                                <!-- Customer Details -->
+                                <div class="p-4 pb-0 rounded-t-4">
+                                    <h6 class="mb-0 dark:text-white">Customer Details</h6>
+                                </div>
+
+                                <div class="flex-auto p-4">
+                                    <div class="flex flex-wrap -mx-3">
+                                        <div
+                                            class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                            <div class="mb-4">
+                                                <label
+                                                    for="customer_name"
+                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Customer's Name</label>
+                                                <input
+                                                    type="text"
+                                                    name="customer_name"
+                                                    placeholder="Enter Name"
+                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                            <div class="mb-4">
+                                                <label
+                                                    for="custome_email"
+                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Email ID</label>
+                                                <input
+                                                    type="email"
+                                                    name="custome_email"
+                                                    placeholder="Enter Email ID"
+                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="w-full max-w-full px-3 shrink-0 md:w-12/12 md:flex-0">
+                                            <div class="mb-4">
+                                                <label
+                                                    for="custome_mobile"
+                                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Mobile Number</label>
+                                                <input
+                                                    type="text"
+                                                    name="custome_mobile"
+                                                    placeholder="Enter Mobile Number"
+                                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <button
+                                    class="px-8 w-full py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
+                                    style="font-size: 1rem" type="submit">
+                                    Generate Bill
+                                </button>
                             </div>
-
-                            <button
-                                class="px-8 w-full py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
-                                style="font-size: 1rem" type="submit">
-                                Generate Bill
-                            </button>
-                        </div>
-                    </form>
+                        </form>
 
 
-
-                    <!-- Floating Dropdown Menu Button -->
-
-
-
-
+                    </div>
 
                 </div>
-
-
             </div>
         </div>
     </main>
+
+
 
 
 
@@ -508,6 +578,19 @@
                     sellingPriceOutput.value = finalAmount.toFixed(2);
                 });
             });
+        });
+    </script>
+
+
+
+    <!-- Delete Script -->
+    <script>
+        document.getElementById('productSelect').addEventListener('change', function() {
+            if (this.value) {
+                const form = document.getElementById('deleteForm');
+                form.action = this.value;
+                form.submit();
+            }
         });
     </script>
 
