@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bills', function (Blueprint $table) {
+        Schema::create('checkouts', function (Blueprint $table) {
             $table->id();
-            $table->json('bill_data')->nullable();
-            $table->decimal('total_amount', 10, 2)->default(0.00);
+            $table->json('products')->nullable(); // Array of products with details
+            $table->decimal('customer_overall_total_amount', 10, 2)->default(0);
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bills');
+        Schema::dropIfExists('checkouts');
     }
 };

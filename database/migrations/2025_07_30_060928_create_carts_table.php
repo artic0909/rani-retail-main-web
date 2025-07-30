@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('soldeds', function (Blueprint $table) {
+        Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->json('bill_data');
-            $table->decimal('total_amount', 10, 2);
-            $table->string('customer_name');
-            $table->string('email')->nullable();
-            $table->string('mobile_number')->nullable();
+            $table->json('product_ids')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('soldeds');
+        Schema::dropIfExists('carts');
     }
 };

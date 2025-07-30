@@ -254,13 +254,14 @@
                 <div class="w-full max-w-full px-3 shrink-0 md:flex-0 mt-4">
                     <div class="flex flex-wrap -mx-3">
                         <div class="flex-none w-full max-w-full px-3">
-                            <div
-                                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                            <form action="{{ route('cart.add') }}" method="POST" class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                                @csrf
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
                                     <h6 class="dark:text-white">All Stocked Products</h6>
+                                    <button type="submit" class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85" style="font-size: 14px">Add to Cart</button>
                                 </div>
-                                <div class="flex-auto px-0 pt-0 pb-2">
+                                <div class="flex-auto px-0 pt-0 pb-2" style="margin-top: 10px;">
                                     <div class="p-0 overflow-x-auto">
                                         <table
                                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
@@ -272,7 +273,7 @@
                                                     <th>Category</th>
                                                     <th>Decriptive Fields</th>
                                                     <th>Purchase Details</th>
-                                                    <th>Unit</th>
+                                                    <th>Stock Status</th>
                                                     <th>Purchase Rate</th>
                                                     <th>Transport Cost</th>
                                                     <th colspan="2">Add to Cart</th>
@@ -281,10 +282,7 @@
                                             </thead>
                                             <tbody>
                                                 @foreach ($products as $product)
-                                                @php
-                                                $inCart = in_array($product->id, $cartProductIds);
-                                                @endphp
-                                                <tr style="text-align:center; border-bottom: 1px solid #ccc; {{ $inCart ? 'background-color: #d4edda;' : '' }}">
+                                                <tr style="text-align:center; border-bottom: 1px solid #ccc;">
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $product->product_name }}</td>
                                                     <td>
@@ -313,13 +311,7 @@
                                                     <td>{{ $product->purchase_rate ?? 'N/A' }}</td>
                                                     <td>{{ $product->transport_cost ?? 'N/A' }}</td>
                                                     <td>
-                                                        <form action="{{ route('saler-add-to-cart', $product->id) }}" method="POST" style="display: flex; justify-content: center; align-items: center;">
-                                                            @csrf
-                                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                                            <button type="submit" class="px-4 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85" style="font-size: 14px">
-                                                                <i class="ni ni-cart"></i>
-                                                            </button>
-                                                        </form>
+                                                        <input type="checkbox" name="product_ids[]" value="{{ $product->id }}" style="scale: 2;">
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -328,7 +320,7 @@
                                         </table>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>

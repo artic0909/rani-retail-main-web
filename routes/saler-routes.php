@@ -19,15 +19,12 @@ Route::middleware('auth:salers')->group(function () {
 
     // All Products
     Route::get('/saler/saler-all-products', [SalerController::class, 'allProductsView'])->name('saler-all-products');
-    Route::post('/saler/saler-all-products', [SalerController::class, 'addToCart'])->name('saler-add-to-cart');
+    Route::post('/saler/add-to-cart', [SalerController::class, 'addToCart'])->name('cart.add');
 
     // Cart
     Route::get('/saler/saler-cart-items', [SalerController::class, 'cartView'])->name('saler-cart');
-    Route::post('/saler/saler-cart-items', [SalerController::class, 'addToBill'])->name('addToBill');
-    Route::post('/saler/generate-bill', [SalerController::class, 'generateBill'])->name('generate.bill');
+    Route::post('/saler/saler-cart-items/checkouts/store', [SalerController::class, 'checkOut'])->name('checkouts.store');
 
-    Route::post('/saler/empty-cart', [SalerController::class, 'emptyCart'])->name('admin.empty-cart');
-    Route::delete('/saler/cart/{id}', [SalerController::class, 'deleteCartProduct'])->name('cart.delete');
 
 
 

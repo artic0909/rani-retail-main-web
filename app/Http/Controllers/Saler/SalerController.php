@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Saler;
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\Cart;
+use App\Models\Checkout;
 use App\Models\Product;
 use App\Models\Solded;
 use App\Models\User;
@@ -94,135 +95,68 @@ class SalerController extends Controller
     {
 
         $products = Product::with(['subCategory.mainCategory'])->get();
-        $cartProductIds = Cart::pluck('product_id')->toArray();
 
-        return view('saler.saler-all-products', compact('products', 'cartProductIds'));
+
+        return view('saler.saler-all-products', compact('products'));
     }
 
     public function addToCart(Request $request)
     {
-
-        $productId = $request->product_id;
-
-        $product = Product::findOrFail($productId);
-
-        $existingCart = Cart::where('product_id', $productId)->first();
-        if ($existingCart) {
-            return redirect()->back()->with('warning', 'Product already in cart.');
-        }
-
-
-        $purchaseRate = $product->purchase_rate + $product->transport_cost;
-
-        // Create cart entry
-        Cart::create([
-            'product_id' => $productId,
-            'quantity' => 1,
-            'purchase_rate' => $purchaseRate,
-            'selling_price' => 0,
-            'profit_parcentage' => 0,
+        $request->validate([
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'exists:products,id',
         ]);
 
-        return redirect()->back()->with('success', 'Product added to cart.');
-    }
+        Cart::create([
+            'product_ids' => $request->product_ids,
+        ]);
 
+        return back()->with('success', 'Products added to cart successfully!');
+    }
 
     public function cartView()
     {
-        $cartProducts = Cart::with('product')->get();
-        $lastBill = Bill::latest()->first();
-
-        return view('saler.saler-cart', compact('cartProducts', 'lastBill'));
+        $cartItems = Cart::all();
+        return view('saler.saler-cart', compact('cartItems'));
     }
 
-
-    public function addToBill(Request $request)
+    public function checkOut(Request $request)
     {
-        $request->validate([
-            'bill_data' => 'required|array',
-            'bill_data.*.product_id' => 'required|integer',
-            'bill_data.*.product_name' => 'required|string',
-            'bill_data.*.other_details' => 'nullable|string',
-            'bill_data.*.purchase_rate' => 'required|numeric',
-            'bill_data.*.quantity' => 'required|numeric',
-            'bill_data.*.profit_percentage' => 'required|numeric',
-            'bill_data.*.selling_price' => 'required|numeric',
-            'total_amount' => 'required|numeric',
+        $validated = $request->validate([
+            'products' => 'required|array',
+            'products.*.product_id' => 'required|integer|exists:products,id',
+            'products.*.customer_product_rate' => 'required|numeric',
+            'products.*.customer_purchase_quantity' => 'required|numeric',
+            'products.*.customer_profit_percentage' => 'required|numeric',
+            'products.*.customer_product_selling_price' => 'required|numeric',
         ]);
 
-        $totalAmount = collect($request->bill_data)->sum('total_amount');
+        $totalAmount = collect($validated['products'])->sum('customer_product_selling_price');
 
-        $bill = new Bill();
-        $bill->bill_data = json_encode($request->bill_data);
-        $bill->total_amount = $totalAmount;
-        $bill->save();
-
-
-        return redirect()->back()->with('success', 'Bill created successfully!');
-    }
-
-
-    public function generateBill(Request $request)
-    {
-        $request->validate([
-            'customer_name' => 'required|string',
-            'email' => 'nullable|email',
-            'mobile_number' => 'nullable|string|max:15',
-            'bill_id' => 'required|integer|exists:bills,id',
+        $checkout = Checkout::create([
+            'products' => $validated['products'],
+            'customer_overall_total_amount' => $totalAmount,
         ]);
 
-        $bill = Bill::findOrFail($request->bill_id);
+        // For Stock Update
+        foreach ($validated['products'] as $item) {
+            $product = Product::find($item['product_id']);
 
-        // Decode bill_data
-        $billItems = json_decode($bill->bill_data, true); // true = associative array
+            if ($product) {
+                
+                $product->purchase_unit -= $item['customer_purchase_quantity'];
 
-        foreach ($billItems as $item) {
-            if (isset($item['id'], $item['quantity'])) {
-                $product = Product::find($item['id']);
-
-                if ($product) {
-                    $newQty = max(0, $product->purchase_unit - (int) $item['quantity']);
-                    $product->purchase_unit = $newQty;
-                    $product->save();
+                // Avoid negative stock
+                if ($product->purchase_unit < 0) {
+                    $product->purchase_unit = 0;
                 }
+
+                $product->save();
             }
         }
 
-
-        // Move to sold table
-        Solded::create([
-            'bill_data' => $bill->bill_data,
-            'total_amount' => $bill->total_amount,
-            'customer_name' => $request->customer_name,
-            'email' => $request->email,
-            'mobile_number' => $request->mobile_number,
-        ]);
-
-        // Delete the original bill
-        $bill->delete();
-
-        return redirect()->back()->with('success', 'Bill generated, stock updated, and moved to Solded successfully.');
+        return back()->with('success', 'Checkouts successfully!');
     }
 
-    public function emptyCart()
-    {
-        try {
-            Cart::truncate();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()]);
-        }
-    }
 
-    public function deleteCartProduct($id)
-    {
-        try {
-            $cartItem = Cart::findOrFail($id);
-            $cartItem->delete();
-
-            return redirect()->back()->with('success', 'Deleted Successfully.');
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error deleting cart item.', 'error' => $e->getMessage()]);
-        }
-    }
 }

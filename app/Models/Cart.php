@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Cart extends Model
 {
     protected $fillable = [
-        'product_id',
-        'purchase_rate',
-        'quantity',
-        'profit_percentage',
-        'selling_price',
+        'product_ids',
     ];
 
-    public function product()
+    protected $casts = [
+        'product_ids' => 'array',
+    ];
+
+    // Relationship to Product modelpublic function getProductsAttribute()
+    public function getProductsAttribute()
     {
-        return $this->belongsTo(Product::class);
+        return Product::whereIn('id', $this->product_ids ?? [])->get();
     }
 }
