@@ -11,7 +11,7 @@
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Filter Search Products</title>
+    <title>All Products By Filter</title>
     <!--     Fonts and icons     -->
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
@@ -49,10 +49,10 @@
                 sidenav-close></i>
             <a
                 class="block px-8 py-6 m-0 text-sm whitespace-nowrap dark:text-white text-slate-700"
-                href="/stock/stock-dashboard">
+                href="/saler/saler-dashboard">
                 <span
                     class="ml-1 font-semibold transition-all duration-200 ease-nav-brand"
-                    style="font-size: 1.2rem; font-weight: bolder">Rani Retail - Stock</span>
+                    style="font-size: 1.2rem; font-weight: bolder">Rani Retail - Sales</span>
             </a>
         </div>
 
@@ -65,7 +65,7 @@
                 <li class="mt-0.5 w-full">
                     <a
                         class="py-2.7 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold text-slate-700 transition-colors"
-                        href="/stock/stock-dashboard">
+                        href="/saler/saler-dashboard">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
@@ -78,26 +78,12 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/stock/stock-add-main-category">
+                        class="py-2.7 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold text-slate-700 transition-colors"
+                        href="/saler/saler-all-products">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
-                                class="relative top-0 text-sm leading-normal text-orange-500 ni ni-calendar-grid-58"></i>
-                        </div>
-                        <span
-                            class="ml-1 duration-300 opacity-100 pointer-events-none ease">Add Categories</span>
-                    </a>
-                </li>
-
-                <li class="mt-0.5 w-full">
-                    <a
-                        class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/stock/stock-list-all-products">
-                        <div
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i
-                                class="relative top-0 text-sm leading-normal text-orange-500 ni ni-archive-2"></i>
+                                class="relative top-0 text-sm leading-normal text-red-600 ni ni-box-2"></i>
                         </div>
                         <span
                             class="ml-1 duration-300 opacity-100 pointer-events-none ease">All Products</span>
@@ -106,36 +92,36 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class="bg-blue-500/13 bg-blue-500/13dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/stock/stock-all-products">
-                        <div
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center fill-current stroke-0 text-center xl:p-2.5">
-                            <i
-                                class="relative top-0 text-sm leading-normal text-emerald-500 ni ni-box-2"></i>
-                        </div>
-                        <span
-                            class="ml-1 duration-300 opacity-100 pointer-events-none ease">Filter Products</span>
-                    </a>
-                </li>
-
-                <li class="mt-0.5 w-full">
-                    <a
-                        class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/stock/stock-stock-report">
+                        class="bg-blue-500/13 dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                        href="/saler/saler-find-products">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
-                                class="relative top-0 text-sm leading-normal text-cyan-500 ni ni-single-copy-04"></i>
+                                class="relative top-0 text-sm leading-normal text-emerald-500 ni ni-credit-card"></i>
                         </div>
                         <span
-                            class="ml-1 duration-300 opacity-100 pointer-events-none ease">Stock Manage</span>
+                            class="ml-1 duration-300 opacity-100 pointer-events-none ease">Product Sale</span>
                     </a>
                 </li>
 
                 <li class="mt-0.5 w-full">
                     <a
                         class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/stock/stock-sales-report">
+                        href="/saler/saler-cart-items">
+                        <div
+                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                            <i
+                                class="relative top-0 text-sm leading-normal text-cyan-500 ni ni-cart"></i>
+                        </div>
+                        <span
+                            class="ml-1 duration-300 opacity-100 pointer-events-none ease">Cart Items</span>
+                    </a>
+                </li>
+
+                <li class="mt-0.5 w-full">
+                    <a
+                        class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                        href="/saler/saler-sales-report">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
@@ -156,7 +142,7 @@
                 <li class="mt-0.5 w-full">
                     <a
                         class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/stock/stock-profile">
+                        href="/saler/saler-profile.html">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
@@ -172,7 +158,7 @@
 
     <div
         class="relative h-full max-h-screen transition-all duration-200 ease-in-out xl:ml-68">
-        <!-- Navbar -->
+        <!-- Nav -->
         <nav
             class="relative flex flex-wrap items-center justify-between px-0 py-2 mx-6 transition-all ease-in shadow-none duration-250 rounded-2xl lg:flex-nowrap lg:justify-start"
             navbar-main
@@ -184,7 +170,7 @@
                     <ol
                         class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
                         <li class="text-sm leading-normal">
-                            <a class="text-white font-bold" href="#">Back</a>
+                            <a class="text-white font-bold" href="">Back</a>
                         </li>
                         <li
                             class="text-sm pl-2 capitalize leading-normal text-white before:float-left before:pr-2 before:text-white before:content-['/']"
@@ -206,19 +192,18 @@
                             <input
                                 type="text"
                                 class="pl-9 text-sm focus:shadow-primary-outline ease w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 dark:bg-slate-850 dark:text-white bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:transition-shadow"
-                                placeholder="Type here..." />
+                                placeholder="Search here..." />
                         </div>
                     </div>
                     <ul
                         class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
                         <li class="flex items-center">
-                            <form method="POST" action="{{ route('stock-manager.logout') }}">
-                                @csrf
-                                <button type="submit" class="flex items-center px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
-                                    <i class="fa fa-user sm:mr-1"></i>
-                                    <span class="sm:inline">Logout</span>
-                                </button>
-                            </form>
+                            <a
+                                href=""
+                                class="block px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
+                                <i class="fa fa-user sm:mr-1"></i>
+                                <span class="sm:inline">Logout</span>
+                            </a>
                         </li>
                         <li class="flex items-center pl-4 xl:hidden">
                             <a
@@ -291,29 +276,28 @@
                                             id="main-category"
                                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
                                             <option value="" selected>Select Main Category</option>
-                                            @foreach ($mainCategories as $mainCategory)
-                                            <option value="{{$mainCategory->id}}">{{$mainCategory->main_category_name}}</option>
+                                            @foreach ($mainCategories as $main)
+                                            <option value="{{ $main->id }}">{{ $main->main_category_name }}</option>
                                             @endforeach
-
                                         </select>
                                     </div>
 
                                     <div class="mb-4">
                                         <label
-                                            for=""
+                                            for="username"
                                             class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Choose Sub Category *</label>
 
                                         <select
                                             name=""
                                             id="sub-category"
                                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                            <option value="" selected>Select Sub Category</option>
+                                            <option value="">Select Sub Category</option>
                                         </select>
 
                                         <div
                                             style="
                           display: flex;
-                          justify-content: center;
+                          justify-content: end;
                           margin-top: 20px;
                         ">
                                             <button
@@ -335,154 +319,144 @@
                 <div class="w-full max-w-full px-3 shrink-0 md:flex-0 mt-4">
                     <div class="flex flex-wrap -mx-3">
                         <div class="flex-none w-full max-w-full px-3">
-                            <div
-                                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                            <form action="{{ route('cart.add') }}" method="POST" class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                                @csrf
+
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
                                     <h6 class="dark:text-white">Filter Products</h6>
-                                    <a href="" class="text-sm text-cyan-500 underline">Export</a>
+                                    <button type="submit" class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85" style="font-size: 14px">Add to Cart</button>
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
                                         <table
                                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                                             <thead class="align-bottom">
-
                                                 <tr style="text-align:center; border-bottom: 1px solid #ccc;">
-                                                    <th>Product Name</th>
-                                                    <th>Decriptive Fields</th>
-                                                    <th>Purchase Details</th>
-                                                    <th>Unit</th>
-                                                    <th>Purchase Rate</th>
-                                                    <th>Transport Cost</th>
-                                                    <th colspan="2">Actions</th>
-                                                </tr>
+                                                    <th>Product Name
+                                                    </th>
+                                                    <th> Colors
+                                                    </th>
+                                                    <th>Sizes
+                                                    </th>
 
+                                                    <th>Purchase Unit
+                                                    </th>
+
+                                                    <th> Purchase Rate
+                                                    </th>
+
+                                                    <th>Transport Cost
+                                                    </th>
+                                                </tr>
                                             </thead>
                                             <tbody id="products-table-body">
-
+                                                <tr>
+                                                    <td colspan="7" style="text-align: center;">No product found</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
 
-
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const mainCategorySelect = document.querySelector("#main-category");
-            const subCategorySelect = document.querySelector("#sub-category");
-            const showButton = document.querySelector("#show-products-btn");
-
-            // Load subcategories when main category changes
-            mainCategorySelect.addEventListener("change", function() {
-                const mainCategoryId = this.value;
-
-                fetch(`/stock/get-subcategories/${mainCategoryId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
-                        data.forEach(sub => {
-                            subCategorySelect.innerHTML += `<option value="${sub.id}">${sub.sub_category_name}</option>`;
-                        });
-                    });
-            });
-
-            // Load products when "SHOW" button is clicked
-            showButton.addEventListener("click", function() {
-                const subCategoryId = subCategorySelect.value;
-
-                fetch('/stock/get-products', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify({
-                            sub_category_id: subCategoryId
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        const tableBody = document.querySelector("#products-table-body");
-                        tableBody.innerHTML = "";
-
-                        data.forEach(product => {
-                            let fieldsHtml = '';
-
-                            if (product.field_values && typeof product.field_values === 'object') {
-                                for (const [key, value] of Object.entries(product.field_values)) {
-                                    let displayValue;
-                                    if (Array.isArray(value)) {
-                                        displayValue = value.join(', ');
-                                    } else if (typeof value === 'object') {
-                                        displayValue = JSON.stringify(value);
-                                    } else {
-                                        displayValue = value ?? 'N/A';
-                                    }
-
-                                    fieldsHtml += `<div><strong>${key}:</strong> ${displayValue}</div>`;
-                                }
-                            } else {
-                                fieldsHtml = 'N/A';
-                            }
-
-                            tableBody.innerHTML += `
-                        <tr style="text-align:center; border-bottom: 1px solid #ccc;">
-                            <td>${product.product_name}</td>
-                            <td>${fieldsHtml}</td>
-                            <td>${product.purchase_details ?? 'N/A'}</td>
-                            <td>${product.purchase_unit ?? 'N/A'}</td>
-                            <td>${product.purchase_rate ?? 'N/A'}</td>
-                            <td>${product.transport_cost ?? 'N/A'}</td>
-                            <td><a href="/stock/products/${product.id}/edit" class="text-green-600">Edit</a></td>
-                            <td><a href="#" onclick="deleteProduct(${product.id})" class="text-red-600">Delete</a></td>
-                        </tr>`;
-                        });
-                    });
-            });
-        });
-    </script>
-
-    <script>
-        function deleteProduct(id) {
-            if (!confirm("Are you sure you want to delete this product?")) return;
-
-            fetch(`/stock/delete-product/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                    }
-                    location.reload();
-                })
-                .catch(error => {
-                    console.error("Error deleting product:", error);
-                    alert("Something went wrong.");
-                });
-        }
-    </script>
-
-
-
 </body>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const mainCategorySelect = document.querySelector("#main-category");
+        const subCategorySelect = document.querySelector("#sub-category");
+        const showButton = document.querySelector("#show-products-btn");
+
+        // Load subcategories when main category changes
+        mainCategorySelect.addEventListener("change", function() {
+            const mainCategoryId = this.value;
+
+            if (!mainCategoryId) {
+                subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
+                return;
+            }
+
+            fetch(`/saler/get-subcategories/${mainCategoryId}`)
+                .then(res => res.json())
+                .then(data => {
+                    subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
+                    data.forEach(sub => {
+                        subCategorySelect.innerHTML += `<option value="${sub.id}">${sub.sub_category_name}</option>`;
+                    });
+                });
+        });
+
+        // Load products when "SHOW" button is clicked
+        showButton.addEventListener("click", function() {
+            const subCategoryId = subCategorySelect.value;
+            const tableBody = document.querySelector("#products-table-body");
+
+            if (!subCategoryId) {
+                alert("Please select a subcategory.");
+                return;
+            }
+
+            fetch('/saler/get-products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        sub_category_id: subCategoryId
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    tableBody.innerHTML = "";
+
+                    if (data.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No products found.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(product => {
+                        let fieldsHtml = '';
+
+                        if (product.field_values && typeof product.field_values === 'object') {
+                            for (const [key, value] of Object.entries(product.field_values)) {
+                                let displayValue = Array.isArray(value) ?
+                                    value.join(', ') :
+                                    (typeof value === 'object' ? JSON.stringify(value) : (value ?? 'N/A'));
+
+                                fieldsHtml += `<div><strong>${key}:</strong> ${displayValue}</div>`;
+                            }
+                        } else {
+                            fieldsHtml = 'N/A';
+                        }
+
+                        tableBody.innerHTML += `
+                            <tr  style="text-align:center; border-bottom: 1px solid #ccc;">
+                                <td>${product.product_name}</td>
+                                <td>${fieldsHtml}</td>
+                                <td>${product.sizes ?? 'N/A'}</td>
+                                <td>${product.purchase_unit ?? 'N/A'}</td>
+                                <td>${product.purchase_rate ?? 'N/A'}</td>
+                                <td>${product.transport_cost ?? 'N/A'}</td>
+                                
+                            </tr>`;
+                    });
+                });
+        });
+    });
+</script>
+
 <!-- plugin for scrollbar  -->
 <script src="../assets/js/plugins/perfect-scrollbar.min.js" async></script>
 <!-- main script file  -->

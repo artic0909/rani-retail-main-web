@@ -27,6 +27,15 @@ Route::middleware('auth:salers')->group(function () {
     Route::delete('/saler/saler-cart-items/checkout/delete', [SalerController::class, 'deleteCheckOutData'])->name('checkout.delete');
     Route::delete('/saler/cart/delete-item/{product_id}', [SalerController::class, 'deleteCartItem'])->name('cart.delete.item');
 
+    // Product Filter
+    Route::get('/saler/saler-find-products', [SalerController::class, 'productFilterView'])->name('saler-product-filter');
+    Route::get('/saler/get-subcategories/{mainCategoryId}', [SalerController::class, 'getSubcategories']);
+    Route::post('/saler/get-products', [SalerController::class, 'getProducts']);
+
+    // Sales Report
+    Route::get('/saler/saler-sales-report', [SalerController::class, 'salesReport'])->name('sales.report');
+
+
 
 
 

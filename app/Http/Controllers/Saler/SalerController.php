@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\Cart;
 use App\Models\Checkout;
+use App\Models\MainCategory;
 use App\Models\Product;
 use App\Models\Solded;
 use App\Models\SoldItems;
+use App\Models\SubCategory;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -230,29 +233,75 @@ class SalerController extends Controller
         return back()->with('success', 'Latest checkout deleted and stock restored.');
     }
 
+
+
     public function generateBill(Request $request)
     {
-        $validated = $request->validate([
-            'products' => 'required|array',
-            'customer_overall_total_amount' => 'required|numeric',
-            'customer_name' => 'required|string',
-            'custome_email' => 'nullable|email',
-            'custome_mobile' => 'nullable|string',
-        ]);
+        $products = $request->input('products');
+        $totalAmount = $request->input('customer_overall_total_amount');
+        $soldDate = $request->input('sold_date');
+        $customerName = $request->input('customer_name');
+        $customerEmail = $request->input('custome_email');
+        $customerMobile = $request->input('custome_mobile');
+
+        // Manually handle sold_date if not provided
+        try {
+            $soldDateFormatted = $soldDate ? Carbon::parse($soldDate)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+        } catch (\Exception $e) {
+            $soldDateFormatted = Carbon::now()->format('Y-m-d'); // fallback if parsing fails
+        }
 
         SoldItems::create([
-            'products' => $validated['products'],
-            'customer_overall_total_amount' => $validated['customer_overall_total_amount'],
-            'customer_name' => $validated['customer_name'],
-            'custome_email' => $validated['custome_email'] ?? null,
-            'custome_mobile' => $validated['custome_mobile'] ?? null,
+            'products' => is_array($products) ? $products : [],
+            'customer_overall_total_amount' => is_numeric($totalAmount) ? $totalAmount : 0,
+            'sold_date' => $soldDateFormatted,
+            'customer_name' => $customerName ?? 'N/A',
+            'custome_email' => $customerEmail,
+            'custome_mobile' => $customerMobile,
         ]);
 
+        // Delete latest checkout if exists
         $latestCheckout = Checkout::latest()->first();
         if ($latestCheckout) {
             $latestCheckout->delete();
         }
 
         return redirect()->back()->with('success', 'Bill generated and saved.');
+    }
+
+
+    public function productFilterView()
+    {
+        $mainCategories = MainCategory::all();
+        return view('saler.saler-product-filter', compact('mainCategories'));
+    }
+
+    public function getSubcategories($mainCategoryId)
+    {
+        return SubCategory::where('main_category_id', $mainCategoryId)->get();
+    }
+
+    public function getProducts(Request $request)
+    {
+        return Product::where('sub_category_id', $request->sub_category_id)->get();
+    }
+
+    public function salesReport(Request $request)
+    {
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
+
+        $query = SoldItems::query();
+
+        if ($from && $to) {
+            $query->whereBetween('sold_date', [
+                Carbon::parse($from)->format('Y-m-d'),
+                Carbon::parse($to)->format('Y-m-d')
+            ]);
+        }
+
+        $salesReport = $query->orderBy('sold_date', 'desc')->with('products.product')->get();
+
+        return view('saler.saler-sales-report', compact('salesReport', 'from', 'to'));
     }
 }
