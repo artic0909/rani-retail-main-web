@@ -141,7 +141,7 @@
                 <li class="mt-0.5 w-full">
                     <a
                         class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/saler/saler-profile.html">
+                        href="/saler/saler-profile">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
@@ -264,7 +264,7 @@
                         </div>
                         <div class="flex-auto p-6">
                             <div class="flex flex-wrap -mx-3">
-                                <form method="GET" action="{{ route('sales.report') }}"
+                                <form method="GET" action="{{ route('saler.sales.report') }}"
                                     class="w-full max-w-full px-3 shrink-0 md:w-full md:flex-0">
                                     <div class="mb-4">
                                         <label
@@ -299,7 +299,7 @@
                                             SHOW
                                         </button>
 
-                                        <a href="{{ route('sales.report') }}"
+                                        <a href="{{ route('saler.sales.report') }}"
                                             class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
                                             style="font-size: 14px">
                                             Clear
@@ -321,9 +321,15 @@
                                 class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
+                                    @if($from && $to)
                                     <h6 class="dark:text-white;">
-                                        Sales Report : 12/02/2025 to 13/02/2025
+                                        Sales Report : {{ \Carbon\Carbon::parse($from)->format('d/m/Y') }}
+                                        to
+                                        {{ \Carbon\Carbon::parse($to)->format('d/m/Y') }}
                                     </h6>
+                                    @else
+                                    <h6 class="dark:text-white;">Sales Report</h6>
+                                    @endif
                                     <a href="" class="text-sm text-cyan-500 underline">Export Report</a>
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
@@ -337,6 +343,7 @@
                                                     <td>Customer Details</td>
                                                     <td>Products Details</td>
                                                     <td>Total Amount</td>
+                                                    <td>Costing Amount</td>
                                                     <td>Profit Amount</td>
                                                     <td>Profit Percentage</td>
                                                 </tr>
@@ -366,14 +373,16 @@
                                                         Product Name: {{ $productModel->product_name ?? 'N/A' }}<br>
                                                         Rate: ₹{{ $product['customer_product_rate'] }}<br>
                                                         Qty: {{ $product['customer_purchase_quantity'] }}<br>
-                                                        Profit %: {{ $product['customer_profit_percentage'] }}<br>
+                                                        Profit: {{ $product['customer_profit_percentage'] }}%<br>
                                                         Selling: ₹{{ $product['customer_product_selling_price'] }}<br>
                                                         <hr>
                                                         @endforeach
                                                     </td>
 
+                                                    {{-- Total Amount (Selling) --}}
                                                     <td>₹{{ number_format($report->customer_overall_total_amount, 2) }}</td>
 
+                                                    {{-- START: Costing calculation only --}}
                                                     @php
                                                     $totalProfit = 0;
                                                     $totalCost = 0;
@@ -391,8 +400,12 @@
                                                     }
                                                     @endphp
 
+                                                    <td>₹{{ number_format($totalCost, 2) }}</td>
+
+                                                    {{-- Profit Amount --}}
                                                     <td>₹{{ number_format($totalProfit, 2) }}</td>
 
+                                                    {{-- Profit Percentage (unchanged) --}}
                                                     <td>
                                                         @if($totalCost > 0)
                                                         {{ round(($totalProfit / $totalCost) * 100, 2) }}%

@@ -143,7 +143,7 @@
                     </p>
                   </div>
                   <div class="flex-auto p-6">
-                    <form role="form" action="{{ route('verify.saler-login') }}" method="POST">
+                    <form role="form" action="{{ route('saler.verify.saler-login') }}" method="POST">
                       @csrf
 
                       <div class="mb-4">

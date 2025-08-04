@@ -154,7 +154,7 @@
                 <li class="mt-0.5 w-full">
                     <a
                         class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/saler/saler-profile.html">
+                        href="/saler/saler-profile">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
@@ -267,7 +267,7 @@
                 <!-- Cart Items -->
                 <div class="w-full max-w-full px-3 mt-6 md:w-8/12 md:flex-none">
 
-                    <form method="POST" action="{{ route('checkouts.store') }}" class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                    <form method="POST" action="{{ route('saler.checkouts.store') }}" class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                         @csrf
                         <div class="p-6 px-4 pb-0 mb-0 border-b-0 rounded-t-2xl flex justify-between">
                             <h6 class="mb-0 dark:text-white">Selected Items Billing Amount: ₹ <span id="totalAmount"></span></h6>
@@ -371,7 +371,7 @@
                             @endphp
 
                             @if($hasCheckout)
-                            <form action="{{ route('checkout.delete') }}" method="POST" style="padding: 15px;">
+                            <form action="{{ route('saler.checkout.delete') }}" method="POST" style="padding: 15px;">
                                 @csrf
                                 @method('DELETE')
                                 <button class="px-8 py-2 font-bold text-white rounded-lg shadow-md text-xs hover:shadow-xs hover:-translate-y-px active:opacity-85 w-full" style="background-color: red;" type="submit">Delete Checkout Items</button>
@@ -389,11 +389,11 @@
                                     <select id="productSelect" class="px-8 py-2 font-bold rounded-lg shadow-md text-xs w-full text-red-600">
                                         <option selected>Select cart item to delete</option>
                                         @foreach ($cartItems as $item)
-                                        <option value="{{ route('cart.delete.item', 'all') }}">
+                                        <option value="{{ route('saler.cart.delete.item', 'all') }}">
                                             Delete All
                                         </option>
                                         @foreach ($item->products as $product)
-                                        <option value="{{ route('cart.delete.item', $product->id) }}">
+                                        <option value="{{ route('saler.cart.delete.item', $product->id) }}">
                                             {{ $product->product_name }}
                                         </option>
                                         @endforeach
@@ -407,7 +407,7 @@
 
 
                         <!-- Generate Bill -->
-                        <form action="{{ route('generate-bill.store') }}" method="POST">
+                        <form action="{{ route('saler.generate-bill.store') }}" method="POST">
                             @csrf
 
                             <div class="p-4 pb-0 rounded-t-4">

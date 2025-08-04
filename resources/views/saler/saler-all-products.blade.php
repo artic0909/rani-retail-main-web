@@ -141,7 +141,7 @@
                 <li class="mt-0.5 w-full">
                     <a
                         class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/saler/saler-profile.html">
+                        href="/saler/saler-profile">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
@@ -254,7 +254,7 @@
                 <div class="w-full max-w-full px-3 shrink-0 md:flex-0 mt-4">
                     <div class="flex flex-wrap -mx-3">
                         <div class="flex-none w-full max-w-full px-3">
-                            <form action="{{ route('cart.add') }}" method="POST" class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                            <form action="{{ route('saler.cart.add') }}" method="POST" class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                                 @csrf
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">

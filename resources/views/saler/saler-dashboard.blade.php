@@ -135,7 +135,7 @@
                 <li class="mt-0.5 w-full">
                     <a
                         class="dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                        href="/saler/saler-profile.html">
+                        href="/saler/saler-profile">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i
@@ -193,7 +193,7 @@
                     <ul
                         class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
                         <li class="flex items-center">
-                            <form method="POST" action="{{ route('saler.logout') }}">
+                            <form method="POST" action="{{ route('saler.saler.logout') }}">
                                 @csrf
                                 <button type="submit" class="flex items-center px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
                                     <i class="fa fa-user sm:mr-1"></i>

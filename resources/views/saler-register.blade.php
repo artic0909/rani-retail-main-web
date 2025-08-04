@@ -242,7 +242,7 @@
                                 </div>
                             </div>
                             <div class="flex-auto p-6">
-                                <form role="form text-left" method="POST" action="{{ route('store.saler-register') }}">
+                                <form role="form text-left" method="POST" action="{{ route('saler.store.saler-register') }}">
                                     @csrf
                                     @method('POST')
 

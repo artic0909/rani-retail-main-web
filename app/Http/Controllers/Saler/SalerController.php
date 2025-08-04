@@ -58,7 +58,7 @@ class SalerController extends Controller
             'type'     => 'saler',
         ]);
 
-        return redirect()->route('waiting-page')->with('success', 'Saler registered successfully.');
+        return redirect()->route('saler.waiting-page')->with('success', 'Saler registered successfully.');
     }
 
     // Saler Login Function---------------------------->
@@ -73,7 +73,7 @@ class SalerController extends Controller
 
         if (Auth::guard('salers')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('saler-dashboard');
+            return redirect()->route('saler.saler-dashboard');
         }
 
         return back()->withErrors([
@@ -86,7 +86,7 @@ class SalerController extends Controller
     {
         Auth::guard('salers')->logout();
         Session::flush();
-        return redirect()->route('saler-login');
+        return redirect()->route('saler.saler-login');
     }
 
     // Saler Dashboard View---------------------------->
@@ -115,7 +115,7 @@ class SalerController extends Controller
             'product_ids' => $request->product_ids,
         ]);
 
-        return redirect()->route('saler-cart')->with('success', 'Products added to cart successfully!');
+        return redirect()->route('saler.saler-cart')->with('success', 'Products added to cart successfully!');
     }
 
     public function deleteCartItem($product_id)
@@ -303,5 +303,45 @@ class SalerController extends Controller
         $salesReport = $query->orderBy('sold_date', 'desc')->with('products.product')->get();
 
         return view('saler.saler-sales-report', compact('salesReport', 'from', 'to'));
+    }
+
+    // Saler Profile View---------------------------->
+    public function salerProfileView()
+    {
+        $user = Auth::guard('salers')->user();
+        return view('saler.saler-profile', compact('user'));
+    }
+
+    // Saler Manager Profile Edit---------------------------->
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'mobile' => 'nullable|string|max:20',
+        ]);
+
+        $user = Auth::guard('salers')->user();
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile = $request->mobile;
+        $user->save();
+
+        return back()->with('success', 'Profile updated successfully.');
+    }
+
+    // Saler Manager Profile Password Update---------------------------->
+    public function updateProfilePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = Auth::guard('salers')->user();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->back()->with('success', 'Password updated successfully!');
     }
 }

@@ -3,42 +3,46 @@
 use App\Http\Controllers\Saler\SalerController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/saler-login', [SalerController::class, 'loginView'])->name('saler-login');
-Route::get('/saler-register', [SalerController::class, 'registerView'])->name('saler-register');
-Route::get('/waiting-page', [SalerController::class, 'waitingPageView'])->name('waiting-page');
+Route::get('/saler-login', [SalerController::class, 'loginView'])->name('saler.saler-login');
+Route::get('/saler-register', [SalerController::class, 'registerView'])->name('saler.saler-register');
+Route::get('/waiting-page', [SalerController::class, 'waitingPageView'])->name('saler.waiting-page');
 
 
-Route::post('/saler-register', [SalerController::class, 'salerRegister'])->name('store.saler-register');
+Route::post('/saler-register', [SalerController::class, 'salerRegister'])->name('saler.store.saler-register');
 
-Route::post('/saler-login', [SalerController::class, 'salerLogin'])->name('verify.saler-login');
+Route::post('/saler-login', [SalerController::class, 'salerLogin'])->name('saler.verify.saler-login');
 
 
 Route::middleware('auth:salers')->group(function () {
-    Route::get('/saler/saler-dashboard', [SalerController::class, 'salerDashboardView'])->name('saler-dashboard');
-    Route::post('/saler/saler-logout', [SalerController::class, 'salerLogout'])->name('saler.logout');
+    Route::get('/saler/saler-dashboard', [SalerController::class, 'salerDashboardView'])->name('saler.saler-dashboard');
+    Route::post('/saler/saler-logout', [SalerController::class, 'salerLogout'])->name('saler.saler.logout');
 
     // All Products
-    Route::get('/saler/saler-all-products', [SalerController::class, 'allProductsView'])->name('saler-all-products');
-    Route::post('/saler/add-to-cart', [SalerController::class, 'addToCart'])->name('cart.add');
+    Route::get('/saler/saler-all-products', [SalerController::class, 'allProductsView'])->name('saler.saler-all-products');
+    Route::post('/saler/add-to-cart', [SalerController::class, 'addToCart'])->name('saler.cart.add');
 
     // Cart
-    Route::get('/saler/saler-cart-items', [SalerController::class, 'cartView'])->name('saler-cart');
-    Route::post('/saler/saler-cart-items/checkouts/store', [SalerController::class, 'checkOut'])->name('checkouts.store');
-    Route::delete('/saler/saler-cart-items/checkout/delete', [SalerController::class, 'deleteCheckOutData'])->name('checkout.delete');
-    Route::delete('/saler/cart/delete-item/{product_id}', [SalerController::class, 'deleteCartItem'])->name('cart.delete.item');
+    Route::get('/saler/saler-cart-items', [SalerController::class, 'cartView'])->name('saler.saler-cart');
+    Route::post('/saler/saler-cart-items/checkouts/store', [SalerController::class, 'checkOut'])->name('saler.checkouts.store');
+    Route::delete('/saler/saler-cart-items/checkout/delete', [SalerController::class, 'deleteCheckOutData'])->name('saler.checkout.delete');
+    Route::delete('/saler/cart/delete-item/{product_id}', [SalerController::class, 'deleteCartItem'])->name('saler.cart.delete.item');
 
     // Product Filter
-    Route::get('/saler/saler-find-products', [SalerController::class, 'productFilterView'])->name('saler-product-filter');
+    Route::get('/saler/saler-find-products', [SalerController::class, 'productFilterView'])->name('saler.saler-product-filter');
     Route::get('/saler/get-subcategories/{mainCategoryId}', [SalerController::class, 'getSubcategories']);
     Route::post('/saler/get-products', [SalerController::class, 'getProducts']);
 
     // Sales Report
-    Route::get('/saler/saler-sales-report', [SalerController::class, 'salesReport'])->name('sales.report');
+    Route::get('/saler/saler-sales-report', [SalerController::class, 'salesReport'])->name('saler.sales.report');
 
+    // Saler Profile
+    Route::get('/saler/saler-profile', [SalerController::class, 'salerProfileView'])->name('saler.saler-profile');
+    Route::post('/saler/update-profile', [SalerController::class, 'updateProfile'])->name('saler.updateProfile');
+    Route::post('/saler/update-password', [SalerController::class, 'updateProfilePassword'])->name('saler.updatePassword');
 
 
 
 
     // Generate Bill
-    Route::post('/saler/generate-bill', [SalerController::class, 'generateBill'])->name('generate-bill.store');
+    Route::post('/saler/generate-bill', [SalerController::class, 'generateBill'])->name('saler.generate-bill.store');
 });
