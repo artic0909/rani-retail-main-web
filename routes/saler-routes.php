@@ -34,11 +34,17 @@ Route::middleware('auth:salers')->group(function () {
 
     // Sales Report
     Route::get('/saler/saler-sales-report', [SalerController::class, 'salesReport'])->name('saler.sales.report');
+    Route::get('/saler/sales-report/export', [SalerController::class, 'exportSalesReport'])->name('saler.sales.report.export');
 
     // Saler Profile
     Route::get('/saler/saler-profile', [SalerController::class, 'salerProfileView'])->name('saler.saler-profile');
     Route::post('/saler/update-profile', [SalerController::class, 'updateProfile'])->name('saler.updateProfile');
     Route::post('/saler/update-password', [SalerController::class, 'updateProfilePassword'])->name('saler.updatePassword');
+
+    // Stock Refill
+    Route::get('/saler/sales-stock-refill', [SalerController::class, 'stockRefillView'])->name('saler.stock-refill');
+    Route::get('/saler/export-stock-refill', [SalerController::class, 'exportStockRefill'])->name('saler.export.stock.refill');
+
 
 
 

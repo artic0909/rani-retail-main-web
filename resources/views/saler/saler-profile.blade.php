@@ -175,10 +175,10 @@
                         <li
                             class="text-sm pl-2 capitalize leading-normal text-white before:float-left before:pr-2 before:text-white before:content-['/']"
                             aria-current="page">
-                            Dashboard
+                            Profile
                         </li>
                     </ol>
-                    <h6 class="mb-0 font-bold text-white capitalize">Dashboard</h6>
+                    <h6 class="mb-0 font-bold text-white capitalize">Profile Management</h6>
                 </nav>
 
                 <div

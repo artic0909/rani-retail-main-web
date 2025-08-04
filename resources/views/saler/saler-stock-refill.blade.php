@@ -10,7 +10,7 @@
         sizes="76x76"
         href="../assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>Products List</title>
+    <title>Stock Refill List</title>
     <!--     Fonts and icons     -->
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
@@ -77,7 +77,7 @@
 
                 <li class="mt-0.5 w-full">
                     <a
-                        class="py-2.7 bg-blue-500/13 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold text-slate-700 transition-colors"
+                        class="py-2.7 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold text-slate-700 transition-colors"
                         href="/saler/saler-all-products">
                         <div
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
@@ -169,16 +169,17 @@
                     <ol
                         class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
                         <li class="text-sm leading-normal">
-                            <a class="text-white font-bold" href="">Back</a>
+                            <a class="text-white opacity-50" href="javascript:;">Sales</a>
                         </li>
                         <li
                             class="text-sm pl-2 capitalize leading-normal text-white before:float-left before:pr-2 before:text-white before:content-['/']"
                             aria-current="page">
-                            Add
+                            Stock Refill
                         </li>
                     </ol>
-                    <h6 class="mb-0 font-bold text-white capitalize">Show Products</h6>
+                    <h6 class="mb-0 font-bold text-white capitalize">Need Refill</h6>
                 </nav>
+
                 <div
                     class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
                     <div class="flex items-center md:ml-auto md:pr-4">
@@ -197,12 +198,13 @@
                     <ul
                         class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
                         <li class="flex items-center">
-                            <a
-                                href=""
-                                class="block px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
-                                <i class="fa fa-user sm:mr-1"></i>
-                                <span class="sm:inline">Logout</span>
-                            </a>
+                            <form method="POST" action="{{ route('saler.saler.logout') }}">
+                                @csrf
+                                <button type="submit" class="flex items-center px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
+                                    <i class="fa fa-user sm:mr-1"></i>
+                                    <span class="sm:inline">Logout</span>
+                                </button>
+                            </form>
                         </li>
                         <li class="flex items-center pl-4 xl:hidden">
                             <a
@@ -254,19 +256,18 @@
                 <div class="w-full max-w-full px-3 shrink-0 md:flex-0 mt-4">
                     <div class="flex flex-wrap -mx-3">
                         <div class="flex-none w-full max-w-full px-3">
-                            <form action="{{ route('saler.cart.add') }}" method="POST" class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-                                @csrf
+                            <div
+                                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
-                                    <h6 class="dark:text-white">All Stocked Products</h6>
-                                    <button type="submit" class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85" style="font-size: 14px">Add to Cart</button>
+                                    <h6 class="dark:text-white">Out of Stock - 33</h6>
+                                    <a href="{{ route('saler.export.stock.refill') }}" class="text-sm text-cyan-500 underline">Export</a>
                                 </div>
-                                <div class="flex-auto px-0 pt-0 pb-2" style="margin-top: 10px;">
+                                <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
                                         <table
                                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                                             <thead class="align-bottom">
-
                                                 <tr style="text-align:center; border-bottom: 1px solid #ccc;">
                                                     <th>SL.</th>
                                                     <th>Product Name</th>
@@ -276,9 +277,7 @@
                                                     <th>Stock Status</th>
                                                     <th>Purchase Rate</th>
                                                     <th>Transport Cost</th>
-                                                    <th colspan="2">Add to Cart</th>
                                                 </tr>
-
                                             </thead>
                                             <tbody>
                                                 @foreach ($products as $product)
@@ -327,31 +326,20 @@
 
                                                     <td>{{ $product->purchase_rate ?? 'N/A' }}</td>
                                                     <td>{{ $product->transport_cost ?? 'N/A' }}</td>
-
-
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="product_ids[]"
-                                                            value="{{ $product->id }}"
-                                                            style="scale: 2;"
-                                                            {{ $product->purchase_unit == 0 ? 'disabled' : '' }}>
-                                                    </td>
-
                                                 </tr>
                                                 @endforeach
-
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 
 
     <script>

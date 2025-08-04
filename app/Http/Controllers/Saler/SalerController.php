@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Saler;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ProductPurchaseMail;
 use App\Models\Bill;
 use App\Models\Cart;
 use App\Models\Checkout;
@@ -13,10 +14,14 @@ use App\Models\SoldItems;
 use App\Models\SubCategory;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Container\Attributes\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Str;
 
 
@@ -92,7 +97,56 @@ class SalerController extends Controller
     // Saler Dashboard View---------------------------->
     public function salerDashboardView()
     {
-        return view('saler.saler-dashboard');
+        $today = Carbon::today();
+
+        $todaysSales = SoldItems::whereDate('sold_date', $today)
+            ->sum('customer_overall_total_amount');
+
+        $todaysProductQty = SoldItems::whereDate('sold_date', $today)
+            ->with('products')
+            ->get()
+            ->sum(function ($sale) {
+                return collect($sale->products)->sum('customer_purchase_quantity');
+            });
+
+
+        $lastSalesDay = SoldItems::whereDate('sold_date', '<', $today)
+            ->orderByDesc('sold_date')
+            ->value('sold_date');
+
+
+        $yesterdaysSales = 0;
+        $yesterdaysProductQty = 0;
+        $yesterdaySalesDate = null;
+        $yesterdaySellingProductDate = null;
+
+        if ($lastSalesDay) {
+
+            $yesterdaysSales = SoldItems::whereDate('sold_date', $lastSalesDay)
+                ->sum('customer_overall_total_amount');
+
+            $yesterdaysProductQty = SoldItems::whereDate('sold_date', $lastSalesDay)
+                ->with('products')
+                ->get()
+                ->sum(function ($sale) {
+                    return collect($sale->products)->sum('customer_purchase_quantity');
+                });
+
+            $yesterdaySalesDate = Carbon::parse($lastSalesDay)->format('d M');
+            $yesterdaySellingProductDate = Carbon::parse($lastSalesDay)->format('d M');
+        }
+
+        $stockRefillCount = Product::where('purchase_unit', '<=', 3)->count();
+
+        return view('saler.saler-dashboard', [
+            'todaysSales' => $todaysSales,
+            'todaysProductQty' => $todaysProductQty,
+            'yesterdaysSales' => $yesterdaysSales,
+            'yesterdaysProductQty' => $yesterdaysProductQty,
+            'yesterdaySalesDate' => $yesterdaySalesDate,
+            'yesterdaySellingProductDate' => $yesterdaySellingProductDate,
+            'stockRefillCount' => $stockRefillCount,
+        ]);
     }
 
     public function allProductsView(Request $request)
@@ -248,7 +302,7 @@ class SalerController extends Controller
         try {
             $soldDateFormatted = $soldDate ? Carbon::parse($soldDate)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
         } catch (\Exception $e) {
-            $soldDateFormatted = Carbon::now()->format('Y-m-d'); // fallback if parsing fails
+            $soldDateFormatted = Carbon::now()->format('Y-m-d');
         }
 
         SoldItems::create([
@@ -266,10 +320,45 @@ class SalerController extends Controller
             $latestCheckout->delete();
         }
 
+        $productData = [];
+
+        foreach ($products as $item) {
+            if (!isset($item['product_id'])) {
+                continue;
+            }
+            $productModel = Product::find($item['product_id']);
+            $productData[] = [
+                'product_id' => $item['product_id'],
+                'product_name' => $productModel->product_name ?? 'N/A',
+                'customer_purchase_quantity' => $item['customer_purchase_quantity'],
+                'customer_product_rate' => $item['customer_product_rate'],
+                'customer_product_selling_price' => $item['customer_product_selling_price'],
+            ];
+        }
+
+        $billDetails = [
+            'customer_name' => $customerName,
+            'customer_email' => $customerEmail,
+            'customer_mobile' => $customerMobile,
+            'sold_date' => $soldDateFormatted,
+            'customer_overall_total_amount' => $totalAmount,
+            'products' => $productData,
+        ];
+
+
+        $pdf = PDF::loadView('pdf.bill', ['billDetails' => $billDetails]);
+
+ 
+        $pdfPath = 'bills/bill_' . now()->timestamp . '.pdf';
+        // Storage::put($pdfPath, $pdf->output());
+
+        Mail::to($customerEmail)->send(new ProductPurchaseMail($billDetails, $pdf->output()));
+
+
         return redirect()->back()->with('success', 'Bill generated and saved.');
     }
 
-
+    // Product Filter View ----------------------------->
     public function productFilterView()
     {
         $mainCategories = MainCategory::all();
@@ -280,12 +369,27 @@ class SalerController extends Controller
     {
         return SubCategory::where('main_category_id', $mainCategoryId)->get();
     }
-
     public function getProducts(Request $request)
     {
-        return Product::where('sub_category_id', $request->sub_category_id)->get();
+        $products = Product::with([
+            'subCategory.mainCategory'
+        ])->where('sub_category_id', $request->sub_category_id)->get();
+
+        return $products->map(function ($product) {
+            $product->field_values = is_string($product->field_values)
+                ? json_decode($product->field_values, true)
+                : $product->field_values;
+
+            $product->unit_type = $product->unit_type ?? '';
+
+            $product->main_category = $product->subCategory->mainCategory ?? null;
+            $product->sub_category = $product->subCategory ?? null;
+
+            return $product;
+        });
     }
 
+    // Sales Report View ----------------------------->
     public function salesReport(Request $request)
     {
         $from = $request->input('from_date');
@@ -304,6 +408,88 @@ class SalerController extends Controller
 
         return view('saler.saler-sales-report', compact('salesReport', 'from', 'to'));
     }
+
+    // Sales Report Export ---------------------------->
+    public function exportSalesReport(Request $request)
+    {
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
+
+        $query = SoldItems::query();
+
+        if ($from && $to) {
+            $query->whereBetween('sold_date', [
+                Carbon::parse($from)->format('Y-m-d'),
+                Carbon::parse($to)->format('Y-m-d')
+            ]);
+        }
+
+        $sales = $query->orderBy('sold_date', 'desc')->get();
+
+        $rows = [];
+
+        foreach ($sales as $report) {
+            $products = is_array($report->products) ? $report->products : [];
+
+            $productLines = [];
+            $totalProfit = 0;
+            $totalCost = 0;
+            $productCounter = 1;
+
+            foreach ($products as $product) {
+                $productModel = \App\Models\Product::find($product['product_id']);
+
+                $name = $productModel->product_name ?? 'N/A';
+                $rate = $product['customer_product_rate'];
+                $qty = $product['customer_purchase_quantity'];
+                $selling = $product['customer_product_selling_price'];
+
+                $cost = $rate * $qty;
+                $profit = $selling - $cost;
+                $profitPercentage = $cost > 0 ? round(($profit / $cost) * 100) : 0;
+
+                $totalCost += $cost;
+                $totalProfit += $profit;
+
+                // Decode field_values (other details)
+                $fieldValues = is_string($productModel->field_values ?? null)
+                    ? json_decode($productModel->field_values, true)
+                    : (is_array($productModel->field_values) ? $productModel->field_values : []);
+
+                $detailsString = '';
+                if (!empty($fieldValues)) {
+                    $detailsList = [];
+                    foreach ($fieldValues as $key => $value) {
+                        $keyFormatted = ucwords(str_replace('_', ' ', $key));
+                        $detailsList[] = "$keyFormatted: $value";
+                    }
+                    $detailsString = ' (' . implode(', ', $detailsList) . ')';
+                }
+
+                $productLines[] = $productCounter++ . ". $name$detailsString - Rate: ₹" . number_format($rate, 2) .
+                    ", Qty: $qty, Profit % : $profitPercentage%" .
+                    ", Selling: ₹" . number_format($selling, 2) .
+                    ", Profit: ₹" . number_format($profit, 2);
+            }
+
+            $rows[] = [
+                'Date' => Carbon::parse($report->sold_date)->format('d/m/Y'),
+                'Customer Name' => $report->customer_name,
+                'Customer Email' => $report->custome_email,
+                'Customer Mobile' => $report->custome_mobile,
+                'Product Details' => implode("\n", $productLines),
+                'Overall Profit Amount' => "₹" . number_format($totalProfit, 2),
+                'Overall Profit %' => $totalCost > 0 ? round(($totalProfit / $totalCost) * 100, 2) . '%' : '0%',
+            ];
+        }
+
+        $filePath = storage_path('app/sales_report.csv');
+
+        SimpleExcelWriter::create($filePath)->addRows($rows);
+
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
 
     // Saler Profile View---------------------------->
     public function salerProfileView()
@@ -343,5 +529,66 @@ class SalerController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Password updated successfully!');
+    }
+
+    // Stock Refill View ---------------------------->
+    public function stockRefillView()
+    {
+        $products = Product::where('purchase_unit', '<', 4)->get();
+        return view('saler.saler-stock-refill', compact('products'));
+    }
+
+    public function exportStockRefill()
+    {
+        $products = Product::with(['subCategory.mainCategory'])
+            ->where('purchase_unit', '<=', 3)
+            ->get();
+
+        $rows = [];
+        $counter = 1;
+
+        foreach ($products as $product) {
+            $mainCategory = $product->subCategory->mainCategory->main_category_name ?? 'N/A';
+            $subCategory = $product->subCategory->sub_category_name ?? 'N/A';
+
+            // Determine stock status
+            if ($product->purchase_unit == 0) {
+                $stockStatus = 'Out of Stock';
+            } elseif ($product->purchase_unit <= 3) {
+                $stockStatus = "{$product->purchase_unit} {$product->unit_type} Refill";
+            } else {
+                $stockStatus = "{$product->purchase_unit} {$product->unit_type}";
+            }
+
+            // Parse dynamic fields
+            $fields = is_string($product->field_values)
+                ? json_decode($product->field_values, true)
+                : ($product->field_values ?? []);
+
+            $fieldDetails = [];
+            if (is_array($fields)) {
+                foreach ($fields as $label => $value) {
+                    $fieldDetails[] = "$label: $value";
+                }
+            }
+
+            $rows[] = [
+                'SL' => $counter++,
+                'Product Name' => $product->product_name,
+                'Main Category' => $mainCategory,
+                'Sub Category' => $subCategory,
+                'Stock Status' => $stockStatus,
+                'Purchase Details' => $product->purchase_details ?? 'N/A',
+                'Purchase Rate' => $product->purchase_rate ?? 'N/A',
+                'Transport Cost' => $product->transport_cost ?? 'N/A',
+                'Descriptive Fields' => implode("\n", $fieldDetails),
+            ];
+        }
+
+        $filePath = storage_path('app/stock_refill_report.csv');
+
+        SimpleExcelWriter::create($filePath)->addRows($rows);
+
+        return response()->download($filePath)->deleteFileAfterSend(true);
     }
 }

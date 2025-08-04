@@ -372,17 +372,18 @@
                             <div class="flex flex-row -mx-3">
                                 <div class="flex-none w-2/3 max-w-full px-3">
                                     <div>
-                                        <p
-                                            class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                                        <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                             Today's Sales
                                         </p>
-                                        <h5 class="mb-2 font-bold dark:text-white">₹3,000</h5>
+                                        <h5 class="mb-2 font-bold dark:text-white">₹{{ number_format($todaysSales, 2) }}</h5>
                                         <p class="mb-0 dark:text-white dark:opacity-60">
-                                            <span
-                                                class="text-sm font-bold leading-normal text-emerald-500">+55%</span>
-                                            since yesterday
+                                            <span class="text-sm font-bold leading-normal text-emerald-500">
+                                                ₹{{ number_format($yesterdaysSales, 2) }}
+                                            </span>
+                                            yesterday - {{ $yesterdaySalesDate ?? 'N/A' }}
                                         </p>
                                     </div>
+
                                 </div>
                                 <div class="px-3 text-right basis-1/3">
                                     <div
@@ -409,11 +410,11 @@
                                             class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                             Today's Selling Products
                                         </p>
-                                        <h5 class="mb-2 font-bold dark:text-white">30</h5>
+                                        <h5 class="mb-2 font-bold dark:text-white">+{{ $todaysProductQty }}</h5>
                                         <p class="mb-0 dark:text-white dark:opacity-60">
                                             <span
-                                                class="text-sm font-bold leading-normal text-emerald-500">+3%</span>
-                                            since yesterday
+                                                class="text-sm font-bold leading-normal text-emerald-500">+{{ $yesterdaysProductQty }}</span>
+                                            yesterday - {{ $yesterdaySellingProductDate ?? 'N/A' }}
                                         </p>
                                     </div>
                                 </div>
@@ -432,7 +433,7 @@
                 <!-- card3 -->
                 <div
                     class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
-                    <a href="sales-stock-refill.html"
+                    <a href="/saler/sales-stock-refill"
                         class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                         <div class="flex-auto p-4">
                             <div class="flex flex-row -mx-3">
@@ -442,11 +443,11 @@
                                             class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                             Stock refill
                                         </p>
-                                        <h5 class="mb-2 font-bold text-red-600">+62</h5>
+                                        <h5 class="mb-2 font-bold text-red-600">+{{ $stockRefillCount }}</h5>
                                         <p class="mb-0 dark:text-white dark:opacity-60">
                                             <span
-                                                class="text-sm font-bold leading-normal text-red-600">12/06/2025</span>
-                                            last refill
+                                                class="text-sm font-bold leading-normal text-red-600">need</span>
+                                            stock refill
                                         </p>
                                     </div>
                                 </div>

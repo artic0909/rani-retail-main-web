@@ -325,7 +325,6 @@
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
                                     <h6 class="dark:text-white">Filter Products</h6>
-                                    <button type="submit" class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85" style="font-size: 14px">Add to Cart</button>
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
@@ -333,21 +332,14 @@
                                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                                             <thead class="align-bottom">
                                                 <tr style="text-align:center; border-bottom: 1px solid #ccc;">
-                                                    <th>Product Name
-                                                    </th>
-                                                    <th> Colors
-                                                    </th>
-                                                    <th>Sizes
-                                                    </th>
-
-                                                    <th>Purchase Unit
-                                                    </th>
-
-                                                    <th> Purchase Rate
-                                                    </th>
-
-                                                    <th>Transport Cost
-                                                    </th>
+                                                    <th>SL.</th>
+                                                    <th>Product Name</th>
+                                                    <th>Category</th>
+                                                    <th>Decriptive Fields</th>
+                                                    <th>Purchase Details</th>
+                                                    <th>Stock Status</th>
+                                                    <th>Purchase Rate</th>
+                                                    <th>Transport Cost</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="products-table-body">
@@ -378,7 +370,7 @@
         const subCategorySelect = document.querySelector("#sub-category");
         const showButton = document.querySelector("#show-products-btn");
 
-        // Load subcategories when main category changes
+        // Load subcategories on main category change
         mainCategorySelect.addEventListener("change", function() {
             const mainCategoryId = this.value;
 
@@ -397,7 +389,7 @@
                 });
         });
 
-        // Load products when "SHOW" button is clicked
+        // Load products when SHOW button is clicked
         showButton.addEventListener("click", function() {
             const subCategoryId = subCategorySelect.value;
             const tableBody = document.querySelector("#products-table-body");
@@ -422,40 +414,58 @@
                     tableBody.innerHTML = "";
 
                     if (data.length === 0) {
-                        tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No products found.</td></tr>';
+                        tableBody.innerHTML = '<tr><td colspan="8" class="text-center p-4">No products found.</td></tr>';
                         return;
                     }
 
-                    data.forEach(product => {
-                        let fieldsHtml = '';
+                    data.forEach((product, index) => {
+                        let fieldsHtml = 'N/A';
 
                         if (product.field_values && typeof product.field_values === 'object') {
+                            fieldsHtml = '';
                             for (const [key, value] of Object.entries(product.field_values)) {
-                                let displayValue = Array.isArray(value) ?
-                                    value.join(', ') :
-                                    (typeof value === 'object' ? JSON.stringify(value) : (value ?? 'N/A'));
-
-                                fieldsHtml += `<div><strong>${key}:</strong> ${displayValue}</div>`;
+                                const display = Array.isArray(value) ? value.join(', ') :
+                                    typeof value === 'object' ? JSON.stringify(value) :
+                                    value ?? 'N/A';
+                                fieldsHtml += `<div><strong>${key}:</strong> ${display}</div>`;
                             }
+                        }
+
+                        // Format stock display
+                        const unit = product.unit_type ?? '';
+                        const purchaseUnit = parseFloat(product.purchase_unit ?? 0);
+                        let stockDisplay = '';
+                        let stockStyle = '';
+
+                        if (purchaseUnit === 0) {
+                            stockDisplay = 'Out of Stock';
+                            stockStyle = 'color: red; font-weight: bold;';
+                        } else if (purchaseUnit <= 3) {
+                            stockDisplay = `${purchaseUnit} ${unit} Refill`;
+                            stockStyle = 'color: orange; font-weight: bold;';
                         } else {
-                            fieldsHtml = 'N/A';
+                            stockDisplay = `${purchaseUnit} ${unit}`;
+                            stockStyle = 'color: green;';
                         }
 
                         tableBody.innerHTML += `
-                            <tr  style="text-align:center; border-bottom: 1px solid #ccc;">
-                                <td>${product.product_name}</td>
-                                <td>${fieldsHtml}</td>
-                                <td>${product.sizes ?? 'N/A'}</td>
-                                <td>${product.purchase_unit ?? 'N/A'}</td>
-                                <td>${product.purchase_rate ?? 'N/A'}</td>
-                                <td>${product.transport_cost ?? 'N/A'}</td>
-                                
-                            </tr>`;
+                        <tr style="text-align:center; border-bottom: 1px solid #ccc;">
+                            <td>${index + 1}</td>
+                            <td>${product.product_name}</td>
+                            <td>${product.main_category?.main_category_name ?? 'N/A'} - ${product.sub_category?.sub_category_name ?? 'N/A'}</td>
+                            <td>${fieldsHtml}</td>
+                            <td>${product.purchase_details ?? 'N/A'}</td>
+                            <td style="${stockStyle}">${stockDisplay}</td>
+                            <td>${product.purchase_rate ?? 'N/A'}</td>
+                            <td>${product.transport_cost ?? 'N/A'}</td>
+                        </tr>`;
                     });
                 });
         });
     });
 </script>
+
+
 
 <!-- plugin for scrollbar  -->
 <script src="../assets/js/plugins/perfect-scrollbar.min.js" async></script>

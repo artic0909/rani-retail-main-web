@@ -169,15 +169,15 @@
                     <ol
                         class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
                         <li class="text-sm leading-normal">
-                            <a class="text-white font-bold" href="">Back</a>
+                            <a class="text-white font-bold" href="#">Sales</a>
                         </li>
                         <li
                             class="text-sm pl-2 capitalize leading-normal text-white before:float-left before:pr-2 before:text-white before:content-['/']"
                             aria-current="page">
-                            Add
+                            Report
                         </li>
                     </ol>
-                    <h6 class="mb-0 font-bold text-white capitalize">Show Products</h6>
+                    <h6 class="mb-0 font-bold text-white capitalize">Sales Report</h6>
                 </nav>
                 <div
                     class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
@@ -246,7 +246,6 @@
                 </div>
             </div>
         </nav>
-
 
         <!-- Products Show -->
         <div class="w-full p-6 mx-auto">
@@ -330,7 +329,18 @@
                                     @else
                                     <h6 class="dark:text-white;">Sales Report</h6>
                                     @endif
-                                    <a href="" class="text-sm text-cyan-500 underline">Export Report</a>
+
+                                    @php
+                                    $query = [];
+                                    if(request('from_date')) $query['from_date'] = request('from_date');
+                                    if(request('to_date')) $query['to_date'] = request('to_date');
+                                    @endphp
+
+                                    <a href="{{ route('saler.sales.report.export', $query) }}"
+                                        class="text-sm text-cyan-500 underline">
+                                        Export Report
+                                    </a>
+
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
@@ -342,6 +352,7 @@
                                                     <td>Date</td>
                                                     <td>Customer Details</td>
                                                     <td>Products Details</td>
+                                                    <td>Purchase Details</td>
                                                     <td>Total Amount</td>
                                                     <td>Costing Amount</td>
                                                     <td>Profit Amount</td>
@@ -361,6 +372,40 @@
                                                         {{ $report->custome_mobile }}
                                                     </td>
 
+                                                    <td style="text-align: left;">
+                                                        @php
+                                                        $products = $report->products;
+                                                        @endphp
+
+                                                        @foreach($products as $product)
+                                                        @php
+                                                        $productModel = \App\Models\Product::find($product['product_id']);
+
+                                                        // Decode or use directly
+                                                        $fieldValues = is_string($productModel->field_values ?? null)
+                                                        ? json_decode($productModel->field_values, true)
+                                                        : (is_array($productModel->field_values) ? $productModel->field_values : []);
+                                                        @endphp
+
+                                                        <div style="margin-bottom: 12px; margin-top: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background-color: #f9f9f9;">
+                                                            <strong>Product Name:</strong> {{ $productModel->product_name ?? 'N/A' }}<br>
+
+                                                            @if (!empty($fieldValues))
+                                                            <div style="margin-top: 5px;">
+                                                                <strong>Details:</strong>
+                                                                <ul style="margin: 0; padding-left: 16px;">
+                                                                    @foreach($fieldValues as $key => $value)
+                                                                    <li><strong>{{ ucwords(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}</li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
+                                                            @endif
+                                                        </div>
+                                                        @endforeach
+                                                    </td>
+
+
+
                                                     <td>
                                                         @php
                                                         $products = $report->products;
@@ -370,7 +415,7 @@
                                                         @php
                                                         $productModel = \App\Models\Product::find($product['product_id']);
                                                         @endphp
-                                                        Product Name: {{ $productModel->product_name ?? 'N/A' }}<br>
+
                                                         Rate: ₹{{ $product['customer_product_rate'] }}<br>
                                                         Qty: {{ $product['customer_purchase_quantity'] }}<br>
                                                         Profit: {{ $product['customer_profit_percentage'] }}%<br>
