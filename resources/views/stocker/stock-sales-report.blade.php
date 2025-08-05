@@ -323,14 +323,14 @@
                         </div>
                         <div class="flex-auto p-6">
                             <div class="flex flex-wrap -mx-3">
-                                <div
+                                <form method="GET" action="{{ route('stock.stock-sales-report') }}"
                                     class="w-full max-w-full px-3 shrink-0 md:w-full md:flex-0">
                                     <div class="mb-4">
                                         <label
                                             for="username"
                                             class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">From*</label>
                                         <input
-                                            type="date"
+                                            type="date" name="from_date" value="{{ request('from_date') }}"
                                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                                     </div>
 
@@ -339,10 +339,34 @@
                                             for="username"
                                             class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">To*</label>
                                         <input
-                                            type="date"
+                                            type="date" name="to_date" value="{{ request('to_date') }}"
                                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                                     </div>
-                                </div>
+
+
+                                    <div
+                                        style="
+                          display: flex;
+                          justify-content: end;
+                          margin-top: 20px;
+                        ">
+                                        <button
+                                            id="show-products-btn"
+                                            type="submit"
+                                            class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
+                                            style="font-size: 14px">
+                                            SHOW
+                                        </button>
+
+                                        <a href="{{ route('stock.stock-sales-report') }}"
+                                            class="ml-4 px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in border-0 rounded-lg shadow-md cursor-pointer text-xs bg-blue-500 lg:block tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85"
+                                            style="font-size: 14px">
+                                            Clear
+                                        </a>
+                                    </div>
+
+                                </form>
+
                             </div>
                         </div>
                     </div>
@@ -356,96 +380,150 @@
                                 class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
-                                    <h6 class="dark:text-white">
-                                        Sales Report : 12/02/2025 to 13/02/2025
+                                    @if($from && $to)
+                                    <h6 class="dark:text-white;">
+                                        Sales Report : {{ \Carbon\Carbon::parse($from)->format('d/m/Y') }}
+                                        to
+                                        {{ \Carbon\Carbon::parse($to)->format('d/m/Y') }}
                                     </h6>
-                                    <a href="" class="text-sm text-cyan-500 underline">Export Report</a>
+                                    @else
+                                    <h6 class="dark:text-white;">Sales Report</h6>
+                                    @endif
+
+                                    @php
+                                    $query = [];
+                                    if(request('from_date')) $query['from_date'] = request('from_date');
+                                    if(request('to_date')) $query['to_date'] = request('to_date');
+                                    @endphp
+
+                                    <a href="{{ route('stock.sales.report.export', $query) }}"
+                                        class="text-sm text-cyan-500 underline">
+                                        Export Report
+                                    </a>
+
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
                                         <table
                                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                                             <thead class="align-bottom">
-                                                <tr>
-                                                    <th
-                                                        class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                        Product Name
-                                                    </th>
-                                                    <th
-                                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                        Product Details
-                                                    </th>
-                                                    <th
-                                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                        Seles Unit
-                                                    </th>
-
-                                                    <th
-                                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                        Sales Price
-                                                    </th>
-
-                                                    <th
-                                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                        Profit
-                                                    </th>
+                                                <tr style="text-align: center; border-bottom: 1px solid #ccc;">
+                                                    <td>SL</td>
+                                                    <td>Date</td>
+                                                    <td>Customer Details</td>
+                                                    <td>Products Details</td>
+                                                    <td>Purchase Details</td>
+                                                    <td>Total Amount</td>
+                                                    <td>Costing Amount</td>
+                                                    <td>Profit Amount</td>
+                                                    <td>Profit Percentage</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr style="text-align: center">
-                                                    <td
-                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                        <div class="flex px-2 py-1">
-                                                            <div>
-                                                                <img
-                                                                    src="../assets/img/team-4.jpg"
-                                                                    class="inline-flex items-center justify-center mr-4 text-sm text-white transition-all duration-200 ease-in-out h-9 w-9 rounded-xl"
-                                                                    alt="user3" />
+                                                @foreach($salesReport as $report)
+                                                <tr style="text-align: center; border-bottom: 1px solid #ccc;">
+                                                    <td>{{ $loop->iteration }}</td>
+
+                                                    <td>{{ \Carbon\Carbon::parse($report->sold_date)->format('d/m/Y') }}</td>
+
+                                                    <td>
+                                                        {{ $report->customer_name }}<br>
+                                                        {{ $report->custome_email }}<br>
+                                                        {{ $report->custome_mobile }}
+                                                    </td>
+
+                                                    <td style="text-align: left;">
+                                                        @php
+                                                        $products = $report->products;
+                                                        @endphp
+
+                                                        @foreach($products as $product)
+                                                        @php
+                                                        $productModel = \App\Models\Product::find($product['product_id']);
+
+                                                        // Decode or use directly
+                                                        $fieldValues = is_string($productModel->field_values ?? null)
+                                                        ? json_decode($productModel->field_values, true)
+                                                        : (is_array($productModel->field_values) ? $productModel->field_values : []);
+                                                        @endphp
+
+                                                        <div style="margin-bottom: 12px; margin-top: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background-color: #f9f9f9;">
+                                                            <strong>Product Name:</strong> {{ $productModel->product_name ?? 'N/A' }}<br>
+
+                                                            @if (!empty($fieldValues))
+                                                            <div style="margin-top: 5px;">
+                                                                <strong>Details:</strong>
+                                                                <ul style="margin: 0; padding-left: 16px;">
+                                                                    @foreach($fieldValues as $key => $value)
+                                                                    <li><strong>{{ ucwords(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}</li>
+                                                                    @endforeach
+                                                                </ul>
                                                             </div>
-                                                            <div class="flex flex-col justify-center">
-                                                                <h6
-                                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                                    sample
-                                                                </h6>
-                                                            </div>
+                                                            @endif
                                                         </div>
+                                                        @endforeach
                                                     </td>
 
-                                                    <td
-                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                        <div class="flex px-2 py-1">
-                                                            <div class="flex flex-col justify-center">
-                                                                <h6
-                                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                                    sample
-                                                                </h6>
-                                                            </div>
-                                                        </div>
+
+
+                                                    <td>
+                                                        @php
+                                                        $products = $report->products;
+                                                        @endphp
+
+                                                        @foreach($products as $product)
+                                                        @php
+                                                        $productModel = \App\Models\Product::find($product['product_id']);
+                                                        @endphp
+
+                                                        Rate: ₹{{ $product['customer_product_rate'] }}<br>
+                                                        Qty: {{ $product['customer_purchase_quantity'] }}<br>
+                                                        Profit: {{ $product['customer_profit_percentage'] }}%<br>
+                                                        Selling: ₹{{ $product['customer_product_selling_price'] }}<br>
+                                                        <hr>
+                                                        @endforeach
                                                     </td>
 
-                                                    <td
-                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                        <p
-                                                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">
-                                                            sample
-                                                        </p>
-                                                    </td>
+                                                    {{-- Total Amount (Selling) --}}
+                                                    <td>₹{{ number_format($report->customer_overall_total_amount, 2) }}</td>
 
-                                                    <td
-                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                        <p
-                                                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">
-                                                            sample
-                                                        </p>
-                                                    </td>
+                                                    {{-- START: Costing calculation only --}}
+                                                    @php
+                                                    $totalProfit = 0;
+                                                    $totalCost = 0;
 
-                                                    <td
-                                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                        <span
-                                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">sample</span>
+                                                    foreach ($products as $product) {
+                                                    $rate = $product['customer_product_rate'];
+                                                    $qty = $product['customer_purchase_quantity'];
+                                                    $selling = $product['customer_product_selling_price'];
+
+                                                    $cost = $rate * $qty;
+                                                    $profit = $selling - $cost;
+
+                                                    $totalProfit += $profit;
+                                                    $totalCost += $cost;
+                                                    }
+                                                    @endphp
+
+                                                    <td>₹{{ number_format($totalCost, 2) }}</td>
+
+                                                    {{-- Profit Amount --}}
+                                                    <td>₹{{ number_format($totalProfit, 2) }}</td>
+
+                                                    {{-- Profit Percentage (unchanged) --}}
+                                                    <td>
+                                                        @if($totalCost > 0)
+                                                        {{ round(($totalProfit / $totalCost) * 100, 2) }}%
+                                                        @else
+                                                        0%
+                                                        @endif
                                                     </td>
                                                 </tr>
+                                                @endforeach
+
+
                                             </tbody>
+
                                         </table>
                                     </div>
                                 </div>

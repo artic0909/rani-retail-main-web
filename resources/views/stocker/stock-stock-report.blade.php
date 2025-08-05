@@ -323,7 +323,7 @@
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
                                     <h6 class="dark:text-white">Stock Report</h6>
-                                    <a href="" class="text-sm text-cyan-500 underline">Export Report</a>
+                                    <a href="{{ route('stock.report.export') }}" class="text-sm text-cyan-500 underline">Export Report</a>
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">
@@ -333,11 +333,11 @@
                                                 <tr>
                                                     <th
                                                         class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                        Main Categories
+                                                        Main Category
                                                     </th>
                                                     <th
                                                         class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                        Total Sub Categories
+                                                        Sub Category
                                                     </th>
                                                     <th
                                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -348,43 +348,44 @@
                                             </thead>
                                             <tbody>
                                                 @foreach($mainCategories as $mainCategory)
+                                                @foreach($mainCategory->subCategories as $subCategory)
                                                 <tr style="text-align: center">
-                                                    <td
-                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                    <!-- Main Category -->
+                                                    <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                                         <div class="flex px-2 py-1">
-
                                                             <div class="flex flex-col justify-center">
-                                                                <h6
-                                                                    class="mb-0 text-sm leading-normal dark:text-white">
+                                                                <h6 class="mb-0 text-sm leading-normal dark:text-white">
                                                                     {{ $mainCategory->main_category_name }}
                                                                 </h6>
                                                             </div>
                                                         </div>
                                                     </td>
 
-                                                    <td
-                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                    <!-- Sub Category -->
+                                                    <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                                         <div class="flex px-2 py-1">
                                                             <div class="flex flex-col justify-center">
-                                                                <h6
-                                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                                    {{ $mainCategory->subCategories->count() }}
+                                                                <h6 class="mb-0 text-sm leading-normal dark:text-white">
+                                                                    {{ $subCategory->sub_category_name }}
                                                                 </h6>
                                                             </div>
                                                         </div>
                                                     </td>
 
-                                                    <td
-                                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                        <p
-                                                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">
-                                                            {{ $mainCategory->subCategories->sum(fn($sub) => $sub->products->count()) }}
-                                                        </p>
+                                                    <!-- Total Products in this Sub Category -->
+                                                    <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                        @php $count = $subCategory->products->count(); @endphp
+                                                        @if($count === 0)
+                                                        <p class="mb-0 text-xs font-semibold leading-tight text-red-600 dark:text-red-400">Empty</p>
+                                                        @else
+                                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">{{ $count }}</p>
+                                                        @endif
                                                     </td>
-
                                                 </tr>
                                                 @endforeach
+                                                @endforeach
                                             </tbody>
+
                                         </table>
                                     </div>
                                 </div>

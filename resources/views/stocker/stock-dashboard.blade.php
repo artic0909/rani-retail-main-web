@@ -275,15 +275,15 @@
               <div class="flex flex-row -mx-3">
                 <div class="flex-none w-2/3 max-w-full px-3">
                   <div>
-                    <p
-                      class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                    <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                       Today's Sales
                     </p>
-                    <h5 class="mb-2 font-bold dark:text-white">₹3,000</h5>
+                    <h5 class="mb-2 font-bold dark:text-white">₹{{ number_format($todaysSales, 2) }}</h5>
                     <p class="mb-0 dark:text-white dark:opacity-60">
-                      <span
-                        class="text-sm font-bold leading-normal text-emerald-500">+55%</span>
-                      since yesterday
+                      <span class="text-sm font-bold leading-normal text-emerald-500">
+                        ₹{{ number_format($yesterdaysSales, 2) }}
+                      </span>
+                      yesterday - {{ $yesterdaySalesDate ?? 'N/A' }}
                     </p>
                   </div>
                 </div>
@@ -312,11 +312,11 @@
                       class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                       Today's Selling Products
                     </p>
-                    <h5 class="mb-2 font-bold dark:text-white">30</h5>
+                    <h5 class="mb-2 font-bold dark:text-white">+{{ $todaysProductQty }}</h5>
                     <p class="mb-0 dark:text-white dark:opacity-60">
                       <span
-                        class="text-sm font-bold leading-normal text-emerald-500">+3%</span>
-                      since yesterday
+                        class="text-sm font-bold leading-normal text-emerald-500">+{{ $yesterdaysProductQty }}</span>
+                      yesterday - {{ $yesterdaySellingProductDate ?? 'N/A' }}
                     </p>
                   </div>
                 </div>
@@ -345,11 +345,11 @@
                       class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                       Stock refill
                     </p>
-                    <h5 class="mb-2 font-bold text-red-600">+62</h5>
+                    <h5 class="mb-2 font-bold text-red-600">+{{ $stockRefillCount }}</h5>
                     <p class="mb-0 dark:text-white dark:opacity-60">
                       <span
-                        class="text-sm font-bold leading-normal text-red-600">12/06/2025</span>
-                      last refill
+                        class="text-sm font-bold leading-normal text-red-600">need</span>
+                      stock refill
                     </p>
                   </div>
                 </div>
@@ -373,15 +373,17 @@
               <div class="flex flex-row -mx-3">
                 <div class="flex-none w-2/3 max-w-full px-3">
                   <div>
-                    <p
-                      class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                      Last Month Sales
+                    <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                      This Month Sales
                     </p>
-                    <h5 class="mb-2 font-bold dark:text-white">₹10,030</h5>
+                    <h5 class="mb-2 font-bold dark:text-white">₹{{ number_format($thisMonthSales, 2) }}</h5>
+
                     <p class="mb-0 dark:text-white dark:opacity-60">
-                      <span
-                        class="text-sm font-bold leading-normal text-emerald-500">+5%</span>
-                      May
+                      <span class="text-sm font-bold leading-normal text-emerald-500">
+                        ₹{{ number_format($lastMonthSales, 2) }}
+                      </span>
+                      {{ $lastMonthName }}
+                      <!-- last month -->
                     </p>
                   </div>
                 </div>
@@ -425,7 +427,7 @@
                             class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                             Main Category
                           </p>
-                          <h5 class="mb-2 font-bold dark:text-white">Total - 33</h5>
+                          <h5 class="mb-2 font-bold dark:text-white">Total - {{ $mainCategoryCount }}</h5>
 
                         </div>
                       </div>
@@ -454,7 +456,7 @@
                             class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                             Sub Categories
                           </p>
-                          <h5 class="mb-2 font-bold dark:text-white">Total - 55</h5>
+                          <h5 class="mb-2 font-bold dark:text-white">Total - {{ $subCategoryCount }}</h5>
 
                         </div>
                       </div>
@@ -522,270 +524,44 @@
               <table
                 class="items-center w-full mb-4 align-top border-collapse border-gray-200 dark:border-white/40">
                 <tbody>
+                  @foreach($monthlySales as $monthData)
                   <tr>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
+                    <td class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
                       <div class="flex items-center px-2 py-1">
                         <div class="ml-6">
-                          <p
-                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
+                          <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
                             Month:
                           </p>
-                          <h6
-                            class="mb-0 text-sm leading-normal dark:text-white">
-                            January
+                          <h6 class="mb-0 text-sm leading-normal dark:text-white">
+                            {{ $monthData['month'] }}
                           </h6>
                         </div>
                       </div>
                     </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
                       <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
+                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
                           Sales:
                         </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹25000
+                        <h6 class="mb-0 text-sm leading-normal dark:text-white">
+                          ₹{{ number_format($monthData['total_sales'], 2) }}
                         </h6>
                       </div>
                     </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
                       <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
+                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
                           Profit:
                         </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹8,900
+                        <h6 class="mb-0 text-sm leading-normal dark:text-white">
+                          ₹{{ number_format($monthData['total_profit'], 2) }}
                         </h6>
                       </div>
                     </td>
                   </tr>
-
-                  <tr>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                      <div class="flex items-center px-2 py-1">
-                        <div class="ml-6">
-                          <p
-                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                            Month:
-                          </p>
-                          <h6
-                            class="mb-0 text-sm leading-normal dark:text-white">
-                            June
-                          </h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Sales:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹25000
-                        </h6>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Profit:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹8,900
-                        </h6>
-                      </div>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                      <div class="flex items-center px-2 py-1">
-                        <div class="ml-6">
-                          <p
-                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                            Month:
-                          </p>
-                          <h6
-                            class="mb-0 text-sm leading-normal dark:text-white">
-                            May
-                          </h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Sales:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹25000
-                        </h6>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Profit:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹8,900
-                        </h6>
-                      </div>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                      <div class="flex items-center px-2 py-1">
-                        <div class="ml-6">
-                          <p
-                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                            Month:
-                          </p>
-                          <h6
-                            class="mb-0 text-sm leading-normal dark:text-white">
-                            April
-                          </h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Sales:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹25000
-                        </h6>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Profit:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹8,900
-                        </h6>
-                      </div>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                      <div class="flex items-center px-2 py-1">
-                        <div class="ml-6">
-                          <p
-                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                            Month:
-                          </p>
-                          <h6
-                            class="mb-0 text-sm leading-normal dark:text-white">
-                            March
-                          </h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Sales:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹25000
-                        </h6>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Profit:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹8,900
-                        </h6>
-                      </div>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                      <div class="flex items-center px-2 py-1">
-                        <div class="ml-6">
-                          <p
-                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                            Month:
-                          </p>
-                          <h6
-                            class="mb-0 text-sm leading-normal dark:text-white">
-                            February
-                          </h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Sales:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹25000
-                        </h6>
-                      </div>
-                    </td>
-                    <td
-                      class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                      <div class="text-center">
-                        <p
-                          class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                          Profit:
-                        </p>
-                        <h6
-                          class="mb-0 text-sm leading-normal dark:text-white">
-                          ₹8,900
-                        </h6>
-                      </div>
-                    </td>
-                  </tr>
+                  @endforeach
                 </tbody>
+
               </table>
             </div>
           </div>
@@ -796,7 +572,7 @@
           <div
             class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
             <div class="p-4 pb-0 rounded-t-4">
-              <h6 class="mb-0 dark:text-white">Product Categories</h6>
+              <h6 class="mb-0 dark:text-white">Product Categories {{ count($mainCategories) }}</h6>
             </div>
             <div class="flex-auto p-4">
               <ul class="flex flex-col pl-0 mb-0 rounded-lg">
@@ -816,7 +592,7 @@
                         {{ $mainCategory->main_category_name }}
                       </h6>
                       <span class="text-xs leading-tight dark:text-white/80">
-                        <span class="font-semibold">{{ count($mainCategory->subCategories) }} Sub Categories</span></span>
+                        <span class="font-semibold" style="color: red;">{{ count($mainCategory->subCategories) }}</span> Sub Categories</span>
                     </div>
                   </div>
 

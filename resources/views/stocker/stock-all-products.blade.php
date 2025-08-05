@@ -384,7 +384,6 @@
                                 <div
                                     class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent flex justify-between">
                                     <h6 class="dark:text-white">Filter Products</h6>
-                                    <a href="" class="text-sm text-cyan-500 underline">Export</a>
                                 </div>
                                 <div class="flex-auto px-0 pt-0 pb-2">
                                     <div class="p-0 overflow-x-auto">

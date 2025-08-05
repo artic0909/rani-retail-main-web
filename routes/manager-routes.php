@@ -67,8 +67,13 @@ Route::middleware('auth:managers')->group(function () {
 
     // Stock Report
     Route::get('/stock/stock-stock-report', [ManagerController::class, 'stockReportView'])->name('stock-report');
-
+    Route::get('/stock/stock-report/export', [ManagerController::class, 'exportStockReport'])->name('stock.report.export');
 
     // Sales Report
-    Route::get('/stock/stock-sales-report', [ManagerController::class, 'salesReportView'])->name('stock-sales-report');
+    Route::get('/stock/stock-sales-report', [ManagerController::class, 'salesReportView'])->name('stock.stock-sales-report');
+    Route::get('/stock/sales-report/export', [ManagerController::class, 'exportSalesReport'])->name('stock.sales.report.export');
+
+    // Stock Refill
+    Route::get('/stock/stock-stock-refill', [ManagerController::class, 'stockRefillView'])->name('stock.stock-refill');
+    Route::get('/stock/export-stock-refill', [ManagerController::class, 'exportStockRefill'])->name('stock.export.stock.refill');
 });

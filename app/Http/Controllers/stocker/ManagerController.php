@@ -17,6 +17,10 @@ use App\Models\SubCategory;
 use App\Models\SubCategoryDescriptiveFields;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\FilteredProductsExport;
+use App\Models\SoldItems;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ManagerController extends Controller
 {
@@ -42,11 +46,150 @@ class ManagerController extends Controller
     // Stock Dashboard View---------------------------->
     public function stockDashboardView()
     {
+        $mainCategoryCount = MainCategory::count();
+        $subCategoryCount = SubCategory::count();
         $mainCategories = MainCategory::with('subCategories.products')
             ->inRandomOrder()
             ->paginate(6);
 
-        return view('stocker.stock-dashboard', compact('mainCategories'));
+
+        $today = Carbon::today();
+
+        $todaysSales = SoldItems::whereDate('sold_date', $today)
+            ->sum('customer_overall_total_amount');
+
+        $todaysProductQty = SoldItems::whereDate('sold_date', $today)
+            ->with('products')
+            ->get()
+            ->sum(function ($sale) {
+                return collect($sale->products)->sum('customer_purchase_quantity');
+            });
+
+
+        $lastSalesDay = SoldItems::whereDate('sold_date', '<', $today)
+            ->orderByDesc('sold_date')
+            ->value('sold_date');
+
+
+        $yesterdaysSales = 0;
+        $yesterdaysProductQty = 0;
+        $yesterdaySalesDate = null;
+        $yesterdaySellingProductDate = null;
+
+        if ($lastSalesDay) {
+
+            $yesterdaysSales = SoldItems::whereDate('sold_date', $lastSalesDay)
+                ->sum('customer_overall_total_amount');
+
+            $yesterdaysProductQty = SoldItems::whereDate('sold_date', $lastSalesDay)
+                ->with('products')
+                ->get()
+                ->sum(function ($sale) {
+                    return collect($sale->products)->sum('customer_purchase_quantity');
+                });
+
+            $yesterdaySalesDate = Carbon::parse($lastSalesDay)->format('d M');
+            $yesterdaySellingProductDate = Carbon::parse($lastSalesDay)->format('d M');
+        }
+
+        $stockRefillCount = Product::where('purchase_unit', '<=', 3)->count();
+
+        $now = Carbon::now();
+
+        // This Month
+        $thisMonthSales = SoldItems::whereMonth('sold_date', $now->month)
+            ->whereYear('sold_date', $now->year)
+            ->sum('customer_overall_total_amount');
+
+        // Last Month
+        $lastMonth = $now->copy()->subMonth();
+        $lastMonthSales = SoldItems::whereMonth('sold_date', $lastMonth->month)
+            ->whereYear('sold_date', $lastMonth->year)
+            ->sum('customer_overall_total_amount');
+
+
+
+        // Last latest sales
+        $latestSales = SoldItems::orderByDesc('id')->get();
+
+        foreach ($latestSales as $sale) {
+            $productDetails = [];
+            $productItems = is_string($sale->products) ? json_decode($sale->products, true) : $sale->products;
+
+            if (is_array($productItems)) {
+                foreach ($productItems as $item) {
+                    $product = Product::find($item['product_id'] ?? null);
+                    if ($product) {
+                        $productDetails[] = [
+                            'name' => $product->product_name,
+                            'field_values' => $product->field_values,
+                            'rate' => $item['customer_product_rate'] ?? null,
+                            'quantity' => $item['customer_purchase_quantity'] ?? null,
+                            'profit' => $item['customer_profit_percentage'] ?? null,
+                            'selling_price' => $item['customer_product_selling_price'] ?? null,
+                        ];
+                    }
+                }
+            }
+
+            $sale->productDetails = $productDetails;
+        }
+
+        $records = DB::table('sold_items')
+            ->where('sold_date', '>=', now()->subMonths(6))
+            ->get();
+
+        $monthlySales = [];
+
+        foreach ($records as $record) {
+            $month = Carbon::parse($record->sold_date)->format('F'); // e.g., "August"
+
+            $products = json_decode($record->products, true);
+            $totalProfit = 0;
+
+            foreach ($products as $product) {
+                $rate = floatval($product['customer_product_rate']);
+                $qty = floatval($product['customer_purchase_quantity']);
+                $profit_percent = floatval($product['customer_profit_percentage']);
+
+                // Calculate profit for each product
+                $totalProfit += ($rate * $qty) * ($profit_percent / 100);
+            }
+
+            if (!isset($monthlySales[$month])) {
+                $monthlySales[$month] = [
+                    'month' => $month,
+                    'total_sales' => 0,
+                    'total_profit' => 0,
+                ];
+            }
+
+            $monthlySales[$month]['total_sales'] += $record->customer_overall_total_amount;
+            $monthlySales[$month]['total_profit'] += $totalProfit;
+        }
+
+        // Sort by recent months (optional)
+        $monthlySales = collect($monthlySales)->sortByDesc(function ($data) {
+            return Carbon::parse('1 ' . $data['month']);
+        })->take(6);
+
+        return view('stocker.stock-dashboard', [
+            'mainCategoryCount' => $mainCategoryCount,
+            'subCategoryCount' => $subCategoryCount,
+            'yesterdaySalesDate' => $yesterdaySalesDate,
+            'yesterdaySellingProductDate' => $yesterdaySellingProductDate,
+            'yesterdaysSales' => $yesterdaysSales,
+            'yesterdaysProductQty' => $yesterdaysProductQty,
+            'todaysSales' => $todaysSales,
+            'todaysProductQty' => $todaysProductQty,
+            'stockRefillCount' => $stockRefillCount,
+            'thisMonthSales' => $thisMonthSales,
+            'lastMonthSales' => $lastMonthSales,
+            'mainCategories' => $mainCategories,
+            'lastMonthName' => $lastMonth->format('F'),
+            'latestSales' => $latestSales,
+            'monthlySales' => $monthlySales,
+        ]);
     }
 
     // Stock Manager Register Function---------------------------->
@@ -439,9 +582,214 @@ class ManagerController extends Controller
         return view('stocker.stock-stock-report', compact('mainCategories'));
     }
 
-    // Sales Report View---------------------------->
-    public function salesReportView()
+    public function exportStockReport()
     {
-        return view('stocker.stock-sales-report');
+        $filePath = storage_path('app/stock_report.csv');
+
+        $rows = [];
+
+        $mainCategories = MainCategory::with('subCategories.products')->get();
+
+        foreach ($mainCategories as $mainCategory) {
+            foreach ($mainCategory->subCategories as $subCategory) {
+                foreach ($subCategory->products as $product) {
+                    // Decode product details
+                    $detailsArray = is_string($product->field_values)
+                        ? json_decode($product->field_values, true)
+                        : (is_array($product->field_values) ? $product->field_values : []);
+
+                    $productDetails = collect($detailsArray)
+                        ->map(fn($val, $key) => ucwords(str_replace('_', ' ', $key)) . ': ' . $val)
+                        ->implode(', ');
+
+                    // Determine status
+                    $status = 'Available';
+                    if ($product->purchase_unit == 0) {
+                        $status = 'Out of Stock';
+                    } elseif ($product->purchase_unit <= 3) {
+                        $status = 'Stock Refill';
+                    }
+
+                    $rows[] = [
+                        'Main Category'   => $mainCategory->main_category_name,
+                        'Sub Category'    => $subCategory->sub_category_name,
+                        'Product Name'    => $product->product_name,
+                        'Product Details' => $productDetails ?: 'No Details',
+                        'Purchase Units'  => $product->purchase_unit,
+                        'Unit Type'       => $product->unit_type,
+                        'Purchase Rate'   => $product->purchase_rate,
+                        'Transport Cost'  => $product->transport_cost,
+                        'Status'          => $status,
+                    ];
+                }
+            }
+        }
+
+        SimpleExcelWriter::create($filePath)->addRows($rows);
+
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
+
+    // Sales Report View---------------------------->
+    public function salesReportView(Request $request)
+    {
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
+
+        $query = SoldItems::query();
+
+        if ($from && $to) {
+            $query->whereBetween('sold_date', [
+                Carbon::parse($from)->format('Y-m-d'),
+                Carbon::parse($to)->format('Y-m-d')
+            ]);
+        }
+
+        $salesReport = $query->orderBy('sold_date', 'desc')->with('products.product')->get();
+
+        return view('stocker.stock-sales-report', compact('salesReport', 'from', 'to'));
+    }
+
+    // Sales Report Export ---------------------------->
+    public function exportSalesReport(Request $request)
+    {
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
+
+        $query = SoldItems::query();
+
+        if ($from && $to) {
+            $query->whereBetween('sold_date', [
+                Carbon::parse($from)->format('Y-m-d'),
+                Carbon::parse($to)->format('Y-m-d')
+            ]);
+        }
+
+        $sales = $query->orderBy('sold_date', 'desc')->get();
+
+        $rows = [];
+
+        foreach ($sales as $report) {
+            $products = is_array($report->products) ? $report->products : [];
+
+            $productLines = [];
+            $totalProfit = 0;
+            $totalCost = 0;
+            $productCounter = 1;
+
+            foreach ($products as $product) {
+                $productModel = \App\Models\Product::find($product['product_id']);
+
+                $name = $productModel->product_name ?? 'N/A';
+                $rate = $product['customer_product_rate'];
+                $qty = $product['customer_purchase_quantity'];
+                $selling = $product['customer_product_selling_price'];
+
+                $cost = $rate * $qty;
+                $profit = $selling - $cost;
+                $profitPercentage = $cost > 0 ? round(($profit / $cost) * 100) : 0;
+
+                $totalCost += $cost;
+                $totalProfit += $profit;
+
+                // Decode field_values (other details)
+                $fieldValues = is_string($productModel->field_values ?? null)
+                    ? json_decode($productModel->field_values, true)
+                    : (is_array($productModel->field_values) ? $productModel->field_values : []);
+
+                $detailsString = '';
+                if (!empty($fieldValues)) {
+                    $detailsList = [];
+                    foreach ($fieldValues as $key => $value) {
+                        $keyFormatted = ucwords(str_replace('_', ' ', $key));
+                        $detailsList[] = "$keyFormatted: $value";
+                    }
+                    $detailsString = ' (' . implode(', ', $detailsList) . ')';
+                }
+
+                $productLines[] = $productCounter++ . ". $name$detailsString - Rate: ₹" . number_format($rate, 2) .
+                    ", Qty: $qty, Profit % : $profitPercentage%" .
+                    ", Selling: ₹" . number_format($selling, 2) .
+                    ", Profit: ₹" . number_format($profit, 2);
+            }
+
+            $rows[] = [
+                'Date' => Carbon::parse($report->sold_date)->format('d/m/Y'),
+                'Customer Name' => $report->customer_name,
+                'Customer Email' => $report->custome_email,
+                'Customer Mobile' => $report->custome_mobile,
+                'Product Details' => implode("\n", $productLines),
+                'Overall Profit Amount' => "₹" . number_format($totalProfit, 2),
+                'Overall Profit %' => $totalCost > 0 ? round(($totalProfit / $totalCost) * 100, 2) . '%' : '0%',
+            ];
+        }
+
+        $filePath = storage_path('app/sales_report.csv');
+
+        SimpleExcelWriter::create($filePath)->addRows($rows);
+
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
+    // Stock Refill View ---------------------------->
+    public function stockRefillView()
+    {
+        $products = Product::where('purchase_unit', '<', 4)->get();
+        return view('stocker.stock-stock-refill', compact('products'));
+    }
+
+    public function exportStockRefill()
+    {
+        $products = Product::with(['subCategory.mainCategory'])
+            ->where('purchase_unit', '<=', 3)
+            ->get();
+
+        $rows = [];
+        $counter = 1;
+
+        foreach ($products as $product) {
+            $mainCategory = $product->subCategory->mainCategory->main_category_name ?? 'N/A';
+            $subCategory = $product->subCategory->sub_category_name ?? 'N/A';
+
+            // Determine stock status
+            if ($product->purchase_unit == 0) {
+                $stockStatus = 'Out of Stock';
+            } elseif ($product->purchase_unit <= 3) {
+                $stockStatus = "{$product->purchase_unit} {$product->unit_type} Refill";
+            } else {
+                $stockStatus = "{$product->purchase_unit} {$product->unit_type}";
+            }
+
+            // Parse dynamic fields
+            $fields = is_string($product->field_values)
+                ? json_decode($product->field_values, true)
+                : ($product->field_values ?? []);
+
+            $fieldDetails = [];
+            if (is_array($fields)) {
+                foreach ($fields as $label => $value) {
+                    $fieldDetails[] = "$label: $value";
+                }
+            }
+
+            $rows[] = [
+                'SL' => $counter++,
+                'Product Name' => $product->product_name,
+                'Main Category' => $mainCategory,
+                'Sub Category' => $subCategory,
+                'Stock Status' => $stockStatus,
+                'Purchase Details' => $product->purchase_details ?? 'N/A',
+                'Purchase Rate' => $product->purchase_rate ?? 'N/A',
+                'Transport Cost' => $product->transport_cost ?? 'N/A',
+                'Descriptive Fields' => implode("\n", $fieldDetails),
+            ];
+        }
+
+        $filePath = storage_path('app/stock_refill_report.csv');
+
+        SimpleExcelWriter::create($filePath)->addRows($rows);
+
+        return response()->download($filePath)->deleteFileAfterSend(true);
     }
 }
