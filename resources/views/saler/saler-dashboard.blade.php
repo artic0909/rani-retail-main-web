@@ -11,6 +11,7 @@
     <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
     <title>Sales | Dashboard</title>
     <!--     Fonts and icons     -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
         rel="stylesheet" />
@@ -471,17 +472,20 @@
                             <div class="flex flex-row -mx-3">
                                 <div class="flex-none w-2/3 max-w-full px-3">
                                     <div>
-                                        <p
-                                            class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                            Last Month Sales
+                                        <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                                            This Month Sales
                                         </p>
-                                        <h5 class="mb-2 font-bold dark:text-white">₹10,030</h5>
+                                        <h5 class="mb-2 font-bold dark:text-white">₹{{ number_format($thisMonthSales, 2) }}</h5>
+
                                         <p class="mb-0 dark:text-white dark:opacity-60">
-                                            <span
-                                                class="text-sm font-bold leading-normal text-emerald-500">+5%</span>
-                                            May
+                                            <span class="text-sm font-bold leading-normal text-emerald-500">
+                                                ₹{{ number_format($lastMonthSales, 2) }}
+                                            </span>
+                                            {{ $lastMonthName }}
+                                            <!-- last month -->
                                         </p>
                                     </div>
+
                                 </div>
                                 <div class="px-3 text-right basis-1/3">
                                     <div
@@ -568,9 +572,26 @@
                             <table
                                 class="items-center w-full mb-4 align-top border-collapse border-gray-200 dark:border-white/40">
                                 <tbody>
+                                    @foreach ($latestSales as $sale)
                                     <tr>
                                         <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
+                                            class="p-2 align-middle bg-transparent border-b  whitespace-nowrap dark:border-white/40">
+                                            <div class="flex items-center px-2 py-1">
+                                                <div class="ml-6">
+                                                    <p
+                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
+                                                        Date:
+                                                    </p>
+                                                    <h6
+                                                        class="mb-0 text-sm leading-normal dark:text-white">
+                                                        <i class="fa-solid fa-calendar-days"></i> {{ $sale->sold_date }}
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td
+                                            class="p-2 align-middle bg-transparent border-b  whitespace-nowrap dark:border-white/40">
                                             <div class="flex items-center px-2 py-1">
                                                 <div class="ml-6">
                                                     <p
@@ -579,26 +600,65 @@
                                                     </p>
                                                     <h6
                                                         class="mb-0 text-sm leading-normal dark:text-white">
-                                                        Customer Name
+                                                        <i class="fa-solid fa-user"></i> {{ $sale->customer_name }}
                                                     </h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
+                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
                                             <div class="flex items-center px-2 py-1">
                                                 <div class="ml-6">
                                                     <p
                                                         class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Mobile:
+                                                        Email/Mobile:
                                                     </p>
                                                     <h6
                                                         class="mb-0 text-sm leading-normal dark:text-white">
-                                                        123456790
+                                                        <i class="fa-solid fa-envelope"></i> {{ $sale->custome_email }}
+                                                        <br>
+                                                        <i class="fa-solid fa-phone"></i> {{ $sale->custome_mobile }}
                                                     </h6>
                                                 </div>
                                             </div>
                                         </td>
+
+                                        <td
+                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                            <div class="flex items-center px-2 py-1">
+                                                <div class="ml-6">
+                                                    <p
+                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
+                                                        Product Details:
+                                                    </p>
+                                                    <h6 class="mb-0 text-sm leading-normal dark:text-white">
+                                                        @if (!empty($sale->productDetails))
+                                                        @foreach($sale->productDetails as $detail)
+                                                        <strong>Name:</strong> {{ $detail['name'] ?? 'N/A' }}<br>
+
+                                                        @php
+                                                        $fields = is_string($detail['field_values'])
+                                                        ? json_decode($detail['field_values'], true)
+                                                        : $detail['field_values'];
+                                                        @endphp
+
+                                                        @if (!empty($fields))
+                                                        @foreach($fields as $label => $value)
+                                                        <strong>{{ ucfirst($label) }}:</strong> {{ $value }}<br>
+                                                        @endforeach
+                                                        @endif
+
+                                                        
+                                                        <hr class="my-2 border-slate-500">
+                                                        @endforeach
+                                                        @else
+                                                        N/A
+                                                        @endif
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+
                                         <td
                                             class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
                                             <div class="text-center">
@@ -608,7 +668,8 @@
                                                 </p>
                                                 <h6
                                                     class="mb-0 text-sm leading-normal dark:text-white">
-                                                    4
+                                                    {{ collect($sale->products)->sum('customer_purchase_quantity') }}
+
                                                 </h6>
                                             </div>
                                         </td>
@@ -621,11 +682,10 @@
                                                 </p>
                                                 <h6
                                                     class="mb-0 text-sm leading-normal dark:text-white">
-                                                    ₹8,900
+                                                    ₹{{ $sale->customer_overall_total_amount }}
                                                 </h6>
                                             </div>
                                         </td>
-
                                         <td
                                             class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
                                             <div class="text-center">
@@ -635,376 +695,12 @@
                                                 </p>
                                                 <h6
                                                     class="mb-0 text-sm leading-normal dark:text-white">
-                                                    <a href="" class="text-blue-500 underline">PDF</a>
+                                                    <a href="{{ route('saler.pdf.download', $sale->id) }}" target="_blank" class="text-blue-500 underline">PDF</a>
                                                 </h6>
                                             </div>
                                         </td>
                                     </tr>
-
-                                    <tr>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Name:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        Customer Name
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Mobile:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        123456790
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Item Purchased:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    4
-                                                </h6>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Amount:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    ₹8,900
-                                                </h6>
-                                            </div>
-                                        </td>
-
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Invoice:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    <a href="" class="text-blue-500 underline">PDF</a>
-                                                </h6>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Name:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        Customer Name
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Mobile:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        123456790
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Item Purchased:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    4
-                                                </h6>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Amount:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    ₹8,900
-                                                </h6>
-                                            </div>
-                                        </td>
-
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Invoice:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    <a href="" class="text-blue-500 underline">PDF</a>
-                                                </h6>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Name:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        Customer Name
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Mobile:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        123456790
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Item Purchased:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    4
-                                                </h6>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Amount:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    ₹8,900
-                                                </h6>
-                                            </div>
-                                        </td>
-
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Invoice:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    <a href="" class="text-blue-500 underline">PDF</a>
-                                                </h6>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Name:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        Customer Name
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Mobile:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        123456790
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Item Purchased:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    4
-                                                </h6>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Amount:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    ₹8,900
-                                                </h6>
-                                            </div>
-                                        </td>
-
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Invoice:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    <a href="" class="text-blue-500 underline">PDF</a>
-                                                </h6>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Name:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        Customer Name
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b w-3/10 whitespace-nowrap dark:border-white/40">
-                                            <div class="flex items-center px-2 py-1">
-                                                <div class="ml-6">
-                                                    <p
-                                                        class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                        Mobile:
-                                                    </p>
-                                                    <h6
-                                                        class="mb-0 text-sm leading-normal dark:text-white">
-                                                        123456790
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Item Purchased:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    4
-                                                </h6>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Amount:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    ₹8,900
-                                                </h6>
-                                            </div>
-                                        </td>
-
-                                        <td
-                                            class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <div class="text-center">
-                                                <p
-                                                    class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                    Invoice:
-                                                </p>
-                                                <h6
-                                                    class="mb-0 text-sm leading-normal dark:text-white">
-                                                    <a href="" class="text-blue-500 underline">PDF</a>
-                                                </h6>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

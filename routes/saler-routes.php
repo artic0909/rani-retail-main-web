@@ -45,6 +45,9 @@ Route::middleware('auth:salers')->group(function () {
     Route::get('/saler/sales-stock-refill', [SalerController::class, 'stockRefillView'])->name('saler.stock-refill');
     Route::get('/saler/export-stock-refill', [SalerController::class, 'exportStockRefill'])->name('saler.export.stock.refill');
 
+    // PDF Download
+    Route::get('/saler/pdf-download/{id}', [SalerController::class, 'pdfDownload'])->name('saler.pdf.download');
+
 
 
 

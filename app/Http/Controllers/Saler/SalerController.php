@@ -138,6 +138,47 @@ class SalerController extends Controller
 
         $stockRefillCount = Product::where('purchase_unit', '<=', 3)->count();
 
+        $now = Carbon::now();
+
+        // This Month
+        $thisMonthSales = SoldItems::whereMonth('sold_date', $now->month)
+            ->whereYear('sold_date', $now->year)
+            ->sum('customer_overall_total_amount');
+
+        // Last Month
+        $lastMonth = $now->copy()->subMonth();
+        $lastMonthSales = SoldItems::whereMonth('sold_date', $lastMonth->month)
+            ->whereYear('sold_date', $lastMonth->year)
+            ->sum('customer_overall_total_amount');
+
+
+
+        // Last latest sales
+        $latestSales = SoldItems::orderByDesc('id')->get();
+
+        foreach ($latestSales as $sale) {
+            $productDetails = [];
+            $productItems = is_string($sale->products) ? json_decode($sale->products, true) : $sale->products;
+
+            if (is_array($productItems)) {
+                foreach ($productItems as $item) {
+                    $product = Product::find($item['product_id'] ?? null);
+                    if ($product) {
+                        $productDetails[] = [
+                            'name' => $product->product_name,
+                            'field_values' => $product->field_values,
+                            'rate' => $item['customer_product_rate'] ?? null,
+                            'quantity' => $item['customer_purchase_quantity'] ?? null,
+                            'profit' => $item['customer_profit_percentage'] ?? null,
+                            'selling_price' => $item['customer_product_selling_price'] ?? null,
+                        ];
+                    }
+                }
+            }
+
+            $sale->productDetails = $productDetails;
+        }
+
         return view('saler.saler-dashboard', [
             'todaysSales' => $todaysSales,
             'todaysProductQty' => $todaysProductQty,
@@ -146,7 +187,49 @@ class SalerController extends Controller
             'yesterdaySalesDate' => $yesterdaySalesDate,
             'yesterdaySellingProductDate' => $yesterdaySellingProductDate,
             'stockRefillCount' => $stockRefillCount,
+            'thisMonthSales' => $thisMonthSales,
+            'lastMonthSales' => $lastMonthSales,
+            'lastMonthName' => $lastMonth->format('F'),
+            'latestSales' => $latestSales,
         ]);
+    }
+
+    // PDF Download Function---------------------------->
+    public function pdfDownload($id)
+    {
+        $sale = SoldItems::findOrFail($id);
+
+        $productsArray = is_string($sale->products)
+            ? json_decode($sale->products, true)
+            : $sale->products;
+
+        $productDetails = [];
+
+        foreach ($productsArray as $item) {
+            $product = Product::find($item['product_id'] ?? null);
+            if ($product) {
+                $productDetails[] = [
+                    'name' => $product->product_name,
+                    'field_values' => is_string($product->field_values)
+                        ? json_decode($product->field_values, true)
+                        : $product->field_values,
+                    'rate' => $item['customer_product_rate'] ?? null,
+                    'quantity' => $item['customer_purchase_quantity'] ?? null,
+                    'profit' => $item['customer_profit_percentage'] ?? null,
+                    'selling_price' => $item['customer_product_selling_price'] ?? null,
+                ];
+            }
+        }
+
+        // Share data with the view
+        $data = [
+            'sale' => $sale,
+            'productDetails' => $productDetails
+        ];
+
+        $pdf = PDF::loadView('invoice_pdf', $data);
+
+        return $pdf->download("invoice_{$sale->id}.pdf");
     }
 
     public function allProductsView(Request $request)
@@ -348,7 +431,7 @@ class SalerController extends Controller
 
         $pdf = PDF::loadView('pdf.bill', ['billDetails' => $billDetails]);
 
- 
+
         $pdfPath = 'bills/bill_' . now()->timestamp . '.pdf';
         // Storage::put($pdfPath, $pdf->output());
 
