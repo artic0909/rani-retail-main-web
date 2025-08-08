@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waiting Page</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>Please wait...</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -36,8 +38,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         h1 {
@@ -61,6 +68,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="card">
         <div class="loader"></div>
@@ -72,4 +80,5 @@
         </div>
     </div>
 </body>
+
 </html>

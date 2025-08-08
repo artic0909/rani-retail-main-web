@@ -5,11 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-        rel="apple-touch-icon"
-        sizes="76x76"
-        href="../assets/img/apple-icon.png" />
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <title>Cart Items</title>
     <!--     Fonts and icons     -->
     <link
@@ -376,8 +372,8 @@
                                         <!-- it allow input quantity by default 1 -->
                                         <input type="number" placeholder="Enter Quantity" name="products[{{ $productId }}][customer_purchase_quantity]" class="quantity-input w-full px-3 py-2 mb-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm"
                                             data-rate="{{ $rate }}" data-target="{{ $targetId }}" max="{{ $product->purchase_unit }}" required>
-                                            <small>Available Quantity: {{ $product->purchase_unit }}</small>
-                                            <br>
+                                        <small>Available Quantity: {{ $product->purchase_unit }}</small>
+                                        <br>
                                         <!-- it allow input profit percentage -->
                                         <input type="number" placeholder="Enter percentage" name="products[{{ $productId }}][customer_profit_percentage]"
                                             class="percentage-input w-full px-3 py-2 border rounded-lg dark:bg-slate-850 dark:text-white text-sm"

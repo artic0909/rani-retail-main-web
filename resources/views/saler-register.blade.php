@@ -5,11 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-        rel="apple-touch-icon"
-        sizes="76x76"
-        href="../assets/img/apple-icon.png" />
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <title>Saler Register</title>
     <!--     Fonts and icons     -->
     <link
@@ -312,9 +308,9 @@
                                             aria-label="Name"
                                             aria-describedby="email-addon"
                                             name="name"
-                                            id="name" 
-                                            value="{{ old('name') }}" 
-                                            required/>
+                                            id="name"
+                                            value="{{ old('name') }}"
+                                            required />
                                     </div>
                                     <div class="mb-4">
                                         <input
@@ -325,8 +321,8 @@
                                             aria-describedby="email-addon"
                                             name="email"
                                             id="email"
-                                            value="{{ old('email') }}" 
-                                            required/>
+                                            value="{{ old('email') }}"
+                                            required />
                                     </div>
 
                                     <div class="mb-4">
@@ -337,9 +333,9 @@
                                             aria-label="Password"
                                             aria-describedby="password-addon"
                                             name="password"
-                                            id="password" 
-                                            value="{{ old('password') }}" 
-                                            required/>
+                                            id="password"
+                                            value="{{ old('password') }}"
+                                            required />
                                     </div>
 
                                     <div class="min-h-6 pl-7 mb-0.5 block">
