@@ -143,7 +143,7 @@
 
     <div class="footer">
         Thank you for shopping with Rani Retail.<br>
-        Need help? Call us at +91 98765 43210 or email support@raniretail.in
+        Need help? Call us at +91 6292237205 or email raniretail.shop@gmail.com
     </div>
 
 </body>

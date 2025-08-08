@@ -181,7 +181,7 @@
     <div class="footer">
         <p><strong>Thank you for shopping with Rani Retail.</strong></p>
         <p>All sales are subject to company terms and conditions.</p>
-        <p>For queries, contact support@raniretail.com</p>
+        <p>For queries, contact raniretail.shop@gmail.com</p>
     </div>
 </body>
 
