@@ -551,10 +551,31 @@ class SalerController extends Controller
             foreach ($products as $product) {
                 $productModel = \App\Models\Product::find($product['product_id']);
 
-                $name = $productModel->product_name ?? 'N/A';
-                $rate = $product['customer_product_rate'];
-                $qty = $product['customer_purchase_quantity'];
-                $selling = $product['customer_product_selling_price'];
+                // Default product values
+                $name = 'MISSING PRODUCT (ID: ' . ($product['product_id'] ?? 'Unknown') . ')';
+                $detailsString = '';
+
+                if ($productModel) {
+                    $name = $productModel->product_name ?? 'N/A';
+
+                    // Decode field_values
+                    $fieldValues = is_string($productModel->field_values ?? null)
+                        ? json_decode($productModel->field_values, true)
+                        : (is_array($productModel->field_values) ? $productModel->field_values : []);
+
+                    if (!empty($fieldValues)) {
+                        $detailsList = [];
+                        foreach ($fieldValues as $key => $value) {
+                            $keyFormatted = ucwords(str_replace('_', ' ', $key));
+                            $detailsList[] = "$keyFormatted: $value";
+                        }
+                        $detailsString = ' (' . implode(', ', $detailsList) . ')';
+                    }
+                }
+
+                $rate = $product['customer_product_rate'] ?? 0;
+                $qty = $product['customer_purchase_quantity'] ?? 0;
+                $selling = $product['customer_product_selling_price'] ?? 0;
 
                 $cost = $rate * $qty;
                 $profit = $selling - $cost;
@@ -562,21 +583,6 @@ class SalerController extends Controller
 
                 $totalCost += $cost;
                 $totalProfit += $profit;
-
-                // Decode field_values (other details)
-                $fieldValues = is_string($productModel->field_values ?? null)
-                    ? json_decode($productModel->field_values, true)
-                    : (is_array($productModel->field_values) ? $productModel->field_values : []);
-
-                $detailsString = '';
-                if (!empty($fieldValues)) {
-                    $detailsList = [];
-                    foreach ($fieldValues as $key => $value) {
-                        $keyFormatted = ucwords(str_replace('_', ' ', $key));
-                        $detailsList[] = "$keyFormatted: $value";
-                    }
-                    $detailsString = ' (' . implode(', ', $detailsList) . ')';
-                }
 
                 $productLines[] = $productCounter++ . ". $name$detailsString - Rate: ₹" . number_format($rate, 2) .
                     ", Qty: $qty, Profit % : $profitPercentage%" .
@@ -601,6 +607,7 @@ class SalerController extends Controller
 
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
+
 
 
     // Saler Profile View---------------------------->

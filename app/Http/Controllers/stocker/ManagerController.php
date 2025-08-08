@@ -244,7 +244,7 @@ class ManagerController extends Controller
                 ->withInput();
         }
     }
-    
+
     // Stock Manager Login Function---------------------------->
     public function stockManagerLogin(Request $request)
     {
@@ -723,10 +723,32 @@ class ManagerController extends Controller
             foreach ($products as $product) {
                 $productModel = \App\Models\Product::find($product['product_id']);
 
-                $name = $productModel->product_name ?? 'N/A';
-                $rate = $product['customer_product_rate'];
-                $qty = $product['customer_purchase_quantity'];
-                $selling = $product['customer_product_selling_price'];
+                if (!$productModel) {
+                    // Product not found, mark it as missing
+                    $name = 'MISSING PRODUCT (ID: ' . $product['product_id'] . ')';
+                    $detailsString = '';
+                } else {
+                    $name = $productModel->product_name ?? 'N/A';
+
+                    // Decode field_values (other details)
+                    $fieldValues = is_string($productModel->field_values ?? null)
+                        ? json_decode($productModel->field_values, true)
+                        : (is_array($productModel->field_values) ? $productModel->field_values : []);
+
+                    $detailsString = '';
+                    if (!empty($fieldValues)) {
+                        $detailsList = [];
+                        foreach ($fieldValues as $key => $value) {
+                            $keyFormatted = ucwords(str_replace('_', ' ', $key));
+                            $detailsList[] = "$keyFormatted: $value";
+                        }
+                        $detailsString = ' (' . implode(', ', $detailsList) . ')';
+                    }
+                }
+
+                $rate = $product['customer_product_rate'] ?? 0;
+                $qty = $product['customer_purchase_quantity'] ?? 0;
+                $selling = $product['customer_product_selling_price'] ?? 0;
 
                 $cost = $rate * $qty;
                 $profit = $selling - $cost;
@@ -734,21 +756,6 @@ class ManagerController extends Controller
 
                 $totalCost += $cost;
                 $totalProfit += $profit;
-
-                // Decode field_values (other details)
-                $fieldValues = is_string($productModel->field_values ?? null)
-                    ? json_decode($productModel->field_values, true)
-                    : (is_array($productModel->field_values) ? $productModel->field_values : []);
-
-                $detailsString = '';
-                if (!empty($fieldValues)) {
-                    $detailsList = [];
-                    foreach ($fieldValues as $key => $value) {
-                        $keyFormatted = ucwords(str_replace('_', ' ', $key));
-                        $detailsList[] = "$keyFormatted: $value";
-                    }
-                    $detailsString = ' (' . implode(', ', $detailsList) . ')';
-                }
 
                 $productLines[] = $productCounter++ . ". $name$detailsString - Rate: ₹" . number_format($rate, 2) .
                     ", Qty: $qty, Profit % : $profitPercentage%" .
@@ -773,6 +780,7 @@ class ManagerController extends Controller
 
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
+
 
     // Stock Refill View ---------------------------->
     public function stockRefillView()
