@@ -5,12 +5,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/stock-manager-login', [ManagerController::class, 'loginView'])->name('stock-manager-login');
 Route::get('/stock-manager-register', [ManagerController::class, 'registerView'])->name('stock-manager-register');
-Route::get('/waiting-page', [ManagerController::class, 'waitingPageView'])->name('waiting-page');
+Route::get('/stock/waiting-page', [ManagerController::class, 'waitingPageView'])->name('stock.waiting-page');
 
 
 Route::post('/stock-manager-register', [ManagerController::class, 'stockManagerRegister'])->name('store.stock-manager-register');
 
-Route::post('stock-manager-login', [ManagerController::class, 'stockManagerLogin'])->name('verify.stock-manager-login');
+Route::post('/stock-manager-login', [ManagerController::class, 'stockManagerLogin'])->name('verify.stock-manager-login');
 
 Route::middleware('auth:managers')->group(function () {
     Route::get('/stock/stock-dashboard', [ManagerController::class, 'stockDashboardView'])->name('stock-dashboard');

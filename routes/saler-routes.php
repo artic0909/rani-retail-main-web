@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/saler-login', [SalerController::class, 'loginView'])->name('saler.saler-login');
 Route::get('/saler-register', [SalerController::class, 'registerView'])->name('saler.saler-register');
-Route::get('/waiting-page', [SalerController::class, 'waitingPageView'])->name('saler.waiting-page');
+Route::get('/saler/waiting-page', [SalerController::class, 'waitingPageView'])->name('saler.waiting-page');
 
 
 Route::post('/saler-register', [SalerController::class, 'salerRegister'])->name('saler.store.saler-register');

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SalerApprovedMail;
+use App\Mail\StockApprovedMail;
 use App\Models\Manager;
 use App\Models\Saler;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -32,12 +35,14 @@ class AdminController extends Controller
             return redirect()->back()->with('info', 'Already added as manager.');
         }
 
-        Manager::create([
+        $manager = Manager::create([
             'name'     => $user->name,
             'email'    => $user->email,
             'password' => $user->password,
             'type'     => $user->type,
         ]);
+
+        Mail::to($manager->email)->send(new StockApprovedMail($manager));
 
         return redirect()->back()->with('success', 'User added to managers.');
     }
@@ -95,12 +100,14 @@ class AdminController extends Controller
             return redirect()->back()->with('info', 'Already added as saler.');
         }
 
-        Saler::create([
+        $saler = Saler::create([
             'name'     => $user->name,
             'email'    => $user->email,
             'password' => $user->password,
             'type'     => $user->type,
         ]);
+
+        Mail::to($saler->email)->send(new SalerApprovedMail($saler));
 
         return redirect()->back()->with('success', 'User added to salers.');
     }

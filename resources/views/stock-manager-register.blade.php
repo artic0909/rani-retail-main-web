@@ -26,6 +26,64 @@
   <link
     href="../assets/css/argon-dashboard-tailwind.css?v=1.0.1"
     rel="stylesheet" />
+
+  <style>
+    .floating-btn-delete {
+      position: fixed;
+      bottom: 100px;
+      right: 10px;
+      z-index: 9999;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+
+
+    .custom-success-popup,
+    .custom-error-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 5px;
+      color: white;
+      z-index: 9999;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      animation: fadeInOut 4s ease-in-out forwards;
+    }
+
+    .custom-success-popup {
+      background-color: #4CAF50;
+    }
+
+    .custom-error-popup {
+      background-color: #f44336;
+    }
+
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      10% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+  </style>
 </head>
 
 <body
@@ -255,7 +313,9 @@
                       aria-label="Name"
                       aria-describedby="email-addon"
                       name="name"
-                      id="name" />
+                      id="name" 
+                      value="{{ old('name') }}" 
+                      required />
                   </div>
                   <div class="mb-4">
                     <input
@@ -265,17 +325,9 @@
                       aria-label="Email"
                       aria-describedby="email-addon"
                       name="email"
-                      id="email" />
-                  </div>
-                  <div class="mb-4">
-                    <input
-                      type="number"
-                      class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow"
-                      placeholder="Mobile"
-                      aria-label="Mobile"
-                      aria-describedby="email-addon"
-                      name="mobile"
-                      id="mobile" />
+                      id="email" 
+                      value="{{ old('email') }}" 
+                      required />
                   </div>
                   <div class="mb-4">
                     <input
@@ -285,7 +337,9 @@
                       aria-label="Password"
                       aria-describedby="password-addon"
                       name="password"
-                      id="password" />
+                      id="password" 
+                      value="{{ old('password') }}" 
+                      required />
                   </div>
                   <div class="min-h-6 pl-7 mb-0.5 block">
                     <input
@@ -411,6 +465,37 @@
       </div>
     </footer>
     <!-- -------- END FOOTER 3 w/ COMPANY DESCRIPTION WITH LINKS & SOCIAL ICONS & COPYRIGHT ------- -->
+
+
+
+    @if ($errors->any())
+    <div id="errorPopup" class="custom-error-popup">
+      <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+    @endif
+
+    @if (session('success'))
+    <div id="successPopup" class="custom-success-popup">
+      {{ session('success') }}
+    </div>
+    @endif
+
+    @if (session('error'))
+    <div id="errorPopup" class="custom-error-popup">
+      {{ session('error') }}
+    </div>
+    @endif
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const popups = document.querySelectorAll('.custom-success-popup, .custom-error-popup');
+        popups.forEach(popup => setTimeout(() => popup.remove(), 4000));
+      });
+    </script>
   </main>
 </body>
 <!-- plugin for scrollbar  -->

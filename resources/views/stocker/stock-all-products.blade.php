@@ -479,12 +479,30 @@
                                 fieldsHtml = 'N/A';
                             }
 
+
+                            // Format stock display
+                            const unit = product.unit_type ?? '';
+                            const purchaseUnit = parseFloat(product.purchase_unit ?? 0);
+                            let stockDisplay = '';
+                            let stockStyle = '';
+
+                            if (purchaseUnit === 0) {
+                                stockDisplay = 'Out of Stock';
+                                stockStyle = 'color: red; font-weight: bold;';
+                            } else if (purchaseUnit <= 3) {
+                                stockDisplay = `${purchaseUnit} ${unit} Refill`;
+                                stockStyle = 'color: orange; font-weight: bold;';
+                            } else {
+                                stockDisplay = `${purchaseUnit} ${unit}`;
+                                stockStyle = 'color: green;';
+                            }
+
                             tableBody.innerHTML += `
                         <tr style="text-align:center; border-bottom: 1px solid #ccc;">
                             <td>${product.product_name}</td>
                             <td>${fieldsHtml}</td>
                             <td>${product.purchase_details ?? 'N/A'}</td>
-                            <td>${product.purchase_unit ?? 'N/A'}</td>
+                             <td style="${stockStyle}">${stockDisplay}</td>
                             <td>${product.purchase_rate ?? 'N/A'}</td>
                             <td>${product.transport_cost ?? 'N/A'}</td>
                             <td><a href="/stock/products/${product.id}/edit" class="text-green-600">Edit</a></td>

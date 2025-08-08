@@ -371,7 +371,21 @@
 
 
                                                     <td>{{ $product->purchase_details ?? 'N/A' }}</td>
-                                                    <td>{{ $product->purchase_unit ?? 'N/A' }}</td>
+                                                    <td style="
+                                                        color: {{ 
+                                                            $product->purchase_unit == 0 
+                                                                ? 'red' 
+                                                                : ($product->purchase_unit <= 3 ? '#d97706' : 'green') 
+                                                        }}
+                                                    ">
+                                                        @if ($product->purchase_unit == 0)
+                                                        Out of Stock
+                                                        @elseif ($product->purchase_unit <= 3)
+                                                            {{ $product->purchase_unit }} {{ $product->unit_type ?? '' }} Refill
+                                                            @else
+                                                            {{ $product->purchase_unit }} {{ $product->unit_type ?? '' }}
+                                                            @endif
+                                                            </td>
                                                     <td>{{ $product->purchase_rate ?? 'N/A' }}</td>
                                                     <td>{{ $product->transport_cost ?? 'N/A' }}</td>
                                                     <td><a href="/stock/products/{{ $product->id }}/edit" class="text-green-600">Edit</a></td>

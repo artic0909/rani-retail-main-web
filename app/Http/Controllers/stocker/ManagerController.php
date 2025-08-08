@@ -17,10 +17,13 @@ use App\Models\SubCategory;
 use App\Models\SubCategoryDescriptiveFields;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\FilteredProductsExport;
+use App\Mail\StockRegisteredMail;
 use App\Models\SoldItems;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ManagerController extends Controller
 {
@@ -195,42 +198,81 @@ class ManagerController extends Controller
     // Stock Manager Register Function---------------------------->
     public function stockManagerRegister(Request $request)
     {
-        $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users,email',
-            'mobile'   => 'required',
-            'password' => 'required|string|min:6',
-        ]);
+        try {
+            $validated = $request->validate(
+                [
+                    'name'     => 'required|string|max:255',
+                    'email'    => 'required|string|email|max:255|unique:users,email',
+                    'password' => 'required|string|min:6',
+                ],
+                [
+                    'name.required'     => 'Please enter your full name.',
+                    'name.string'       => 'Your name must be valid text.',
+                    'name.max'          => 'Your name may not be longer than :max characters.',
 
-        User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'mobile'    => $validated['mobile'],
-            'password' => bcrypt($validated['password']),
-            'type'     => 'stock-manager',
-        ]);
+                    'email.required'    => 'Please enter your email address.',
+                    'email.string'      => 'Email must be valid text.',
+                    'email.email'       => 'Please enter a valid email address.',
+                    'email.max'         => 'Email may not be longer than :max characters.',
+                    'email.unique'      => 'This email is already registered.',
 
-        return redirect()->route('waiting-page')->with('success', 'Stock Manager registered successfully.');
+                    'mobile.required'   => 'Please enter your mobile number.',
+
+                    'password.required' => 'Please enter a password.',
+                    'password.string'   => 'Password must be valid text.',
+                    'password.min'      => 'Password must be at least :min characters long.',
+                ]
+            );
+
+            $user = User::create([
+                'name'     => $validated['name'],
+                'email'    => $validated['email'],
+                'password' => bcrypt($validated['password']),
+                'type'     => 'stock-manager',
+            ]);
+
+            Mail::to($user->email)->send(new StockRegisteredMail($user));
+
+            return redirect()
+                ->route('stock.waiting-page')
+                ->with('success', 'Stock Manager registered successfully.');
+        } catch (\Throwable $e) {
+            Log::error('Stock Manager registration error: ' . $e->getMessage());
+
+            return back()
+                ->with('error', 'Unable to process your request at the moment. Please try again later.')
+                ->withInput();
+        }
     }
-
+    
     // Stock Manager Login Function---------------------------->
     public function stockManagerLogin(Request $request)
     {
+        // Validation with custom error messages
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email'    => 'required|email|max:255',
+            'password' => 'required|string|min:6',
+        ], [
+            'email.required'    => 'Please enter your email address.',
+            'email.email'       => 'The email format is invalid.',
+            'email.max'         => 'Email cannot exceed 255 characters.',
+            'password.required' => 'Please enter your password.',
+            'password.min'      => 'Password must be at least 6 characters.',
         ]);
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::guard('managers')->attempt($credentials)) {
+        // Attempt login (with "remember me" support if added in form)
+        if (Auth::guard('managers')->attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-            return redirect()->route('stock-dashboard');
+            return redirect()->route('stock-dashboard')
+                ->with('success', 'Welcome back!');
         }
 
+        // If login fails
         return back()->withErrors([
-            'email' => 'Invalid credentials',
-        ]);
+            'email' => 'Invalid credentials. Please try again.',
+        ])->withInput($request->only('email'));
     }
 
     // Stock Manager Logout Function---------------------------->

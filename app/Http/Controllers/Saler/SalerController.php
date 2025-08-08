@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Saler;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ProductPurchaseMail;
+use App\Mail\SalerRegisteredMail;
 use App\Models\Bill;
 use App\Models\Cart;
 use App\Models\Checkout;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Support\Facades\Log;
+use Exception;
 use Illuminate\Support\Str;
 
 
@@ -48,43 +51,69 @@ class SalerController extends Controller
     // Saler Register Function---------------------------->
     public function salerRegister(Request $request)
     {
-        $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users,email',
-            'mobile'   => 'required',
-            'password' => 'required|string|min:6',
-        ]);
+        try {
 
-        User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'mobile'    => $validated['mobile'],
-            'password' => bcrypt($validated['password']),
-            'type'     => 'saler',
-        ]);
+            $validated = $request->validate([
+                'name'     => 'required|string|max:255',
+                'email'    => 'required|string|email|max:255|unique:users,email',
+                'password' => 'required|string|min:6',
+            ]);
 
-        return redirect()->route('saler.waiting-page')->with('success', 'Saler registered successfully.');
+
+            $user = User::create([
+                'name'     => $validated['name'],
+                'email'    => $validated['email'],
+                'password' => bcrypt($validated['password']),
+                'type'     => 'saler',
+            ]);
+
+
+            Mail::to($user->email)->send(new SalerRegisteredMail($user));
+
+            return redirect()
+                ->route('saler.waiting-page')
+                ->with('success', 'Saler registered successfully.');
+        } catch (\Throwable $e) {
+
+            Log::error('Saler registration error: ' . $e->getMessage());
+
+
+            return back()
+                ->with('error', 'Unable to process your request at the moment. Please try again later.')
+                ->withInput();
+        }
     }
 
     // Saler Login Function---------------------------->
     public function salerLogin(Request $request)
     {
+
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email'    => 'required|email|max:255',
+            'password' => 'required|string|min:6',
+        ], [
+            'email.required'    => 'Please enter your email address.',
+            'email.email'       => 'The email format is invalid.',
+            'email.max'         => 'Email cannot exceed 255 characters.',
+            'password.required' => 'Please enter your password.',
+            'password.min'      => 'Password must be at least 6 characters.',
         ]);
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::guard('salers')->attempt($credentials)) {
+
+        if (Auth::guard('salers')->attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-            return redirect()->route('saler.saler-dashboard');
+            return redirect()->route('saler.saler-dashboard')
+                ->with('success', 'Welcome back!');
         }
 
+
         return back()->withErrors([
-            'email' => 'Invalid credentials',
-        ]);
+            'email' => 'Invalid credentials. Please try again.',
+        ])->withInput($request->only('email'));
     }
+
 
     // Saler Logout Function---------------------------->
     public function salerLogout()

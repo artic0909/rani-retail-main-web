@@ -64,7 +64,7 @@
                 </div>
               </div>
               <div class="absolute top-0 right-0 flex-col justify-center hidden w-6/12 h-full max-w-full px-3 pr-0 my-auto text-center flex-0 lg:flex">
-                <div class="relative flex flex-col justify-center h-full bg-cover px-24 m-4 overflow-hidden rounded-xl " style="background: url('../build/assets/img/index.png');">
+                <div class="relative flex flex-col justify-center h-full bg-cover px-24 m-4 overflow-hidden rounded-xl " style="background: url('./assets/img/index.png');">
                   <span class="absolute top-0 left-0 w-full h-full bg-center bg-cover bg-gradient-to-tl from-zinc-800 to-zinc-700 opacity-60"></span>
                   <h4 class="z-20 mt-12 font-bold text-white">"Smart Stock & Sales Platform for Every Retailer"</h4>
                   <p class="z-20 text-white ">UniRetail is a powerful universal retail solution where stock managers effortlessly organize products by category, and sellers seamlessly manage and sell inventory in real time. From grocery to electronics, streamline every step of your retail journey.</p>
