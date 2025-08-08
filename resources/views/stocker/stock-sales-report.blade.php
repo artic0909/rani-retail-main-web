@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <title>Sales Report</title>
     <!--     Fonts and icons     -->
     <link
@@ -435,12 +435,15 @@
 
                                                         @foreach($products as $product)
                                                         @php
-                                                        $productModel = \App\Models\Product::find($product['product_id']);
+                                                        $productModel = \App\Models\Product::find($product['product_id'] ?? null);
 
-                                                        // Decode or use directly
-                                                        $fieldValues = is_string($productModel->field_values ?? null)
+                                                        $fieldValues = [];
+
+                                                        if ($productModel && isset($productModel->field_values)) {
+                                                        $fieldValues = is_string($productModel->field_values)
                                                         ? json_decode($productModel->field_values, true)
                                                         : (is_array($productModel->field_values) ? $productModel->field_values : []);
+                                                        }
                                                         @endphp
 
                                                         <div style="margin-bottom: 12px; margin-top: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background-color: #f9f9f9;">
@@ -458,6 +461,7 @@
                                                             @endif
                                                         </div>
                                                         @endforeach
+
                                                     </td>
 
 

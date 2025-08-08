@@ -193,12 +193,13 @@
                     <ul
                         class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
                         <li class="flex items-center">
-                            <a
-                                href=""
-                                class="block px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
-                                <i class="fa fa-user sm:mr-1"></i>
-                                <span class="sm:inline">Logout</span>
-                            </a>
+                            <form method="POST" action="{{ route('saler.saler.logout') }}">
+                                @csrf
+                                <button type="submit" class="flex items-center px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
+                                    <i class="fa fa-user sm:mr-1"></i>
+                                    <span class="sm:inline">Logout</span>
+                                </button>
+                            </form>
                         </li>
                         <li class="flex items-center pl-4 xl:hidden">
                             <a
@@ -375,12 +376,15 @@
 
                                                         @foreach($products as $product)
                                                         @php
-                                                        $productModel = \App\Models\Product::find($product['product_id']);
+                                                        $productModel = \App\Models\Product::find($product['product_id'] ?? null);
 
-                                                        // Decode or use directly
-                                                        $fieldValues = is_string($productModel->field_values ?? null)
+                                                        $fieldValues = [];
+
+                                                        if ($productModel && isset($productModel->field_values)) {
+                                                        $fieldValues = is_string($productModel->field_values)
                                                         ? json_decode($productModel->field_values, true)
                                                         : (is_array($productModel->field_values) ? $productModel->field_values : []);
+                                                        }
                                                         @endphp
 
                                                         <div style="margin-bottom: 12px; margin-top: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background-color: #f9f9f9;">
@@ -398,6 +402,7 @@
                                                             @endif
                                                         </div>
                                                         @endforeach
+
                                                     </td>
 
 

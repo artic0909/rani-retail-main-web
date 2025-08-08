@@ -193,12 +193,13 @@
                     <ul
                         class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
                         <li class="flex items-center">
-                            <a
-                                href=""
-                                class="block px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
-                                <i class="fa fa-user sm:mr-1"></i>
-                                <span class="sm:inline">Logout</span>
-                            </a>
+                            <form method="POST" action="{{ route('saler.saler.logout') }}">
+                                @csrf
+                                <button type="submit" class="flex items-center px-0 py-2 text-sm font-semibold text-white transition-all ease-nav-brand">
+                                    <i class="fa fa-user sm:mr-1"></i>
+                                    <span class="sm:inline">Logout</span>
+                                </button>
+                            </form>
                         </li>
                         <li class="flex items-center pl-4 xl:hidden">
                             <a
