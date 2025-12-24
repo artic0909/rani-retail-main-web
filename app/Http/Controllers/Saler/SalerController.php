@@ -54,17 +54,17 @@ class SalerController extends Controller
         try {
 
             $validated = $request->validate([
-                'name'     => 'required|string|max:255',
-                'email'    => 'required|string|email|max:255|unique:users,email',
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email',
                 'password' => 'required|string|min:6',
             ]);
 
 
             $user = User::create([
-                'name'     => $validated['name'],
-                'email'    => $validated['email'],
+                'name' => $validated['name'],
+                'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
-                'type'     => 'saler',
+                'type' => 'saler',
             ]);
 
 
@@ -89,14 +89,14 @@ class SalerController extends Controller
     {
 
         $request->validate([
-            'email'    => 'required|email|max:255',
+            'email' => 'required|email|max:255',
             'password' => 'required|string|min:6',
         ], [
-            'email.required'    => 'Please enter your email address.',
-            'email.email'       => 'The email format is invalid.',
-            'email.max'         => 'Email cannot exceed 255 characters.',
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'The email format is invalid.',
+            'email.max' => 'Email cannot exceed 255 characters.',
             'password.required' => 'Please enter your password.',
-            'password.min'      => 'Password must be at least 6 characters.',
+            'password.min' => 'Password must be at least 6 characters.',
         ]);
 
         $credentials = $request->only('email', 'password');
@@ -259,6 +259,13 @@ class SalerController extends Controller
         $pdf = PDF::loadView('invoice_pdf', $data);
 
         return $pdf->download("invoice_{$sale->id}.pdf");
+    }
+
+    // Invoice View Function---------------------------->
+    public function invoiceView($id)
+    {
+        $sale = SoldItems::findOrFail($id);
+        return view('saler.invoice', compact('sale'));
     }
 
     public function allProductsView(Request $request)

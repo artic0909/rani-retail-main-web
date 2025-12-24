@@ -48,6 +48,9 @@ Route::middleware('auth:salers')->group(function () {
     // PDF Download
     Route::get('/saler/pdf-download/{id}', [SalerController::class, 'pdfDownload'])->name('saler.pdf.download');
 
+    // Invoice View
+    Route::get('/saler/invoice/{id}', [SalerController::class, 'invoiceView'])->name('saler.invoice.view');
+
 
 
 
