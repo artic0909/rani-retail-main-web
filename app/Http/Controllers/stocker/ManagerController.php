@@ -201,34 +201,34 @@ class ManagerController extends Controller
         try {
             $validated = $request->validate(
                 [
-                    'name'     => 'required|string|max:255',
-                    'email'    => 'required|string|email|max:255|unique:users,email',
+                    'name' => 'required|string|max:255',
+                    'email' => 'required|string|email|max:255|unique:users,email',
                     'password' => 'required|string|min:6',
                 ],
                 [
-                    'name.required'     => 'Please enter your full name.',
-                    'name.string'       => 'Your name must be valid text.',
-                    'name.max'          => 'Your name may not be longer than :max characters.',
+                    'name.required' => 'Please enter your full name.',
+                    'name.string' => 'Your name must be valid text.',
+                    'name.max' => 'Your name may not be longer than :max characters.',
 
-                    'email.required'    => 'Please enter your email address.',
-                    'email.string'      => 'Email must be valid text.',
-                    'email.email'       => 'Please enter a valid email address.',
-                    'email.max'         => 'Email may not be longer than :max characters.',
-                    'email.unique'      => 'This email is already registered.',
+                    'email.required' => 'Please enter your email address.',
+                    'email.string' => 'Email must be valid text.',
+                    'email.email' => 'Please enter a valid email address.',
+                    'email.max' => 'Email may not be longer than :max characters.',
+                    'email.unique' => 'This email is already registered.',
 
-                    'mobile.required'   => 'Please enter your mobile number.',
+                    'mobile.required' => 'Please enter your mobile number.',
 
                     'password.required' => 'Please enter a password.',
-                    'password.string'   => 'Password must be valid text.',
-                    'password.min'      => 'Password must be at least :min characters long.',
+                    'password.string' => 'Password must be valid text.',
+                    'password.min' => 'Password must be at least :min characters long.',
                 ]
             );
 
             $user = User::create([
-                'name'     => $validated['name'],
-                'email'    => $validated['email'],
+                'name' => $validated['name'],
+                'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
-                'type'     => 'stock-manager',
+                'type' => 'stock-manager',
             ]);
 
             Mail::to($user->email)->send(new StockRegisteredMail($user));
@@ -250,14 +250,14 @@ class ManagerController extends Controller
     {
         // Validation with custom error messages
         $request->validate([
-            'email'    => 'required|email|max:255',
+            'email' => 'required|email|max:255',
             'password' => 'required|string|min:6',
         ], [
-            'email.required'    => 'Please enter your email address.',
-            'email.email'       => 'The email format is invalid.',
-            'email.max'         => 'Email cannot exceed 255 characters.',
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'The email format is invalid.',
+            'email.max' => 'Email cannot exceed 255 characters.',
             'password.required' => 'Please enter your password.',
-            'password.min'      => 'Password must be at least 6 characters.',
+            'password.min' => 'Password must be at least 6 characters.',
         ]);
 
         $credentials = $request->only('email', 'password');
@@ -393,9 +393,9 @@ class ManagerController extends Controller
 
         foreach ($request->sub_category_name as $subCat) {
             SubCategory::create([
-                'main_category_id'   => $request->main_category_name,
-                'sub_category_name'  => $subCat,
-                'slug'               => Str::slug($subCat),
+                'main_category_id' => $request->main_category_name,
+                'sub_category_name' => $subCat,
+                'slug' => Str::slug($subCat),
             ]);
         }
 
@@ -459,14 +459,14 @@ class ManagerController extends Controller
     {
         $request->validate([
             'fields' => 'required|array|min:1',
-            'types'  => 'required|array|min:1',
+            'types' => 'required|array|min:1',
         ]);
 
         foreach ($request->fields as $index => $fieldName) {
             SubCategoryDescriptiveFields::create([
                 'sub_category_id' => $subCategoryId,
-                'field_name'      => $fieldName,
-                'field_type'      => $request->types[$index] ?? 'text',
+                'field_name' => $fieldName,
+                'field_type' => $request->types[$index] ?? 'text',
             ]);
         }
 
@@ -512,12 +512,12 @@ class ManagerController extends Controller
 
 
         $request->validate([
-            'product_name'     => 'required|string|max:255',
+            'product_name' => 'required|string|max:255',
             'purchase_details' => 'nullable|string',
-            'purchase_unit'    => 'nullable|string|max:255',
-            'unit_type'        => 'nullable|string|max:255',
-            'purchase_rate'    => 'nullable|numeric',
-            'transport_cost'   => 'nullable|numeric',
+            'purchase_unit' => 'nullable|string|max:255',
+            'unit_type' => 'nullable|string|max:255',
+            'purchase_rate' => 'nullable|numeric',
+            'transport_cost' => 'nullable|numeric',
         ]);
 
         $dynamicInputs = $request->input('dynamic_fields', []);
@@ -528,14 +528,14 @@ class ManagerController extends Controller
         }
 
         Product::create([
-            'sub_category_id'  => $subCategory->id,
-            'product_name'     => $request->input('product_name'),
+            'sub_category_id' => $subCategory->id,
+            'product_name' => $request->input('product_name'),
             'purchase_details' => $request->input('purchase_details'),
-            'purchase_unit'    => $request->input('purchase_unit'),
-            'unit_type'        => $request->input('unit_type'),
-            'purchase_rate'    => $request->input('purchase_rate'),
-            'transport_cost'   => $request->input('transport_cost'),
-            'field_values'     => $dynamicFieldValues,
+            'purchase_unit' => $request->input('purchase_unit'),
+            'unit_type' => $request->input('unit_type'),
+            'purchase_rate' => $request->input('purchase_rate'),
+            'transport_cost' => $request->input('transport_cost'),
+            'field_values' => $dynamicFieldValues,
         ]);
 
         return redirect()->back()->with('success', 'Product added successfully.');
@@ -578,20 +578,20 @@ class ManagerController extends Controller
     public function editProduct(Request $request, $id)
     {
         $validated = $request->validate([
-            'product_name'      => 'required|string|max:255',
-            'purchase_details'  => 'nullable|string',
-            'purchase_unit'     => 'nullable|string|max:255',
-            'purchase_rate'     => 'nullable|numeric',
-            'transport_cost'    => 'nullable|numeric',
+            'product_name' => 'required|string|max:255',
+            'purchase_details' => 'nullable|string',
+            'purchase_unit' => 'nullable|string|max:255',
+            'purchase_rate' => 'nullable|numeric',
+            'transport_cost' => 'nullable|numeric',
         ]);
 
         $product = Product::findOrFail($id);
 
-        $product->product_name     = $validated['product_name'];
+        $product->product_name = $validated['product_name'];
         $product->purchase_details = $validated['purchase_details'];
-        $product->purchase_unit    = $validated['purchase_unit'];
-        $product->purchase_rate    = $validated['purchase_rate'];
-        $product->transport_cost   = $validated['transport_cost'];
+        $product->purchase_unit = $validated['purchase_unit'];
+        $product->purchase_rate = $validated['purchase_rate'];
+        $product->transport_cost = $validated['transport_cost'];
 
         $dynamicFieldValues = $request->input('dynamic_fields', []);
 
@@ -618,23 +618,80 @@ class ManagerController extends Controller
     }
 
     // Stock Report View---------------------------->
-    public function stockReportView()
+    public function stockReportView(Request $request)
     {
-        $mainCategories = MainCategory::with(['subCategories.products'])->orderBy('main_category_name')->get();
-        return view('stocker.stock-stock-report', compact('mainCategories'));
+        $query = MainCategory::with(['subCategories.products']);
+
+        // Apply main category filter
+        if ($request->filled('main_category_id')) {
+            $query->where('id', $request->main_category_id);
+        }
+
+        // Apply subcategory filter
+        if ($request->filled('sub_category_id')) {
+            $query->whereHas('subCategories', function ($q) use ($request) {
+                $q->where('id', $request->sub_category_id);
+            });
+        }
+
+        // Apply date filter on products
+        if ($request->filled('start_date') || $request->filled('end_date')) {
+            $query->whereHas('subCategories.products', function ($q) use ($request) {
+                if ($request->filled('start_date')) {
+                    $q->whereDate('created_at', '>=', $request->start_date);
+                }
+                if ($request->filled('end_date')) {
+                    $q->whereDate('created_at', '<=', $request->end_date);
+                }
+            });
+        }
+
+        $mainCategories = $query->orderBy('main_category_name')->get();
+
+        // Get all main categories for the dropdown
+        $allMainCategories = MainCategory::orderBy('main_category_name')->get();
+
+        return view('stocker.stock-stock-report', compact('mainCategories', 'allMainCategories'));
     }
 
-    public function exportStockReport()
+    public function exportStockReport(Request $request)
     {
         $filePath = storage_path('app/stock_report.csv');
 
         $rows = [];
 
-        $mainCategories = MainCategory::with('subCategories.products')->get();
+        $query = MainCategory::with('subCategories.products');
+
+        // Apply main category filter
+        if ($request->filled('main_category_id')) {
+            $query->where('id', $request->main_category_id);
+        }
+
+        // Apply subcategory filter
+        if ($request->filled('sub_category_id')) {
+            $query->whereHas('subCategories', function ($q) use ($request) {
+                $q->where('id', $request->sub_category_id);
+            });
+        }
+
+        $mainCategories = $query->get();
 
         foreach ($mainCategories as $mainCategory) {
             foreach ($mainCategory->subCategories as $subCategory) {
+                // Apply subcategory filter if specified
+                if ($request->filled('sub_category_id') && $subCategory->id != $request->sub_category_id) {
+                    continue;
+                }
+
                 foreach ($subCategory->products as $product) {
+                    // Apply date filter
+                    if ($request->filled('start_date') && $product->created_at < $request->start_date) {
+                        continue;
+                    }
+                    if ($request->filled('end_date') && $product->created_at > $request->end_date) {
+                        continue;
+                    }
+
                     // Decode product details
                     $detailsArray = is_string($product->field_values)
                         ? json_decode($product->field_values, true)
@@ -653,15 +710,16 @@ class ManagerController extends Controller
                     }
 
                     $rows[] = [
-                        'Main Category'   => $mainCategory->main_category_name,
-                        'Sub Category'    => $subCategory->sub_category_name,
-                        'Product Name'    => $product->product_name,
+                        'Main Category' => $mainCategory->main_category_name,
+                        'Sub Category' => $subCategory->sub_category_name,
+                        'Product Name' => $product->product_name,
                         'Product Details' => $productDetails ?: 'No Details',
-                        'Purchase Units'  => $product->purchase_unit,
-                        'Unit Type'       => $product->unit_type,
-                        'Purchase Rate'   => $product->purchase_rate,
-                        'Transport Cost'  => $product->transport_cost,
-                        'Status'          => $status,
+                        'Purchase Units' => $product->purchase_unit,
+                        'Unit Type' => $product->unit_type,
+                        'Purchase Rate' => $product->purchase_rate,
+                        'Transport Cost' => $product->transport_cost,
+                        'Created Date' => $product->created_at->format('Y-m-d'),
+                        'Status' => $status,
                     ];
                 }
             }
