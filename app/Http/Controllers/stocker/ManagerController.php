@@ -709,6 +709,13 @@ class ManagerController extends Controller
                         $status = 'Stock Refill';
                     }
 
+                    $purchaseRate = floatval($product->purchase_rate);
+                    $transportCost = floatval($product->transport_cost);
+                    $purchaseUnit = floatval($product->purchase_unit);
+
+                    $totalCosting = $purchaseRate + $transportCost;
+                    $totalAmount = $totalCosting * $purchaseUnit;
+
                     $rows[] = [
                         'Main Category' => $mainCategory->main_category_name,
                         'Sub Category' => $subCategory->sub_category_name,
@@ -718,6 +725,8 @@ class ManagerController extends Controller
                         'Unit Type' => $product->unit_type,
                         'Purchase Rate' => $product->purchase_rate,
                         'Transport Cost' => $product->transport_cost,
+                        'Total Costing' => $totalCosting,
+                        'Total Amount' => $totalAmount,
                         'Created Date' => $product->created_at->format('Y-m-d'),
                         'Status' => $status,
                     ];
