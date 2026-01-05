@@ -836,6 +836,7 @@ class ManagerController extends Controller
                 'Customer Email' => $report->custome_email,
                 'Customer Mobile' => $report->custome_mobile,
                 'Product Details' => implode("\n", $productLines),
+                'Selling Price' => "₹" . number_format($selling, 2),
                 'Overall Profit Amount' => "₹" . number_format($totalProfit, 2),
                 'Overall Profit %' => $totalCost > 0 ? round(($totalProfit / $totalCost) * 100, 2) . '%' : '0%',
             ];
