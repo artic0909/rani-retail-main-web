@@ -183,7 +183,7 @@ class SalerController extends Controller
 
 
         // Last latest sales
-        $latestSales = SoldItems::orderByDesc('id')->get();
+        $latestSales = SoldItems::orderByDesc('id')->take(10)->get();
 
         foreach ($latestSales as $sale) {
             $productDetails = [];

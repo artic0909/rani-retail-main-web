@@ -499,32 +499,17 @@
                                                 </div>
                                             </td>
 
-                                            <td
-                                                class="p-2 align-middle bg-transparent border-b  whitespace-nowrap dark:border-white/40">
-                                                <div class="flex items-center px-2 py-1">
-                                                    <div class="ml-6">
-                                                        <p
-                                                            class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                            Name:
-                                                        </p>
-                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">
-                                                            <i class="fa-solid fa-user"></i> {{ $sale->customer_name }}
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                            </td>
+          
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
                                                 <div class="flex items-center px-2 py-1">
                                                     <div class="ml-6">
                                                         <p
                                                             class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                                                            Email/Mobile:
+                                                            Mobile:
                                                         </p>
                                                         <h6 class="mb-0 text-sm leading-normal dark:text-white">
-                                                            <i class="fa-solid fa-envelope"></i> {{ $sale->custome_email }}
-                                                            <br>
-                                                            <i class="fa-solid fa-phone"></i> {{ $sale->custome_mobile }}
+                                                           {{ $sale->custome_mobile }}
                                                         </h6>
                                                     </div>
                                                 </div>
