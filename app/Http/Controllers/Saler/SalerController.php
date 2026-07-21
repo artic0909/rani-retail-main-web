@@ -413,8 +413,6 @@ class SalerController extends Controller
         $products = $request->input('products');
         $totalAmount = $request->input('customer_overall_total_amount');
         $soldDate = $request->input('sold_date');
-        $customerName = $request->input('customer_name');
-        $customerEmail = $request->input('custome_email');
         $customerMobile = $request->input('custome_mobile');
 
         // Manually handle sold_date if not provided
@@ -428,8 +426,8 @@ class SalerController extends Controller
             'products' => is_array($products) ? $products : [],
             'customer_overall_total_amount' => is_numeric($totalAmount) ? $totalAmount : 0,
             'sold_date' => $soldDateFormatted,
-            'customer_name' => $customerName ?? 'N/A',
-            'custome_email' => $customerEmail,
+            'customer_name' => 'N/A',
+            'custome_email' => null,
             'custome_mobile' => $customerMobile,
         ]);
 
@@ -456,8 +454,8 @@ class SalerController extends Controller
         }
 
         $billDetails = [
-            'customer_name' => $customerName,
-            'customer_email' => $customerEmail,
+            'customer_name' => 'N/A',
+            'customer_email' => null,
             'customer_mobile' => $customerMobile,
             'sold_date' => $soldDateFormatted,
             'customer_overall_total_amount' => $totalAmount,
@@ -471,7 +469,6 @@ class SalerController extends Controller
         $pdfPath = 'bills/bill_' . now()->timestamp . '.pdf';
         // Storage::put($pdfPath, $pdf->output());
 
-        Mail::to($customerEmail)->send(new ProductPurchaseMail($billDetails, $pdf->output()));
 
 
         return redirect()->back()->with('success', 'Bill generated and saved.');
