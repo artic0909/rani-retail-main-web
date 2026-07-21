@@ -609,10 +609,25 @@ class ManagerController extends Controller
         return redirect()->back()->with('success', 'Product deleted successfully.');
     }
 
-    public function allProductsList()
+    public function allProductsList(Request $request)
     {
+        $query = Product::with(['subCategory.mainCategory']);
 
-        $products = Product::with(['subCategory.mainCategory'])->get();
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                  ->orWhere('field_values', 'like', "%{$search}%")
+                  ->orWhereHas('subCategory', function($q) use ($search) {
+                      $q->where('sub_category_name', 'like', "%{$search}%")
+                        ->orWhereHas('mainCategory', function($q) use ($search) {
+                            $q->where('main_category_name', 'like', "%{$search}%");
+                        });
+                  });
+            });
+        }
+
+        $products = $query->paginate(10)->withQueryString();
 
         return view('stocker.stock-list-all-products', compact('products'));
     }
