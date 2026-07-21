@@ -435,7 +435,7 @@
                         </div>
                         <div class="flex-auto p-4">
                             <div>
-                                <canvas id="chart-line" height="300"></canvas>
+                                <canvas id="chart-bars" height="300"></canvas>
                             </div>
                         </div>
                     </div>
@@ -627,4 +627,85 @@
 <!-- main script file  -->
 <script src="../assets/js/argon-dashboard-tailwind.js?v=1.0.1" async></script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById("chart-bars");
+        if(ctx) {
+            ctx = ctx.getContext("2d");
+            var monthlySales = @json($monthlySalesData);
+            
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    datasets: [{
+                        label: "Sales (₹)",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        borderRadius: 4,
+                        borderSkipped: false,
+                        backgroundColor: "#5e72e4",
+                        data: monthlySales,
+                        maxBarThickness: 10
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                drawBorder: false,
+                                display: true,
+                                drawOnChartArea: true,
+                                drawTicks: false,
+                                borderDash: [5, 5]
+                            },
+                            ticks: {
+                                display: true,
+                                padding: 10,
+                                color: '#ccc',
+                                font: {
+                                    size: 11,
+                                    family: "Open Sans",
+                                    style: 'normal',
+                                    lineHeight: 2
+                                },
+                            }
+                        },
+                        x: {
+                            grid: {
+                                drawBorder: false,
+                                display: false,
+                                drawOnChartArea: false,
+                                drawTicks: false,
+                                borderDash: [5, 5]
+                            },
+                            ticks: {
+                                display: true,
+                                color: '#ccc',
+                                padding: 20,
+                                font: {
+                                    size: 11,
+                                    family: "Open Sans",
+                                    style: 'normal',
+                                    lineHeight: 2
+                                },
+                            }
+                        },
+                    },
+                },
+            });
+        }
+    });
+</script>
 </html>

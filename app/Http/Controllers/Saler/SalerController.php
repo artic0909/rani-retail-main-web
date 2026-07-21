@@ -180,7 +180,16 @@ class SalerController extends Controller
             ->whereYear('sold_date', $lastMonth->year)
             ->sum('customer_overall_total_amount');
 
-
+        // Monthly Sales for Bar Chart
+        $monthlySalesData = array_fill(0, 12, 0); // Jan to Dec initialized to 0
+        $monthlySales = SoldItems::whereYear('sold_date', $now->year)
+            ->selectRaw('MONTH(sold_date) as month, sum(customer_overall_total_amount) as total')
+            ->groupBy('month')
+            ->get();
+            
+        foreach ($monthlySales as $sale) {
+            $monthlySalesData[$sale->month - 1] = $sale->total;
+        }
 
         // Last latest sales
         $latestSales = SoldItems::orderByDesc('id')->take(10)->get();
@@ -218,6 +227,7 @@ class SalerController extends Controller
             'stockRefillCount' => $stockRefillCount,
             'thisMonthSales' => $thisMonthSales,
             'lastMonthSales' => $lastMonthSales,
+            'monthlySalesData' => $monthlySalesData,
             'lastMonthName' => $lastMonth->format('F'),
             'latestSales' => $latestSales,
         ]);
