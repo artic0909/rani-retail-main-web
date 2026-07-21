@@ -278,8 +278,11 @@
                                             <li
                                                 class="relative flex p-6 mb-2 border-0 rounded-xl bg-gray-50 dark:bg-slate-850 justify-between">
                                                 <div class="flex flex-col">
-                                                    <h6 class="m-0 p-0 text-sm dark:text-white" style="text-transform: capitalize;">
-                                                        Product Name: {{ $product->product_name }}</h6>
+                                                    <div class="flex justify-between items-center mb-2 w-full">
+                                                        <h6 class="m-0 p-0 text-sm dark:text-white" style="text-transform: capitalize;">
+                                                            Product Name: {{ $product->product_name }}
+                                                        </h6>
+                                                    </div>
                                                     @php
                                                         $fields = is_string($product->field_values)
                                                             ? json_decode($product->field_values, true)
@@ -299,6 +302,13 @@
                                                     <span class="text-sm dark:text-white/80 p-0 m-0">
                                                         {!! implode('<br>', $formattedFields) !!}
                                                     </span>
+                                                    
+                                                    <div class="mt-4">
+                                                        <button type="button" onclick="event.preventDefault(); deleteCartItem('{{ route('saler.cart.delete.item', $product->id) }}')" 
+                                                            class="px-4 py-1 font-bold text-white rounded-lg shadow-md text-xs hover:shadow-xs active:opacity-85" style="background-color: #f5365c; color: white; border: none;" title="Remove from Cart">
+                                                            <i class="fas fa-trash-alt mr-1"></i> Remove Item
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 <div class="flex-col">
@@ -390,29 +400,13 @@
                                 </form>
                             @endif
 
-                            <!-- Delete Cart Items Dropdown -->
+                            <!-- Clear Cart Button -->
                             @if($cartItems->isNotEmpty())
                                 <div style="padding: 15px;">
-
-                                    <form id="deleteForm" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <select id="productSelect"
-                                            class="px-8 py-2 font-bold rounded-lg shadow-md text-xs w-full text-red-600">
-                                            <option selected>Select cart item to delete</option>
-                                            @foreach ($cartItems as $item)
-                                                <option value="{{ route('saler.cart.delete.item', 'all') }}">
-                                                    Delete All
-                                                </option>
-                                                @foreach ($item->products as $product)
-                                                    <option value="{{ route('saler.cart.delete.item', $product->id) }}">
-                                                        {{ $product->product_name }}
-                                                    </option>
-                                                @endforeach
-                                            @endforeach
-                                        </select>
-                                    </form>
+                                    <button type="button" onclick="deleteCartItem('{{ route('saler.cart.delete.item', 'all') }}')"
+                                        class="px-8 py-2 font-bold text-white rounded-lg shadow-md text-xs hover:shadow-xs hover:-translate-y-px active:opacity-85 w-full" style="background-color: #f5365c; border: none;">
+                                        <i class="fas fa-trash-alt mr-2"></i> Clear Cart
+                                    </button>
                                 </div>
                             @endif
                         </div>
@@ -608,14 +602,18 @@
 
 
     <!-- Delete Script -->
+    <form id="deleteItemForm" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
     <script>
-        document.getElementById('productSelect').addEventListener('change', function () {
-            if (this.value) {
-                const form = document.getElementById('deleteForm');
-                form.action = this.value;
+        function deleteCartItem(url) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                const form = document.getElementById('deleteItemForm');
+                form.action = url;
                 form.submit();
             }
-        });
+        }
     </script>
 
 
