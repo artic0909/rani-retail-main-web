@@ -595,7 +595,7 @@ class ManagerController extends Controller
 
         $dynamicFieldValues = $request->input('dynamic_fields', []);
 
-        // ✅ Save as array (will auto-convert to JSON)
+        // Save as array (will auto-convert to JSON)
         $product->field_values = $dynamicFieldValues;
 
         $product->save();
