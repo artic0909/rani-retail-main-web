@@ -266,8 +266,8 @@
                                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                                             <thead class="align-bottom">
 
-                                                <tr style="text-align:center; border-bottom: 1px solid #ccc;">
-                                                    <th>SL.</th>
+                                                <tr style="text-align:left; border-bottom: 1px solid #ccc;">
+                                                    <th class="px-2 py-3">SL.</th>
                                                     <th>Product Name</th>
                                                     <th>Category</th>
                                                     <th>Decriptive Fields</th>
@@ -281,8 +281,8 @@
                                             </thead>
                                             <tbody>
                                                 @foreach ($products as $product)
-                                                <tr style="text-align:center; border-bottom: 1px solid #ccc;">
-                                                    <td>{{ $products->firstItem() + $loop->index }}</td>
+                                                <tr style="text-align:left; border-bottom: 1px solid #ccc;">
+                                                    <td class="px-2 py-3">{{ $products->firstItem() + $loop->index }}</td>
                                                     <td>{{ $product->product_name }}</td>
                                                     <td>
                                                         {{ $product->subCategory->mainCategory->main_category_name ?? 'N/A' }} -
