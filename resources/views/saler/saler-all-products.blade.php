@@ -178,17 +178,19 @@
                 <div
                     class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
                     <div class="flex items-center md:ml-auto md:pr-4">
-                        <div
+                        <form method="GET" action="{{ route('saler.saler-all-products') }}"
                             class="relative flex flex-wrap items-stretch w-full transition-all rounded-lg ease">
-                            <span
-                                class="text-sm ease leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
+                            <button type="submit"
+                                class="text-sm ease leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all cursor-pointer">
                                 <i class="fas fa-search"></i>
-                            </span>
+                            </button>
                             <input
                                 type="text"
+                                name="search"
+                                value="{{ request('search') }}"
                                 class="pl-9 text-sm focus:shadow-primary-outline ease w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 dark:bg-slate-850 dark:text-white bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:transition-shadow"
                                 placeholder="Search here..." />
-                        </div>
+                        </form>
                     </div>
                     <ul
                         class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
@@ -280,7 +282,7 @@
                                             <tbody>
                                                 @foreach ($products as $product)
                                                 <tr style="text-align:center; border-bottom: 1px solid #ccc;">
-                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $products->firstItem() + $loop->index }}</td>
                                                     <td>{{ $product->product_name }}</td>
                                                     <td>
                                                         {{ $product->subCategory->mainCategory->main_category_name ?? 'N/A' }} -
@@ -341,6 +343,9 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="p-4 mt-4">
+                                        {{ $products->onEachSide(1)->links() }}
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -351,21 +356,7 @@
     </div>
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.querySelector('input[placeholder="Search here..."]');
-            const rows = document.querySelectorAll('table tbody tr');
 
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                rows.forEach(row => {
-                    const text = row.innerText.toLowerCase();
-                    row.style.display = text.includes(searchTerm) ? '' : 'none';
-                });
-            });
-        });
-    </script>
 
 </body>
 <!-- plugin for scrollbar  -->
