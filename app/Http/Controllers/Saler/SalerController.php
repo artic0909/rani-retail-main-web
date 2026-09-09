@@ -310,39 +310,58 @@ class SalerController extends Controller
             'product_ids.*' => 'exists:products,id',
         ]);
 
-        Cart::create([
-            'product_ids' => $request->product_ids,
-        ]);
+        $cart = Cart::first();
+        if ($cart) {
+            $existing = is_array($cart->product_ids) ? $cart->product_ids : (json_decode($cart->product_ids, true) ?? []);
+            $merged = array_values(array_unique(array_merge($existing, $request->product_ids)));
+            $cart->product_ids = $merged;
+            $cart->save();
+
+            // Clean up any extra cart records if multiple existed
+            Cart::where('id', '!=', $cart->id)->delete();
+        } else {
+            Cart::create([
+                'product_ids' => array_values(array_unique($request->product_ids)),
+            ]);
+        }
 
         return redirect()->route('saler.saler-cart')->with('success', 'Products added to cart successfully!');
     }
 
     public function deleteCartItem($product_id)
     {
-        $latestCart = Cart::latest()->first();
-
-        if (!$latestCart) {
-            return back()->with('error', 'No cart found.');
-        }
-
         if ($product_id === 'all') {
-            $latestCart->delete();
+            Cart::query()->delete();
             return back()->with('success', 'All items removed from cart.');
         }
 
-        $productIds = $latestCart->product_ids;
+        $allCarts = Cart::all();
 
-        // Remove the specific product
-        $updatedIds = array_filter($productIds, fn($id) => $id != $product_id);
-
-        if (empty($updatedIds)) {
-            $latestCart->delete();
-        } else {
-            $latestCart->product_ids = array_values($updatedIds);
-            $latestCart->save();
+        if ($allCarts->isEmpty()) {
+            return back()->with('error', 'No cart found.');
         }
 
-        return back()->with('success', 'Item removed from cart.');
+        $itemRemoved = false;
+        foreach ($allCarts as $cart) {
+            $productIds = is_array($cart->product_ids) ? $cart->product_ids : (json_decode($cart->product_ids, true) ?? []);
+            $updatedIds = array_filter($productIds, fn($id) => (string)$id !== (string)$product_id);
+
+            if (count($updatedIds) !== count($productIds)) {
+                $itemRemoved = true;
+                if (empty($updatedIds)) {
+                    $cart->delete();
+                } else {
+                    $cart->product_ids = array_values($updatedIds);
+                    $cart->save();
+                }
+            }
+        }
+
+        if ($itemRemoved) {
+            return back()->with('success', 'Item removed from cart.');
+        }
+
+        return back()->with('error', 'Item not found in cart.');
     }
 
     public function cartView()

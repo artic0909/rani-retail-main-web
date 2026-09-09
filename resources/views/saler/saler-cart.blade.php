@@ -403,8 +403,8 @@
                             <!-- Clear Cart Button -->
                             @if($cartItems->isNotEmpty())
                                 <div style="padding: 15px;">
-                                    <button type="button" onclick="deleteCartItem('{{ route('saler.cart.delete.item', 'all') }}')"
-                                        class="px-8 py-2 font-bold text-white rounded-lg shadow-md text-xs hover:shadow-xs hover:-translate-y-px active:opacity-85 w-full" style="background-color: #f5365c; border: none;">
+                                    <button type="button" onclick="event.preventDefault(); deleteCartItem('{{ route('saler.cart.delete.item', 'all') }}')"
+                                        class="px-8 py-2 font-bold text-white rounded-lg shadow-md text-xs hover:shadow-xs hover:-translate-y-px active:opacity-85 w-full cursor-pointer" style="background-color: #f5365c; border: none;">
                                         <i class="fas fa-trash-alt mr-2"></i> Clear Cart
                                     </button>
                                 </div>
